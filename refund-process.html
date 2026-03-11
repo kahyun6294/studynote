@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>환불 프로세스</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: A4; margin: 10mm; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }
+  @media print { body { background: white; padding: 0; display: block; } .card { box-shadow: none; border-radius: 0; width: 100%; padding: 20px 28px; } }
+  .card { background: #ffffff; border-radius: 20px; padding: 48px 56px; width: 780px; box-shadow: 0 8px 40px rgba(0,0,0,0.10); }
+  .title { font-size: 13px; font-weight: 700; color: #888; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .subtitle { font-size: 22px; font-weight: 900; color: #1a1a2e; margin-bottom: 40px; }
+  .parties { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 36px; }
+  .party { flex: 1; border-radius: 14px; padding: 20px 24px; text-align: center; }
+  .party.seller { background: #EEF2FF; border: 2px solid #6366F1; }
+  .party.buyer { background: #FFF7ED; border: 2px solid #F97316; }
+  .party-icon { font-size: 28px; margin-bottom: 6px; }
+  .party-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #888; margin-bottom: 4px; }
+  .party-name { font-size: 16px; font-weight: 900; color: #1a1a2e; }
+  .flow { display: flex; flex-direction: column; }
+  .step { display: flex; align-items: center; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; z-index: 1; }
+  .connector { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+  .connector-line { width: 2px; height: 28px; background: #E5E7EB; }
+  .step-content { flex: 1; margin: 0 16px; padding: 14px 18px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .step-left { display: flex; align-items: center; gap: 12px; }
+  .step-icon { font-size: 20px; }
+  .step-title { font-size: 13px; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; }
+  .step-desc { font-size: 11px; color: #666; }
+  .step-right { display: flex; align-items: center; gap: 8px; min-width: 160px; justify-content: flex-end; }
+  .step-amount { font-size: 17px; font-weight: 900; white-space: nowrap; min-width: 60px; text-align: right; }
+  .arrow-indicator { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+  .vat-row { font-size: 11px; color: #888; padding: 3px 0 0 0; }
+  .vat-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; background: #F0FDF4; border: 1px solid #86EFAC; color: #16A34A; }
+  .step-1 .step-num { background: #6366F1; color: white; }
+  .step-1 .step-content { background: #F5F3FF; border: 1px solid #DDD6FE; }
+  .step-1 .step-amount { color: #6366F1; }
+  .step-1 .arrow-indicator { background: #EEF2FF; color: #6366F1; }
+  .step-2 .step-num { background: #F97316; color: white; }
+  .step-2 .step-content { background: #FFF7ED; border: 1px solid #FED7AA; }
+  .step-2 .step-amount { color: #F97316; }
+  .step-2 .arrow-indicator { background: #FFF7ED; color: #F97316; }
+  .step-3 .step-num { background: #EF4444; color: white; }
+  .step-3 .step-content { background: #FEF2F2; border: 1px solid #FECACA; }
+  .step-3 .step-amount { color: #EF4444; }
+  .step-3 .arrow-indicator { background: #FEF2F2; color: #EF4444; }
+  .step-4 .step-num { background: #10B981; color: white; }
+  .step-4 .step-content { background: #ECFDF5; border: 1px solid #A7F3D0; }
+  .step-4 .step-amount { color: #10B981; }
+  .step-4 .arrow-indicator { background: #ECFDF5; color: #10B981; }
+  .result { margin-top: 32px; border-radius: 12px; overflow: hidden; border: 1.5px solid #E5E7EB; }
+  .result-header { display: grid; grid-template-columns: 140px 1fr 1fr 1fr; background: #1a1a2e; }
+  .result-header-cell { padding: 10px 14px; font-size: 11px; font-weight: 700; color: #aaa; letter-spacing: 1px; text-align: center; border-left: 1px solid rgba(255,255,255,0.08); }
+  .result-header-cell:first-child { border-left: none; text-align: left; }
+  .result-row { display: grid; grid-template-columns: 140px 1fr 1fr 1fr; border-top: 1px solid #F3F4F6; }
+  .result-row.seller { background: #F8F9FF; }
+  .result-row.buyer { background: #FFFBF5; }
+  .result-row-label { padding: 14px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border-right: 2px solid #E5E7EB; }
+  .result-row.seller .result-row-label { color: #6366F1; }
+  .result-row.buyer .result-row-label { color: #F97316; }
+  .result-cell { padding: 14px 12px; text-align: center; border-left: 1px solid #F3F4F6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+  .result-cell-value { font-weight: 700; color: #1a1a2e; font-size: 13px; }
+  .result-cell-sub { font-size: 10px; color: #999; }
+  .positive { color: #10B981 !important; }
+  .negative { color: #EF4444 !important; }
+  .divider { height: 1px; background: #F3F4F6; margin: 28px 0; }
+  .note { background: #F8FAFC; border-left: 3px solid #6366F1; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 11px; color: #555; line-height: 1.8; margin-top: 20px; }
+  .note strong { color: #6366F1; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">거래 프로세스</div>
+  <div class="subtitle">부품 판매 후 환불 처리 흐름</div>
+  <div class="parties">
+    <div class="party seller"><div class="party-icon">🏢</div><div class="party-label">SELLER</div><div class="party-name">우리 회사</div></div>
+    <div class="party buyer"><div class="party-icon">🏬</div><div class="party-label">BUYER</div><div class="party-name">거래처</div></div>
+  </div>
+  <div class="flow">
+    <div class="step step-1"><div class="connector"><div class="step-num">1</div><div class="connector-line"></div></div><div class="step-content"><div class="step-left"><div class="step-icon">📦</div><div><div class="step-title">부품 판매 <span class="vat-badge">VAT 포함</span></div><div class="step-desc">우리 회사 → 거래처 / 세금계산서 발행</div><div class="vat-row">공급가액 100만원 + 부가세 10만원</div></div></div><div class="step-right"><div class="arrow-indicator">우리→거래처</div><div class="step-amount">110만원</div></div></div></div>
+    <div class="step step-2"><div class="connector"><div class="step-num">2</div><div class="connector-line"></div></div><div class="step-content"><div class="step-left"><div class="step-icon">🔄</div><div><div class="step-title">환불 요청</div><div class="step-desc">원칙적 환불 불가 → 위약금 30% 부담 조건 협의</div></div></div><div class="step-right"><div class="arrow-indicator">거래처→우리</div><div class="step-amount" style="color:#F97316;">요청</div></div></div></div>
+    <div class="step step-3"><div class="connector"><div class="step-num">3</div><div class="connector-line"></div></div><div class="step-content"><div class="step-left"><div class="step-icon">💸</div><div><div class="step-title">위약금 수취 <span class="vat-badge" style="background:#FEF2F2;border-color:#FECACA;color:#EF4444;">VAT 없음</span></div><div class="step-desc">거래처 부담 / 부가세 과세 대상 아님 (영수증 발급)</div><div class="vat-row">위약금은 손해배상 성격 → 세금계산서 발행 불가</div></div></div><div class="step-right"><div class="arrow-indicator">거래처→우리</div><div class="step-amount">30만원</div></div></div></div>
+    <div class="step step-4"><div class="connector"><div class="step-num">4</div></div><div class="step-content"><div class="step-left"><div class="step-icon">🏦</div><div><div class="step-title">환불 지급 <span class="vat-badge">VAT 포함</span></div><div class="step-desc">수정세금계산서 발행 (공급가액 -100 + 부가세 -10)</div><div class="vat-row">실제 환불: 110만원 - 위약금 30만원 = 80만원</div></div></div><div class="step-right"><div class="arrow-indicator">우리→거래처</div><div class="step-amount">80만원</div></div></div></div>
+  </div>
+  <div class="divider"></div>
+  <div class="result">
+    <div class="result-header"><div class="result-header-cell">구분</div><div class="result-header-cell">수정세금계산서</div><div class="result-header-cell">위약금</div><div class="result-header-cell">실제 환불</div></div>
+    <div class="result-row seller"><div class="result-row-label">🏢 우리 회사</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value positive">+30만원</div><div class="result-cell-sub">잡이익 (영수증)</div></div><div class="result-cell"><div class="result-cell-value negative">-80만원</div><div class="result-cell-sub">110만원 - 위약금 30만원</div></div></div>
+    <div class="result-row buyer"><div class="result-row-label">🏬 거래처</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value negative">-30만원</div><div class="result-cell-sub">잡손실 (영수증)</div></div><div class="result-cell"><div class="result-cell-value positive">+80만원</div><div class="result-cell-sub">110만원 - 위약금 30만원</div></div></div>
+  </div>
+  <div class="note"><strong>📌 핵심 포인트</strong><br>수정세금계산서: 공급가액 -100만원 + 부가세 -10만원 전액 취소<br>위약금 30만원은 부가세 과세 대상 아님 → <strong>세금계산서 발행 불가, 영수증으로 처리</strong><br>실제 환불금액: 110만원 - 위약금 30만원 = <strong>80만원</strong></div>
+</div>
+</body>
+</html>
