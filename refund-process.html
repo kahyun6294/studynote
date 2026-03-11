@@ -54,11 +54,11 @@
   .note strong { color: #6366F1; }
   .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #888; text-decoration: none; margin-bottom: 20px; }
   .back-btn:hover { color: #1a1a2e; }
+  /* 메모 패널 */
   .memo-panel { width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 40px; }
   .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; }
   .memo-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
   .memo-item { background: #f8fafc; border-radius: 10px; padding: 10px 12px; position: relative; }
-  .memo-item-date { font-size: 10px; color: #aaa; margin-bottom: 6px; }
   .memo-item-row { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 4px; }
   .memo-item-label { font-size: 10px; font-weight: 900; color: #94a3b8; min-width: 36px; padding-top: 1px; }
   .memo-item-val { font-size: 11px; font-weight: 700; color: #1a1a2e; flex: 1; cursor: pointer; }
@@ -66,7 +66,11 @@
   .memo-item-val:hover { color: #F97316; }
   .memo-del-btn { position: absolute; top: 8px; right: 8px; cursor: pointer; color: #ddd; font-size: 11px; background: none; border: none; }
   .memo-del-btn:hover { color: #f87171; }
-  .memo-last { font-size: 10px; color: #ccc; text-align: right; margin-top: 8px; }
+  /* 각 메모 하단 타임스탬프 */
+  .memo-item-times { display: flex; flex-direction: column; gap: 1px; margin-top: 7px; padding-top: 6px; border-top: 1px solid #eef0f3; }
+  .memo-item-time { font-size: 9px; color: #bbb; }
+  .memo-item-time span { color: #94a3b8; font-weight: 700; }
+  /* 입력폼 */
   .memo-form { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 14px; margin-top: 4px; }
   .memo-form-date { font-size: 10px; color: #aaa; }
   .memo-form-label { font-size: 10px; font-weight: 900; color: #94a3b8; margin-bottom: 2px; }
@@ -115,20 +119,15 @@
 var KEY = 'studynote-memos';
 var CARD = 'refund-process';
 
-function loadData() {
-  try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; }
-}
+function loadData() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; } }
 function saveData(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
 
 function fmt(iso) {
   var d = new Date(iso);
   return d.getFullYear() + '.' + pad(d.getMonth()+1) + '.' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
 }
-function fmtShort(iso) {
-  var d = new Date(iso);
-  return (d.getMonth()+1) + '/' + d.getDate();
-}
 function pad(n) { return n < 10 ? '0'+n : ''+n; }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function render() {
   var list = (loadData()[CARD] || []);
@@ -136,61 +135,50 @@ function render() {
   if (list.length === 0) {
     el.innerHTML = '<div style="font-size:11px;color:#ccc;text-align:center;padding:8px 0;">메모 없음</div>';
   } else {
-    var html = '';
+    var h = '';
     for (var i = 0; i < list.length; i++) {
       var m = list[i];
-      html += '<div class="memo-item" data-idx="' + i + '">';
-      html += '<div class="memo-item-date">' + fmtShort(m.created) + '</div>';
-      html += '<div class="memo-item-row"><span class="memo-item-label">거래처</span><span class="memo-item-val client-val" data-idx="' + i + '" data-field="client">' + escHtml(m.client) + '</span></div>';
-      html += '<div class="memo-item-row"><span class="memo-item-label">메모</span><span class="memo-item-val is-memo memo-val" data-idx="' + i + '" data-field="memo">' + escHtml(m.memo) + '</span></div>';
-      html += '<button class="memo-del-btn" data-idx="' + i + '">✕</button>';
-      html += '</div>';
+      h += '<div class="memo-item">';
+      h += '<div class="memo-item-row"><span class="memo-item-label">거래처</span><span class="memo-item-val" data-idx="'+i+'" data-field="client">'+escHtml(m.client)+'</span></div>';
+      h += '<div class="memo-item-row"><span class="memo-item-label">메모</span><span class="memo-item-val is-memo" data-idx="'+i+'" data-field="memo">'+escHtml(m.memo)+'</span></div>';
+      h += '<div class="memo-item-times">';
+      h += '<div class="memo-item-time"><span>작성</span> '+fmt(m.created)+'</div>';
+      if (m.updated) {
+        h += '<div class="memo-item-time"><span>수정</span> '+fmt(m.updated)+'</div>';
+      }
+      h += '</div>';
+      h += '<button class="memo-del-btn" data-idx="'+i+'">✕</button>';
+      h += '</div>';
     }
-    el.innerHTML = html;
-  }
-  // 마지막 작성일시
-  var lastEl = document.querySelector('.memo-last');
-  if (lastEl) lastEl.remove();
-  if (list.length > 0) {
-    var p = document.createElement('div');
-    p.className = 'memo-last';
-    p.textContent = '마지막 작성 ' + fmt(list[list.length-1].created);
-    document.querySelector('.memo-panel').appendChild(p);
+    el.innerHTML = h;
   }
   bindEvents();
 }
 
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 function bindEvents() {
-  // 삭제
   document.querySelectorAll('.memo-del-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
-      var idx = parseInt(this.getAttribute('data-idx'));
       var d = loadData();
-      d[CARD].splice(idx, 1);
-      saveData(d);
-      render();
+      d[CARD].splice(parseInt(this.getAttribute('data-idx')), 1);
+      saveData(d); render();
     });
   });
-  // 인라인 수정
   document.querySelectorAll('.memo-item-val').forEach(function(span) {
     span.addEventListener('click', function() {
       var idx = parseInt(this.getAttribute('data-idx'));
       var field = this.getAttribute('data-field');
-      var old = this.textContent;
       var inp = document.createElement('input');
       inp.className = 'memo-edit-inp';
-      inp.value = old;
+      inp.value = this.textContent;
       this.replaceWith(inp);
       inp.focus();
       inp.addEventListener('blur', function() {
         var d = loadData();
-        if (inp.value.trim()) d[CARD][idx][field] = inp.value.trim();
-        saveData(d);
-        render();
+        if (inp.value.trim()) {
+          d[CARD][idx][field] = inp.value.trim();
+          d[CARD][idx].updated = new Date().toISOString();
+        }
+        saveData(d); render();
       });
       inp.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') inp.blur();
@@ -217,9 +205,7 @@ document.getElementById('inp-memo').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') document.getElementById('add-btn').click();
 });
 
-function updateDate() {
-  document.getElementById('form-date').textContent = fmt(new Date().toISOString());
-}
+function updateDate() { document.getElementById('form-date').textContent = fmt(new Date().toISOString()); }
 updateDate();
 setInterval(updateDate, 60000);
 render();
