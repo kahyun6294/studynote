@@ -23,8 +23,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .card-vat { border-top:3px solid #F97316; }
 .memo-area { border-top:1px solid #f0f0f0; padding-top:10px; margin-top:4px; }
 .memo-label { font-size:10px; font-weight:900; color:#94a3b8; margin-bottom:6px; }
-.memo-chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; min-height:20px; }
-.memo-chip { font-size:11px; font-weight:700; background:#FFF7ED; color:#F97316; border-radius:20px; padding:3px 10px; }
+.memo-chips { display:flex; flex-direction:column; gap:4px; margin-bottom:8px; min-height:20px; }
+.memo-chip { display:flex; align-items:center; gap:6px; font-size:11px; }
+.memo-chip-date { color:#bbb; white-space:nowrap; flex-shrink:0; }
+.memo-chip-name { font-weight:700; background:#FFF7ED; color:#F97316; border-radius:20px; padding:2px 10px; }
 .memo-chip-empty { font-size:11px; color:#ddd; }
 .memo-input-row { display:flex; gap:6px; }
 .memo-input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; }
@@ -63,6 +65,12 @@ var KEY = 'studynote-memos';
 function loadData() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; } }
 function saveData(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
 
+function fmtShort(iso) {
+  var d = new Date(iso);
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 function renderChips(cardId) {
   var list = (loadData()[cardId] || []);
   var el = document.getElementById('chips-' + cardId);
@@ -72,11 +80,10 @@ function renderChips(cardId) {
     return;
   }
   el.innerHTML = list.map(function(m) {
-    return '<span class="memo-chip">' + escHtml(m.client || '') + '</span>';
+    var date = m.updated ? fmtShort(m.updated) : fmtShort(m.created);
+    return '<div class="memo-chip"><span class="memo-chip-date">' + date + '</span><span class="memo-chip-name">' + escHtml(m.client || '') + '</span></div>';
   }).join('');
 }
-
-function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 document.getElementById('btn-refund-process').addEventListener('click', function() {
   addMemo('refund-process');
