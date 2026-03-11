@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세금 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; }
+.back-btn { position:fixed; top:24px; left:24px; font-size:12px; color:#888; text-decoration:none; }
+.back-btn:hover { color:#6366F1; }
+.header { text-align:center; margin-bottom:48px; }
+.header h1 { font-size:26px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
+.header p { font-size:13px; color:#aaa; }
+.cards { display:flex; gap:24px; flex-wrap:wrap; justify-content:center; }
+.card { background:#fff; border-radius:20px; padding:40px 36px; width:260px; box-shadow:0 6px 30px rgba(0,0,0,0.09); text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:16px; transition:transform 0.18s, box-shadow 0.18s; cursor:pointer; }
+.card:hover { transform:translateY(-6px); box-shadow:0 14px 40px rgba(0,0,0,0.14); }
+.card.corp { border-top:4px solid #6366F1; }
+.card.income { border-top:4px solid #10B981; }
+.card-icon { font-size:42px; }
+.card-title { font-size:18px; font-weight:900; color:#1a1a2e; }
+.card-sub { font-size:12px; color:#94a3b8; text-align:center; line-height:1.6; }
+.card-badge { font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; margin-top:4px; }
+.card.corp .card-badge { background:#EEF2FF; color:#6366F1; }
+.card.income .card-badge { background:#ECFDF5; color:#10B981; }
+</style>
+</head>
+<body>
+  <a class="back-btn" href="index.html">&#8592; 메인으로</a>
+  <div class="header">
+    <h1>&#128203; 세금 계산기</h1>
+    <p>계산할 세목을 선택해주세요</p>
+  </div>
+  <div class="cards">
+    <a class="card corp" href="tax-calculator.html">
+      <div class="card-icon">&#127970;</div>
+      <div class="card-title">법인세</div>
+      <div class="card-sub">손익계산서 기반<br>법인세 추정 계산</div>
+      <div class="card-badge">법인사업자</div>
+    </a>
+    <a class="card income" href="income-tax.html">
+      <div class="card-icon">&#129534;</div>
+      <div class="card-title">종합소득세</div>
+      <div class="card-sub">사업·근로소득 기반<br>종합소득세 추정 계산</div>
+      <div class="card-badge">개인사업자</div>
+    </a>
+  </div>
+</body>
+</html>
