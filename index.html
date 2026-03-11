@@ -11,23 +11,28 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .header { text-align:center; margin-bottom:40px; }
 .header h1 { font-size:28px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
 .header p { font-size:14px; color:#888; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; max-width:900px; margin:0 auto; }
-.card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); transition:transform 0.2s; text-decoration:none; display:block; position:relative; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; max-width:900px; margin:0 auto; }
+.card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); transition:transform 0.2s; display:block; position:relative; }
 .card:hover { transform:translateY(-4px); }
+.card-link { text-decoration:none; display:block; }
 .card-icon { font-size:32px; margin-bottom:12px; }
 .card-tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
 .card-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
-.card-desc { font-size:12px; color:#888; line-height:1.6; margin-bottom:10px; }
+.card-desc { font-size:12px; color:#888; line-height:1.6; margin-bottom:14px; }
 .tag-vat { background:#FFF7ED; color:#F97316; }
 .card-vat { border-top:3px solid #F97316; }
-.memo-area { margin-top:10px; border-top:1px solid #f0f0f0; padding-top:10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:28px; }
-.memo-badge { background:#F1F5F9; color:#64748B; font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:4px; }
-.memo-badge:hover { background:#E2E8F0; }
-.memo-add { background:none; border:1.5px dashed #CBD5E1; color:#94A3B8; font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; cursor:pointer; font-family:inherit; }
-.memo-add:hover { border-color:#94A3B8; color:#64748B; }
-.memo-input-wrap { display:none; align-items:center; gap:4px; }
-.memo-input-wrap.active { display:flex; }
-.memo-input { border:1.5px solid #6366F1; border-radius:20px; padding:2px 8px; font-size:10px; font-family:inherit; outline:none; width:90px; }
+.memo-area { border-top:1px solid #f0f0f0; padding-top:12px; margin-top:4px; }
+.memo-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; min-height:0; }
+.memo-item { display:flex; align-items:center; gap:8px; font-size:11px; }
+.memo-date { color:#aaa; white-space:nowrap; flex-shrink:0; }
+.memo-text { color:#555; font-weight:500; }
+.memo-del { margin-left:auto; cursor:pointer; color:#ddd; font-size:13px; flex-shrink:0; }
+.memo-del:hover { color:#f87171; }
+.memo-input-row { display:flex; gap:6px; }
+.memo-input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; }
+.memo-input:focus { border-color:#F97316; }
+.memo-btn { background:#F97316; color:#fff; border:none; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.memo-btn:hover { background:#ea6c0a; }
 </style>
 </head>
 <body>
@@ -36,65 +41,66 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   <p>클릭하면 해당 자료로 이동해요</p>
 </div>
 <div class="grid">
-  <a class="card card-vat" href="refund-process.html" id="card-1">
-    <div class="card-icon">🔄</div>
-    <div class="card-tag tag-vat">부가세</div>
-    <div class="card-title">환불 프로세스</div>
-    <div class="card-desc">부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법</div>
-    <div class="memo-area" id="memo-area-1">
-      <div class="memo-input-wrap" id="memo-input-wrap-1">
-        <input class="memo-input" id="memo-input-1" placeholder="거래처명" maxlength="20">
+  <div class="card card-vat">
+    <a class="card-link" href="refund-process.html">
+      <div class="card-icon">🔄</div>
+      <div class="card-tag tag-vat">부가세</div>
+      <div class="card-title">환불 프로세스</div>
+      <div class="card-desc">부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법</div>
+    </a>
+    <div class="memo-area">
+      <div class="memo-list" id="memo-list-0"></div>
+      <div class="memo-input-row">
+        <input class="memo-input" id="memo-input-0" placeholder="거래처 입력..." />
+        <button class="memo-btn" onclick="addMemo(0)">추가</button>
       </div>
-      <button class="memo-add" id="memo-add-1">+ 메모</button>
     </div>
-  </a>
+  </div>
 </div>
 <script>
+const STORAGE_KEY = 'studynote-memos';
+
 function loadMemos() {
-  const saved = localStorage.getItem('memos-card-1');
-  if(saved) {
-    JSON.parse(saved).forEach(m => addBadge('1', m));
-  }
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
 }
-function saveMemos(cardId) {
-  const badges = [...document.querySelectorAll('#memo-area-'+cardId+' .memo-badge span')].map(s=>s.textContent);
-  localStorage.setItem('memos-card-'+cardId, JSON.stringify(badges));
+function saveMemos(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
-function addBadge(cardId, text) {
-  const area = document.getElementById('memo-area-'+cardId);
-  const addBtn = document.getElementById('memo-add-'+cardId);
-  const badge = document.createElement('div');
-  badge.className = 'memo-badge';
-  badge.innerHTML = '<span>'+text+'</span><span onclick="removeBadge(this,''+cardId+'');event.stopPropagation();" style="opacity:0.5;font-size:9px;">✕</span>';
-  area.insertBefore(badge, addBtn);
+function renderMemos(cardIdx) {
+  const data = loadMemos();
+  const list = data[cardIdx] || [];
+  const el = document.getElementById('memo-list-' + cardIdx);
+  el.innerHTML = list.map((m, i) =>
+    '<div class="memo-item">' +
+    '<span class="memo-date">' + m.date + '</span>' +
+    '<span class="memo-text">' + m.text + '</span>' +
+    '<span class="memo-del" onclick="delMemo(' + cardIdx + ',' + i + ')">✕</span>' +
+    '</div>'
+  ).join('');
 }
-function removeBadge(el, cardId) {
-  el.parentElement.remove();
-  saveMemos(cardId);
+function addMemo(cardIdx) {
+  const input = document.getElementById('memo-input-' + cardIdx);
+  const text = input.value.trim();
+  if (!text) return;
+  const data = loadMemos();
+  if (!data[cardIdx]) data[cardIdx] = [];
+  const now = new Date();
+  const date = (now.getMonth()+1) + '/' + now.getDate();
+  data[cardIdx].push({ date, text });
+  saveMemos(data);
+  input.value = '';
+  renderMemos(cardIdx);
 }
-document.getElementById('memo-add-1').addEventListener('click', function(e) {
-  e.preventDefault();
-  const wrap = document.getElementById('memo-input-wrap-1');
-  wrap.classList.toggle('active');
-  if(wrap.classList.contains('active')) document.getElementById('memo-input-1').focus();
+function delMemo(cardIdx, idx) {
+  const data = loadMemos();
+  data[cardIdx].splice(idx, 1);
+  saveMemos(data);
+  renderMemos(cardIdx);
+}
+document.querySelectorAll('.memo-input').forEach((inp, i) => {
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') addMemo(i); });
 });
-document.getElementById('memo-input-1').addEventListener('keydown', function(e) {
-  if(e.key === 'Enter' && this.value.trim()) {
-    addBadge('1', this.value.trim());
-    saveMemos('1');
-    this.value = '';
-    document.getElementById('memo-input-wrap-1').classList.remove('active');
-    e.preventDefault();
-  }
-  if(e.key === 'Escape') {
-    this.value = '';
-    document.getElementById('memo-input-wrap-1').classList.remove('active');
-  }
-});
-document.getElementById('card-1').addEventListener('click', function(e) {
-  if(e.target.closest('.memo-area')) e.preventDefault();
-});
-loadMemos();
+renderMemos(0);
 </script>
 </body>
 </html>
