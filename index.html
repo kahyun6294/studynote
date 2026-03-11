@@ -34,3 +34,188 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .memo-chip-name { font-weight:700; background:#FFF7ED; color:#F97316; border-radius:20px; padding:2px 10px; }
 .memo-chip-empty { font-size:11px; color:#ddd; }
 .memo-input-row { display:flex; gap:6px; }
+.memo-input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; }
+.memo-input:focus { border-color:#F97316; }
+.memo-btn { background:#F97316; color:#fff; border:none; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; }
+.memo-btn:hover { background:#ea6c0a; }
+.add-card-btn { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.06); border:2px dashed #e5e7eb; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:pointer; min-height:180px; transition:all 0.2s; color:#94a3b8; }
+.add-card-btn:hover { border-color:#F97316; color:#F97316; transform:translateY(-4px); }
+.add-card-btn-icon { font-size:32px; }
+.add-card-btn-text { font-size:13px; font-weight:700; }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:32px; width:400px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+.modal-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:20px; }
+.modal-field { margin-bottom:14px; }
+.modal-label { font-size:11px; font-weight:900; color:#94a3b8; margin-bottom:5px; }
+.modal-input { width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; }
+.modal-input:focus { border-color:#F97316; }
+.modal-textarea { width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; resize:none; height:64px; line-height:1.6; }
+.modal-textarea:focus { border-color:#F97316; }
+.tax-selector { display:flex; flex-wrap:wrap; gap:6px; }
+.tax-opt { font-size:11px; font-weight:700; padding:5px 12px; border-radius:20px; border:1.5px solid #e5e7eb; cursor:pointer; background:#fff; color:#94a3b8; transition:all 0.15s; }
+.tax-opt:hover { border-color:#F97316; color:#F97316; }
+.tax-opt.selected { background:#F97316; border-color:#F97316; color:#fff; }
+.modal-actions { display:flex; gap:8px; margin-top:20px; }
+.modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-save { flex:2; padding:10px; background:#F97316; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-save:hover { background:#ea6c0a; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>&#x1F4DA; 세무 스터디 노트</h1>
+  <p>클릭하면 해당 자료로 이동해요</p>
+</div>
+<div class="grid" id="grid"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">&#x1F4CB; 새 카드 추가</div>
+    <div class="modal-field">
+      <div class="modal-label">세목 선택</div>
+      <div class="tax-selector" id="tax-selector">
+        <button class="tax-opt selected" data-tax="vat">부가세</button>
+        <button class="tax-opt" data-tax="corp">법인세</button>
+        <button class="tax-opt" data-tax="income">소득세</button>
+        <button class="tax-opt" data-tax="with">원천세</button>
+        <button class="tax-opt" data-tax="other">기타</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">제목</div>
+      <input class="modal-input" id="m-title" placeholder="제목 입력" />
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">설명 <span style="font-weight:400;color:#bbb;">(2~3줄)</span></div>
+      <textarea class="modal-textarea" id="m-desc" placeholder="내용 요약 입력"></textarea>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">이모지 <span style="font-weight:400;color:#bbb;">(선택)</span></div>
+      <input class="modal-input" id="m-icon" placeholder="예) 📄" maxlength="4" style="width:72px;" />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modal-cancel">취소</button>
+      <button class="modal-save" id="modal-save">추가하기</button>
+    </div>
+  </div>
+</div>
+<script>
+var SKEY = 'studynote-memos';
+var CKEY = 'studynote-cards';
+var TAX_META = {
+  vat:    { label:'부가세', cls:'tax-vat',    tagCls:'tag-vat',    icon:'🔄' },
+  corp:   { label:'법인세', cls:'tax-corp',   tagCls:'tag-corp',   icon:'🏢' },
+  income: { label:'소득세', cls:'tax-income', tagCls:'tag-income', icon:'📊' },
+  with:   { label:'원천세', cls:'tax-with',   tagCls:'tag-with',   icon:'💼' },
+  other:  { label:'기타',   cls:'tax-other',  tagCls:'tag-other',  icon:'📄' }
+};
+var FIXED_CARDS = [
+  { id:'refund-process', tax:'vat', title:'환불 프로세스', desc:'부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법', icon:'🔄', link:'refund-process.html', fixed:true }
+];
+function loadCards() { try { return JSON.parse(localStorage.getItem(CKEY) || '[]'); } catch(e) { return []; } }
+function saveCards(c) { localStorage.setItem(CKEY, JSON.stringify(c)); }
+function loadMemos() { try { return JSON.parse(localStorage.getItem(SKEY) || '{}'); } catch(e) { return {}; } }
+function saveMemos(d) { localStorage.setItem(SKEY, JSON.stringify(d)); }
+function fmtShort(iso) { var d = new Date(iso); return (d.getMonth()+1) + '/' + d.getDate(); }
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function uid() { return 'c' + Date.now(); }
+function allCards() { return FIXED_CARDS.concat(loadCards()); }
+function renderChips(cardId) {
+  var list = loadMemos()[cardId] || [];
+  var el = document.getElementById('chips-' + cardId);
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<span class="memo-chip-empty">없음</span>'; return; }
+  el.innerHTML = list.map(function(m) {
+    var date = m.updated ? fmtShort(m.updated) : fmtShort(m.created);
+    return '<div class="memo-chip"><span class="memo-chip-date">' + date + '</span><span class="memo-chip-name">' + escHtml(m.client || '') + '</span></div>';
+  }).join('');
+}
+function addMemo(cardId) {
+  var inp = document.getElementById('inp-' + cardId);
+  var client = inp.value.trim();
+  if (!client) return;
+  var d = loadMemos();
+  if (!d[cardId]) d[cardId] = [];
+  d[cardId].push({ created: new Date().toISOString(), client: client, memo: '' });
+  saveMemos(d); inp.value = ''; renderChips(cardId);
+}
+function renderGrid() {
+  var cards = allCards(), h = '';
+  cards.forEach(function(c) {
+    var meta = TAX_META[c.tax] || TAX_META.other;
+    h += '<div class="card ' + meta.cls + '">';
+    if (!c.fixed) h += '<button class="card-del" data-id="' + c.id + '">&#x2715;</button>';
+    h += c.link ? '<a class="card-link" href="' + c.link + '">' : '<div class="card-link">';
+    h += '<div class="card-icon">' + (c.icon || meta.icon) + '</div>';
+    h += '<div class="card-tag ' + meta.tagCls + '">' + meta.label + '</div>';
+    h += '<div class="card-title">' + escHtml(c.title) + '</div>';
+    h += '<div class="card-desc">' + (c.desc || '') + '</div>';
+    h += c.link ? '</a>' : '</div>';
+    h += '<div class="memo-area"><div class="memo-label">거래처</div>';
+    h += '<div class="memo-chips" id="chips-' + c.id + '"></div>';
+    h += '<div class="memo-input-row">';
+    h += '<input class="memo-input" id="inp-' + c.id + '" placeholder="거래처 입력..." />';
+    h += '<button class="memo-btn" data-cid="' + c.id + '">추가</button>';
+    h += '</div></div></div>';
+  });
+  h += '<div class="add-card-btn" id="add-card-btn"><div class="add-card-btn-icon">+</div><div class="add-card-btn-text">새 카드 추가</div></div>';
+  document.getElementById('grid').innerHTML = h;
+  cards.forEach(function(c) { renderChips(c.id); });
+  document.querySelectorAll('.memo-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { addMemo(this.getAttribute('data-cid')); });
+  });
+  document.querySelectorAll('.memo-input').forEach(function(inp) {
+    inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') addMemo(inp.id.replace('inp-', '')); });
+  });
+  document.querySelectorAll('.card-del').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!confirm('이 카드를 삭제할까요?')) return;
+      var id = this.getAttribute('data-id');
+      saveCards(loadCards().filter(function(c) { return c.id !== id; }));
+      renderGrid();
+    });
+  });
+  document.getElementById('add-card-btn').addEventListener('click', openModal);
+}
+var selectedTax = 'vat';
+function openModal() {
+  selectedTax = 'vat';
+  document.getElementById('m-title').value = '';
+  document.getElementById('m-desc').value = '';
+  document.getElementById('m-icon').value = '';
+  document.querySelectorAll('.tax-opt').forEach(function(o) {
+    o.classList.toggle('selected', o.getAttribute('data-tax') === 'vat');
+  });
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('m-title').focus();
+}
+document.querySelectorAll('.tax-opt').forEach(function(o) {
+  o.addEventListener('click', function() {
+    selectedTax = this.getAttribute('data-tax');
+    document.querySelectorAll('.tax-opt').forEach(function(x) { x.classList.remove('selected'); });
+    this.classList.add('selected');
+  });
+});
+document.getElementById('modal-cancel').addEventListener('click', function() {
+  document.getElementById('modal').classList.remove('open');
+});
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+document.getElementById('modal-save').addEventListener('click', function() {
+  var title = document.getElementById('m-title').value.trim();
+  if (!title) { document.getElementById('m-title').focus(); return; }
+  var descRaw = document.getElementById('m-desc').value.trim();
+  var desc = descRaw.split('
+').join('<br>');
+  var icon = document.getElementById('m-icon').value.trim() || null;
+  var cards = loadCards();
+  cards.push({ id: uid(), tax: selectedTax, title: title, desc: desc, icon: icon, link: null, fixed: false });
+  saveCards(cards);
+  document.getElementById('modal').classList.remove('open');
+  renderGrid();
+});
+renderGrid();
+</script>
+</body>
+</html>
