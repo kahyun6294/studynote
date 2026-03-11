@@ -21,11 +21,11 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .card-tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
 .card-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
 .card-desc { font-size:12px; color:#888; line-height:1.6; margin-bottom:14px; }
-.tax-vat    { border-top-color:#F97316; } .tag-vat    { background:#FFF7ED; color:#F97316; }
-.tax-corp   { border-top-color:#6366F1; } .tag-corp   { background:#EEF2FF; color:#6366F1; }
+.tax-vat { border-top-color:#F97316; } .tag-vat { background:#FFF7ED; color:#F97316; }
+.tax-corp { border-top-color:#6366F1; } .tag-corp { background:#EEF2FF; color:#6366F1; }
 .tax-income { border-top-color:#10B981; } .tag-income { background:#ECFDF5; color:#10B981; }
-.tax-with   { border-top-color:#F59E0B; } .tag-with   { background:#FFFBEB; color:#F59E0B; }
-.tax-other  { border-top-color:#94a3b8; } .tag-other  { background:#F1F5F9; color:#64748b; }
+.tax-with { border-top-color:#F59E0B; } .tag-with { background:#FFFBEB; color:#F59E0B; }
+.tax-other { border-top-color:#94a3b8; } .tag-other { background:#F1F5F9; color:#64748b; }
 .memo-area { border-top:1px solid #f0f0f0; padding-top:10px; margin-top:4px; }
 .memo-label { font-size:10px; font-weight:900; color:#94a3b8; margin-bottom:6px; }
 .memo-chips { display:flex; flex-direction:column; gap:4px; margin-bottom:8px; min-height:20px; }
@@ -91,7 +91,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
     </div>
     <div class="modal-field">
       <div class="modal-label">이모지 <span style="font-weight:400;color:#bbb;">(선택)</span></div>
-      <input class="modal-input" id="m-icon" placeholder="예) 📄" maxlength="4" style="width:72px;" />
+      <input class="modal-input" id="m-icon" placeholder="ex) &#x1F4C4;" maxlength="4" style="width:72px;" />
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="modal-cancel">취소</button>
@@ -107,7 +107,7 @@ var TAX_META = {
   corp:   { label:'법인세', cls:'tax-corp',   tagCls:'tag-corp',   icon:'🏢' },
   income: { label:'소득세', cls:'tax-income', tagCls:'tag-income', icon:'📊' },
   with:   { label:'원천세', cls:'tax-with',   tagCls:'tag-with',   icon:'💼' },
-  other:  { label:'기타',   cls:'tax-other',  tagCls:'tag-other',  icon:'📄' }
+  other:  { label:'기타',       cls:'tax-other',  tagCls:'tag-other',  icon:'📄' }
 };
 var FIXED_CARDS = [
   { id:'refund-process', tax:'vat', title:'환불 프로세스', desc:'부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법', icon:'🔄', link:'refund-process.html', fixed:true }
