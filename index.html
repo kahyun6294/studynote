@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>세무 스터디 노트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100vh; padding:40px 20px; }
+.header { text-align:center; margin-bottom:40px; }
+.header h1 { font-size:28px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
+.header p { font-size:14px; color:#888; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; max-width:900px; margin:0 auto; }
+.card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); transition:transform 0.2s; text-decoration:none; display:block; }
+.card:hover { transform:translateY(-4px); }
+.card-icon { font-size:32px; margin-bottom:12px; }
+.card-tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
+.card-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
+.card-desc { font-size:12px; color:#888; line-height:1.6; }
+.tag-vat { background:#FFF7ED; color:#F97316; }
+.card-vat { border-top:3px solid #F97316; }
+</style>
+</head>
+<body>
+<div class="header"><h1>세무 스터디 노트</h1><p>클릭하면 해당 자료로 이동해요</p></div>
+<div class="grid">
+<a class="card card-vat" href="refund-process.html">
+<div class="card-icon">🔄</div>
+<div class="card-tag tag-vat">부가세</div>
+<div class="card-title">환불 프로세스</div>
+<div class="card-desc">부품 판매 후 환불 처리 흐름</div>
+</a>
+</div>
+</body>
+</html>
