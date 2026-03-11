@@ -12,7 +12,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .header h1 { font-size:28px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
 .header p { font-size:14px; color:#888; }
 .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; max-width:900px; margin:0 auto; }
-.card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); transition:transform 0.2s; display:block; position:relative; }
+.card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); transition:transform 0.2s; position:relative; }
 .card:hover { transform:translateY(-4px); }
 .card-link { text-decoration:none; display:block; }
 .card-icon { font-size:32px; margin-bottom:12px; }
@@ -21,13 +21,11 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .card-desc { font-size:12px; color:#888; line-height:1.6; margin-bottom:14px; }
 .tag-vat { background:#FFF7ED; color:#F97316; }
 .card-vat { border-top:3px solid #F97316; }
-.memo-area { border-top:1px solid #f0f0f0; padding-top:12px; margin-top:4px; }
-.memo-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
-.memo-item { display:flex; align-items:center; gap:8px; font-size:11px; }
-.memo-date { color:#aaa; white-space:nowrap; flex-shrink:0; }
-.memo-text { color:#555; font-weight:500; }
-.memo-del { margin-left:auto; cursor:pointer; color:#ddd; font-size:13px; flex-shrink:0; }
-.memo-del:hover { color:#f87171; }
+.memo-area { border-top:1px solid #f0f0f0; padding-top:10px; margin-top:4px; }
+.memo-label { font-size:10px; font-weight:900; color:#94a3b8; margin-bottom:6px; }
+.memo-chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; min-height:20px; }
+.memo-chip { font-size:11px; font-weight:700; background:#FFF7ED; color:#F97316; border-radius:20px; padding:3px 10px; }
+.memo-chip-empty { font-size:11px; color:#ddd; }
 .memo-input-row { display:flex; gap:6px; }
 .memo-input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; }
 .memo-input:focus { border-color:#F97316; }
@@ -49,46 +47,57 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
       <div class="card-desc">부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법</div>
     </a>
     <div class="memo-area">
-      <div class="memo-list" id="memo-list-refund-process"></div>
+      <div class="memo-label">거래처</div>
+      <div class="memo-chips" id="chips-refund-process"></div>
       <div class="memo-input-row">
-        <input class="memo-input" id="memo-input-refund-process" placeholder="거래처 입력..." />
-        <button class="memo-btn" onclick="addMemo('refund-process')">추가</button>
+        <input class="memo-input" id="inp-refund-process" placeholder="거래처 입력..." />
+        <button class="memo-btn" id="btn-refund-process">추가</button>
       </div>
     </div>
   </div>
 </div>
+
 <script>
-const STORAGE_KEY = 'studynote-memos';
-function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; } }
-function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function render(cardId) {
-  const list = (load()[cardId] || []);
-  const el = document.getElementById('memo-list-' + cardId);
+var KEY = 'studynote-memos';
+
+function loadData() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; } }
+function saveData(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+function renderChips(cardId) {
+  var list = (loadData()[cardId] || []);
+  var el = document.getElementById('chips-' + cardId);
   if (!el) return;
-  el.innerHTML = list.length === 0 ? '' : list.map((m, i) =>
-    '<div class="memo-item"><span class="memo-date">' + m.date + '</span><span class="memo-text">' + m.text + '</span><span class="memo-del" onclick="delMemo(\'' + cardId + '\',' + i + ')">✕</span></div>'
-  ).join('');
+  if (list.length === 0) {
+    el.innerHTML = '<span class="memo-chip-empty">없음</span>';
+    return;
+  }
+  el.innerHTML = list.map(function(m) {
+    return '<span class="memo-chip">' + escHtml(m.client || '') + '</span>';
+  }).join('');
 }
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.getElementById('btn-refund-process').addEventListener('click', function() {
+  addMemo('refund-process');
+});
+document.getElementById('inp-refund-process').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') addMemo('refund-process');
+});
+
 function addMemo(cardId) {
-  const inp = document.getElementById('memo-input-' + cardId);
-  const text = inp.value.trim();
-  if (!text) return;
-  const data = load();
-  if (!data[cardId]) data[cardId] = [];
-  const now = new Date();
-  data[cardId].push({ date: (now.getMonth()+1) + '/' + now.getDate(), text });
-  save(data);
+  var inp = document.getElementById('inp-' + cardId);
+  var client = inp.value.trim();
+  if (!client) return;
+  var d = loadData();
+  if (!d[cardId]) d[cardId] = [];
+  d[cardId].push({ created: new Date().toISOString(), client: client, memo: '' });
+  saveData(d);
   inp.value = '';
-  render(cardId);
+  renderChips(cardId);
 }
-function delMemo(cardId, i) {
-  const data = load();
-  data[cardId].splice(i, 1);
-  save(data);
-  render(cardId);
-}
-document.getElementById('memo-input-refund-process').addEventListener('keydown', e => { if(e.key==='Enter') addMemo('refund-process'); });
-render('refund-process');
+
+renderChips('refund-process');
 </script>
 </body>
 </html>
