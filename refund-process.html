@@ -52,10 +52,10 @@
   .step-4 .step-amount { color: #10B981; }
   .step-4 .arrow-indicator { background: #ECFDF5; color: #10B981; }
   .result { margin-top: 32px; border-radius: 12px; overflow: hidden; border: 1.5px solid #E5E7EB; }
-  .result-header { display: grid; grid-template-columns: 140px 1fr 1fr 1fr; background: #1a1a2e; }
+  .result-header { display: grid; grid-template-columns: 140px 1fr 1fr; background: #1a1a2e; }
   .result-header-cell { padding: 10px 14px; font-size: 11px; font-weight: 700; color: #aaa; letter-spacing: 1px; text-align: center; border-left: 1px solid rgba(255,255,255,0.08); }
   .result-header-cell:first-child { border-left: none; text-align: left; }
-  .result-row { display: grid; grid-template-columns: 140px 1fr 1fr 1fr; border-top: 1px solid #F3F4F6; }
+  .result-row { display: grid; grid-template-columns: 140px 1fr 1fr; border-top: 1px solid #F3F4F6; }
   .result-row.seller { background: #F8F9FF; }
   .result-row.buyer { background: #FFFBF5; }
   .result-row-label { padding: 14px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border-right: 2px solid #E5E7EB; }
@@ -69,9 +69,8 @@
   .divider { height: 1px; background: #F3F4F6; margin: 28px 0; }
   .note { background: #F8FAFC; border-left: 3px solid #6366F1; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 11px; color: #555; line-height: 1.8; margin-top: 20px; }
   .note strong { color: #6366F1; }
-  /* 메모 패널 */
   .memo-panel { width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 40px; }
-  .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; }
   .memo-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
   .memo-item { background: #f8fafc; border-radius: 8px; padding: 8px 10px; }
   .memo-item-date { font-size: 10px; color: #aaa; margin-bottom: 3px; }
@@ -106,13 +105,24 @@
   </div>
   <div class="divider"></div>
   <div class="result">
-    <div class="result-header"><div class="result-header-cell">구분</div><div class="result-header-cell">수정세금계산서</div><div class="result-header-cell">위약금</div><div class="result-header-cell">실제 환불</div></div>
-    <div class="result-row seller"><div class="result-row-label">🏢 우리 회사</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value positive">+30만원</div><div class="result-cell-sub">잡이익 (영수증)</div></div><div class="result-cell"><div class="result-cell-value negative">-80만원</div><div class="result-cell-sub">110만원 - 위약금 30만원</div></div></div>
-    <div class="result-row buyer"><div class="result-row-label">🏬 거래처</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value negative">-30만원</div><div class="result-cell-sub">잡손실 (영수증)</div></div><div class="result-cell"><div class="result-cell-value positive">+80만원</div><div class="result-cell-sub">110만원 - 위약금 30만원</div></div></div>
+    <div class="result-header">
+      <div class="result-header-cell">구분</div>
+      <div class="result-header-cell">수정세금계산서</div>
+      <div class="result-header-cell">실제 환불</div>
+    </div>
+    <div class="result-row seller">
+      <div class="result-row-label">🏢 우리 회사</div>
+      <div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div>
+      <div class="result-cell"><div class="result-cell-value negative">-80만원</div><div class="result-cell-sub">110만원 수취 후 80만원 환불</div></div>
+    </div>
+    <div class="result-row buyer">
+      <div class="result-row-label">🏬 거래처</div>
+      <div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div>
+      <div class="result-cell"><div class="result-cell-value positive">+80만원</div><div class="result-cell-sub">110만원 지급 후 80만원 환불</div></div>
+    </div>
   </div>
   <div class="note"><strong>📌 핵심 포인트</strong><br>수정세금계산서: 공급가액 -100만원 + 부가세 -10만원 전액 취소<br>위약금 30만원은 부가세 과세 대상 아님 → <strong>세금계산서 발행 불가, 영수증으로 처리</strong><br>실제 환불금액: 110만원 - 위약금 30만원 = <strong>80만원</strong></div>
 </div>
-
 <div class="memo-panel">
   <div class="memo-panel-title">📝 거래처 메모</div>
   <div class="memo-list" id="memo-list"></div>
@@ -121,81 +131,38 @@
     <button class="memo-btn" onclick="addMemo()">+ 추가</button>
   </div>
 </div>
-
 <script>
 const KEY = 'studynote-memos';
 const CARD = 'refund-process';
-
-function load() {
-  try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; }
-}
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; } }
 function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
-
 function render() {
-  const data = load();
-  const list = data[CARD] || [];
+  const list = load()[CARD] || [];
   const el = document.getElementById('memo-list');
-  if (list.length === 0) {
-    el.innerHTML = '<div style="font-size:11px;color:#ccc;text-align:center;padding:10px 0;">메모 없음</div>';
-    return;
-  }
-  el.innerHTML = list.map((m, i) =>
-    '<div class="memo-item">' +
-    '<div class="memo-item-date">' + m.date + '</div>' +
-    '<div class="memo-item-text">' +
-    '<span id="text-' + i + '">' + m.text + '</span>' +
-    '<span class="memo-del" onclick="delMemo(' + i + ')">✕</span>' +
-    '</div>' +
-    '</div>'
-  ).join('');
-  // 텍스트 클릭 시 수정
-  list.forEach((m, i) => {
-    const span = document.getElementById('text-' + i);
-    if (span) span.onclick = () => startEdit(i, m.text);
-  });
+  el.innerHTML = list.length === 0
+    ? '<div style="font-size:11px;color:#ccc;text-align:center;padding:10px 0;">메모 없음</div>'
+    : list.map((m,i) => '<div class="memo-item"><div class="memo-item-date">'+m.date+'</div><div class="memo-item-text"><span id="t'+i+'">'+m.text+'</span><span class="memo-del" onclick="del('+i+')">✕</span></div></div>').join('');
+  list.forEach((m,i) => { const s=document.getElementById('t'+i); if(s) s.onclick=()=>edit(i,m.text); });
 }
-
-function startEdit(i, oldText) {
-  const span = document.getElementById('text-' + i);
-  if (!span) return;
+function edit(i, old) {
+  const s = document.getElementById('t'+i);
+  if(!s) return;
   const inp = document.createElement('input');
-  inp.className = 'memo-edit-input';
-  inp.value = oldText;
-  span.replaceWith(inp);
-  inp.focus();
-  inp.onblur = () => commitEdit(i, inp.value);
-  inp.onkeydown = e => { if(e.key === 'Enter') inp.blur(); if(e.key === 'Escape') render(); };
+  inp.className='memo-edit-input'; inp.value=old;
+  s.replaceWith(inp); inp.focus();
+  inp.onblur=()=>{ const d=load(); if(inp.value.trim()) d[CARD][i].text=inp.value.trim(); save(d); render(); };
+  inp.onkeydown=e=>{ if(e.key==='Enter') inp.blur(); if(e.key==='Escape') render(); };
 }
-
-function commitEdit(i, newText) {
-  const data = load();
-  if (!data[CARD]) return;
-  if (newText.trim()) data[CARD][i].text = newText.trim();
-  save(data);
-  render();
-}
-
 function addMemo() {
-  const inp = document.getElementById('memo-input');
-  const text = inp.value.trim();
-  if (!text) return;
-  const data = load();
-  if (!data[CARD]) data[CARD] = [];
-  const now = new Date();
-  data[CARD].push({ date: (now.getMonth()+1) + '/' + now.getDate(), text });
-  save(data);
-  inp.value = '';
-  render();
+  const inp=document.getElementById('memo-input');
+  const text=inp.value.trim(); if(!text) return;
+  const d=load(); if(!d[CARD]) d[CARD]=[];
+  const now=new Date();
+  d[CARD].push({date:(now.getMonth()+1)+'/'+now.getDate(),text});
+  save(d); inp.value=''; render();
 }
-
-function delMemo(i) {
-  const data = load();
-  data[CARD].splice(i, 1);
-  save(data);
-  render();
-}
-
-document.getElementById('memo-input').addEventListener('keydown', e => { if(e.key === 'Enter') addMemo(); });
+function del(i) { const d=load(); d[CARD].splice(i,1); save(d); render(); }
+document.getElementById('memo-input').addEventListener('keydown',e=>{ if(e.key==='Enter') addMemo(); });
 render();
 </script>
 </body>
