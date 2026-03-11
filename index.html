@@ -48,7 +48,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .modal { background:#fff; border-radius:20px; padding:32px; width:400px; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
 .modal-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:20px; }
 .modal-field { margin-bottom:14px; }
-.modal-label { font-size:11px; font-weight:900; color:#94a3b8; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+.modal-label { font-size:11px; font-weight:900; color:#94a3b8; margin-bottom:5px; }
 .modal-input { width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; }
 .modal-input:focus { border-color:#F97316; }
 .modal-textarea { width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; resize:none; height:64px; line-height:1.6; }
@@ -57,13 +57,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .tax-opt { font-size:11px; font-weight:700; padding:5px 12px; border-radius:20px; border:1.5px solid #e5e7eb; cursor:pointer; background:#fff; color:#94a3b8; transition:all 0.15s; }
 .tax-opt:hover { border-color:#F97316; color:#F97316; }
 .tax-opt.selected { background:#F97316; border-color:#F97316; color:#fff; }
-/* AI 생성 영역 */
-.ai-row { display:flex; gap:8px; align-items:flex-end; }
-.ai-row .modal-input { flex:1; }
-.ai-btn { background:#6366F1; color:#fff; border:none; border-radius:10px; padding:9px 14px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; font-family:inherit; flex-shrink:0; }
-.ai-btn:hover { background:#4f46e5; }
-.ai-btn:disabled { background:#c7d2fe; cursor:not-allowed; }
-.ai-status { font-size:10px; color:#6366F1; margin-top:4px; min-height:14px; }
+.hint { font-size:10px; color:#bbb; margin-top:4px; }
 .modal-actions { display:flex; gap:8px; margin-top:20px; }
 .modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
 .modal-save { flex:2; padding:10px; background:#F97316; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
@@ -81,7 +75,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   <div class="modal">
     <div class="modal-title">📋 새 카드 추가</div>
     <div class="modal-field">
-      <div class="modal-label">세목</div>
+      <div class="modal-label">세목 선택</div>
       <div class="tax-selector" id="tax-selector">
         <button class="tax-opt selected" data-tax="vat">부가세</button>
         <button class="tax-opt" data-tax="corp">법인세</button>
@@ -89,26 +83,19 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
         <button class="tax-opt" data-tax="with">원천세</button>
         <button class="tax-opt" data-tax="other">기타</button>
       </div>
-    </div>
-    <div class="modal-field">
-      <div class="modal-label">키워드 <span style="font-weight:400;color:#bbb;">입력하면 AI가 제목+설명 자동 생성</span></div>
-      <div class="ai-row">
-        <input class="modal-input" id="m-keyword" placeholder="예) 매입세액 불공제, 접대비 한도 초과" />
-        <button class="ai-btn" id="ai-gen-btn">✨ AI 생성</button>
-      </div>
-      <div class="ai-status" id="ai-status"></div>
+      <div class="hint">선택하면 제목과 설명이 자동으로 채워져요</div>
     </div>
     <div class="modal-field">
       <div class="modal-label">제목</div>
-      <input class="modal-input" id="m-title" placeholder="자동 생성되거나 직접 입력" />
+      <input class="modal-input" id="m-title" placeholder="제목 입력" />
     </div>
     <div class="modal-field">
       <div class="modal-label">설명</div>
-      <textarea class="modal-textarea" id="m-desc" placeholder="자동 생성되거나 직접 입력"></textarea>
+      <textarea class="modal-textarea" id="m-desc" placeholder="설명 입력"></textarea>
     </div>
     <div class="modal-field">
       <div class="modal-label">이모지 <span style="font-weight:400;color:#bbb;">(선택)</span></div>
-      <input class="modal-input" id="m-icon" placeholder="예) 📄" maxlength="4" style="width:80px;" />
+      <input class="modal-input" id="m-icon" placeholder="예) 📄" maxlength="4" style="width:72px;" />
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="modal-cancel">취소</button>
@@ -120,16 +107,34 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 <script>
 var SKEY = 'studynote-memos';
 var CKEY = 'studynote-cards';
+
 var TAX_META = {
-  vat:    { label:'부가세', cls:'tax-vat',    tagCls:'tag-vat',    icon:'🔄' },
-  corp:   { label:'법인세', cls:'tax-corp',   tagCls:'tag-corp',   icon:'🏢' },
-  income: { label:'소득세', cls:'tax-income', tagCls:'tag-income', icon:'📊' },
-  with:   { label:'원천세', cls:'tax-with',   tagCls:'tag-with',   icon:'💼' },
-  other:  { label:'기타',   cls:'tax-other',  tagCls:'tag-other',  icon:'📄' }
+  vat:    { label:'부가세', cls:'tax-vat',    tagCls:'tag-vat',    icon:'🔄',
+            title:'부가세 처리',
+            desc:'세금계산서 발행·수취 및 매입세액 공제 처리
+신고·납부 일정과 수정신고 방법 정리' },
+  corp:   { label:'법인세', cls:'tax-corp',   tagCls:'tag-corp',   icon:'🏢',
+            title:'법인세 세무조정',
+            desc:'결산 후 세무조정 항목 검토 및 소득금액 계산
+익금산입·손금불산입 처리 방법 정리' },
+  income: { label:'소득세', cls:'tax-income', tagCls:'tag-income', icon:'📊',
+            title:'소득세 신고',
+            desc:'사업소득·근로소득 구분 및 필요경비 처리
+종합소득세 신고 일정과 절세 포인트 정리' },
+  with:   { label:'원천세', cls:'tax-with',   tagCls:'tag-with',   icon:'💼',
+            title:'원천세 신고·납부',
+            desc:'급여·용역·이자·배당 소득 원천징수 처리
+매월 신고 및 연말정산 정리 방법' },
+  other:  { label:'기타',   cls:'tax-other',  tagCls:'tag-other',  icon:'📄',
+            title:'기타 세무 이슈',
+            desc:'세목 구분이 어렵거나 복합 이슈인 경우 정리
+관련 법령·예규·판례 참고사항 메모' }
 };
+
 var FIXED_CARDS = [
   { id:'refund-process', tax:'vat', title:'환불 프로세스', desc:'부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법', icon:'🔄', link:'refund-process.html', fixed:true }
 ];
+
 function loadCards() { try { return JSON.parse(localStorage.getItem(CKEY)||'[]'); } catch(e) { return []; } }
 function saveCards(c) { localStorage.setItem(CKEY, JSON.stringify(c)); }
 function loadMemos() { try { return JSON.parse(localStorage.getItem(SKEY)||'{}'); } catch(e) { return {}; } }
@@ -150,44 +155,41 @@ function renderChips(cardId) {
   }).join('');
 }
 function addMemo(cardId) {
-  var inp = document.getElementById('inp-'+cardId);
-  var client = inp.value.trim(); if (!client) return;
-  var d = loadMemos(); if (!d[cardId]) d[cardId]=[];
-  d[cardId].push({ created:new Date().toISOString(), client:client, memo:'' });
+  var inp=document.getElementById('inp-'+cardId), client=inp.value.trim(); if(!client) return;
+  var d=loadMemos(); if(!d[cardId]) d[cardId]=[];
+  d[cardId].push({created:new Date().toISOString(),client:client,memo:''});
   saveMemos(d); inp.value=''; renderChips(cardId);
 }
 function renderGrid() {
-  var cards = allCards();
-  var h = '';
+  var cards=allCards(), h='';
   cards.forEach(function(c) {
-    var meta = TAX_META[c.tax]||TAX_META.other;
-    h += '<div class="card '+meta.cls+'">';
-    if (!c.fixed) h += '<button class="card-del" data-id="'+c.id+'">✕</button>';
-    h += c.link ? '<a class="card-link" href="'+c.link+'">' : '<div class="card-link">';
-    h += '<div class="card-icon">'+(c.icon||meta.icon)+'</div>';
-    h += '<div class="card-tag '+meta.tagCls+'">'+meta.label+'</div>';
-    h += '<div class="card-title">'+escHtml(c.title)+'</div>';
-    h += '<div class="card-desc">'+(c.desc||'')+'</div>';
-    h += c.link ? '</a>' : '</div>';
-    h += '<div class="memo-area"><div class="memo-label">거래처</div>';
-    h += '<div class="memo-chips" id="chips-'+c.id+'"></div>';
-    h += '<div class="memo-input-row"><input class="memo-input" id="inp-'+c.id+'" placeholder="거래처 입력..." />';
-    h += '<button class="memo-btn" data-cid="'+c.id+'">추가</button></div></div></div>';
+    var meta=TAX_META[c.tax]||TAX_META.other;
+    h+='<div class="card '+meta.cls+'">';
+    if(!c.fixed) h+='<button class="card-del" data-id="'+c.id+'">✕</button>';
+    h+=c.link?'<a class="card-link" href="'+c.link+'">':'<div class="card-link">';
+    h+='<div class="card-icon">'+(c.icon||meta.icon)+'</div>';
+    h+='<div class="card-tag '+meta.tagCls+'">'+meta.label+'</div>';
+    h+='<div class="card-title">'+escHtml(c.title)+'</div>';
+    h+='<div class="card-desc">'+(c.desc||'')+'</div>';
+    h+=c.link?'</a>':'</div>';
+    h+='<div class="memo-area"><div class="memo-label">거래처</div>';
+    h+='<div class="memo-chips" id="chips-'+c.id+'"></div>';
+    h+='<div class="memo-input-row"><input class="memo-input" id="inp-'+c.id+'" placeholder="거래처 입력..." />';
+    h+='<button class="memo-btn" data-cid="'+c.id+'">추가</button></div></div></div>';
   });
-  h += '<div class="add-card-btn" id="add-card-btn"><div class="add-card-btn-icon">+</div><div class="add-card-btn-text">새 카드 추가</div></div>';
-  document.getElementById('grid').innerHTML = h;
-  cards.forEach(function(c) { renderChips(c.id); });
-  document.querySelectorAll('.memo-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { addMemo(this.getAttribute('data-cid')); });
+  h+='<div class="add-card-btn" id="add-card-btn"><div class="add-card-btn-icon">+</div><div class="add-card-btn-text">새 카드 추가</div></div>';
+  document.getElementById('grid').innerHTML=h;
+  cards.forEach(function(c){ renderChips(c.id); });
+  document.querySelectorAll('.memo-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){ addMemo(this.getAttribute('data-cid')); });
   });
-  document.querySelectorAll('.memo-input').forEach(function(inp) {
-    inp.addEventListener('keydown', function(e) { if(e.key==='Enter') addMemo(inp.id.replace('inp-','')); });
+  document.querySelectorAll('.memo-input').forEach(function(inp){
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter') addMemo(inp.id.replace('inp-','')); });
   });
-  document.querySelectorAll('.card-del').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      if (!confirm('이 카드를 삭제할까요?')) return;
-      var id = this.getAttribute('data-id');
-      saveCards(loadCards().filter(function(c){ return c.id!==id; }));
+  document.querySelectorAll('.card-del').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(!confirm('이 카드를 삭제할까요?')) return;
+      saveCards(loadCards().filter(function(c){ return c.id!==this.getAttribute('data-id'); }.bind(this)));
       renderGrid();
     });
   });
@@ -195,73 +197,40 @@ function renderGrid() {
 }
 
 // 모달
-var selectedTax = 'vat';
+var selectedTax='vat';
+function fillDefaults(tax) {
+  var meta=TAX_META[tax];
+  document.getElementById('m-title').value=meta.title;
+  document.getElementById('m-desc').value=meta.desc;
+  document.getElementById('m-icon').value=meta.icon;
+}
 function openModal() {
   selectedTax='vat';
-  document.getElementById('m-keyword').value='';
-  document.getElementById('m-title').value='';
-  document.getElementById('m-desc').value='';
-  document.getElementById('m-icon').value='';
-  document.getElementById('ai-status').textContent='';
-  document.querySelectorAll('.tax-opt').forEach(function(o){ o.classList.toggle('selected', o.getAttribute('data-tax')==='vat'); });
+  document.querySelectorAll('.tax-opt').forEach(function(o){ o.classList.toggle('selected',o.getAttribute('data-tax')==='vat'); });
+  fillDefaults('vat');
   document.getElementById('modal').classList.add('open');
-  document.getElementById('m-keyword').focus();
+  document.getElementById('m-title').focus();
 }
-document.querySelectorAll('.tax-opt').forEach(function(o) {
-  o.addEventListener('click', function() {
+document.querySelectorAll('.tax-opt').forEach(function(o){
+  o.addEventListener('click',function(){
     selectedTax=this.getAttribute('data-tax');
     document.querySelectorAll('.tax-opt').forEach(function(x){ x.classList.remove('selected'); });
     this.classList.add('selected');
+    fillDefaults(selectedTax);
   });
 });
-document.getElementById('modal-cancel').addEventListener('click', function(){ document.getElementById('modal').classList.remove('open'); });
-document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
-
-// AI 생성
-document.getElementById('ai-gen-btn').addEventListener('click', async function() {
-  var keyword = document.getElementById('m-keyword').value.trim();
-  var taxLabel = TAX_META[selectedTax].label;
-  if (!keyword) { document.getElementById('ai-status').textContent='키워드를 먼저 입력해주세요'; return; }
-  var btn = this;
-  btn.disabled=true; btn.textContent='생성 중...';
-  document.getElementById('ai-status').textContent='AI가 내용을 작성하고 있어요...';
-  try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:300,
-        messages:[{
-          role:'user',
-          content:'세무 스터디 노트의 카드 내용을 JSON으로만 응답해줘. 세목: '+taxLabel+', 키워드: '+keyword+'. 형식: {"title":"짧은 제목(15자 이내)","desc":"2줄 설명(핵심 포인트, 줄바꿈은 <br> 사용)","icon":"관련 이모지 1개"} - JSON 외 다른 텍스트 없이 JSON만 응답'
-        }]
-      })
-    });
-    var data = await res.json();
-    var text = data.content[0].text.trim();
-    var json = JSON.parse(text);
-    document.getElementById('m-title').value = json.title||'';
-    document.getElementById('m-desc').value = (json.desc||'').replace(/<br>/g,'\n');
-    document.getElementById('m-icon').value = json.icon||'';
-    document.getElementById('ai-status').textContent='✅ 생성 완료! 수정 후 추가하세요';
-  } catch(err) {
-    document.getElementById('ai-status').textContent='오류가 발생했어요. 직접 입력해주세요';
-  }
-  btn.disabled=false; btn.textContent='✨ AI 생성';
-});
-
-document.getElementById('modal-save').addEventListener('click', function() {
-  var title = document.getElementById('m-title').value.trim();
-  if (!title) { alert('제목을 입력해주세요'); document.getElementById('m-title').focus(); return; }
-  var desc = document.getElementById('m-desc').value.trim().replace(/\n/g,'<br>');
-  var cards = loadCards();
-  cards.push({ id:uid(), tax:selectedTax, title:title, desc:escHtml(desc), icon:document.getElementById('m-icon').value.trim()||null, link:null, fixed:false });
+document.getElementById('modal-cancel').addEventListener('click',function(){ document.getElementById('modal').classList.remove('open'); });
+document.getElementById('modal').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+document.getElementById('modal-save').addEventListener('click',function(){
+  var title=document.getElementById('m-title').value.trim();
+  if(!title){ document.getElementById('m-title').focus(); return; }
+  var desc=document.getElementById('m-desc').value.trim().replace(/\n/g,'<br>');
+  var cards=loadCards();
+  cards.push({id:uid(),tax:selectedTax,title:title,desc:desc,icon:document.getElementById('m-icon').value.trim()||null,link:null,fixed:false});
   saveCards(cards);
   document.getElementById('modal').classList.remove('open');
   renderGrid();
 });
-
 renderGrid();
 </script>
 </body>
