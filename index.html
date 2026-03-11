@@ -17,10 +17,17 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .card-icon { font-size:32px; margin-bottom:12px; }
 .card-tag { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
 .card-title { font-size:16px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
-.card-desc { font-size:12px; color:#888; line-height:1.6; }
+.card-desc { font-size:12px; color:#888; line-height:1.6; margin-bottom:10px; }
 .tag-vat { background:#FFF7ED; color:#F97316; }
 .card-vat { border-top:3px solid #F97316; }
-.memo { position:absolute; top:16px; right:16px; background:#F1F5F9; color:#64748B; font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; max-width:100px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.memo-area { margin-top:10px; border-top:1px solid #f0f0f0; padding-top:10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; min-height:28px; }
+.memo-badge { background:#F1F5F9; color:#64748B; font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:4px; }
+.memo-badge:hover { background:#E2E8F0; }
+.memo-add { background:none; border:1.5px dashed #CBD5E1; color:#94A3B8; font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; cursor:pointer; font-family:inherit; }
+.memo-add:hover { border-color:#94A3B8; color:#64748B; }
+.memo-input-wrap { display:none; align-items:center; gap:4px; }
+.memo-input-wrap.active { display:flex; }
+.memo-input { border:1.5px solid #6366F1; border-radius:20px; padding:2px 8px; font-size:10px; font-family:inherit; outline:none; width:90px; }
 </style>
 </head>
 <body>
@@ -29,13 +36,65 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   <p>클릭하면 해당 자료로 이동해요</p>
 </div>
 <div class="grid">
-  <a class="card card-vat" href="refund-process.html">
-    <span class="memo">샤갈</span>
+  <a class="card card-vat" href="refund-process.html" id="card-1">
     <div class="card-icon">🔄</div>
     <div class="card-tag tag-vat">부가세</div>
     <div class="card-title">환불 프로세스</div>
     <div class="card-desc">부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법</div>
+    <div class="memo-area" id="memo-area-1">
+      <div class="memo-input-wrap" id="memo-input-wrap-1">
+        <input class="memo-input" id="memo-input-1" placeholder="거래처명" maxlength="20">
+      </div>
+      <button class="memo-add" id="memo-add-1">+ 메모</button>
+    </div>
   </a>
 </div>
+<script>
+function loadMemos() {
+  const saved = localStorage.getItem('memos-card-1');
+  if(saved) {
+    JSON.parse(saved).forEach(m => addBadge('1', m));
+  }
+}
+function saveMemos(cardId) {
+  const badges = [...document.querySelectorAll('#memo-area-'+cardId+' .memo-badge span')].map(s=>s.textContent);
+  localStorage.setItem('memos-card-'+cardId, JSON.stringify(badges));
+}
+function addBadge(cardId, text) {
+  const area = document.getElementById('memo-area-'+cardId);
+  const addBtn = document.getElementById('memo-add-'+cardId);
+  const badge = document.createElement('div');
+  badge.className = 'memo-badge';
+  badge.innerHTML = '<span>'+text+'</span><span onclick="removeBadge(this,''+cardId+'');event.stopPropagation();" style="opacity:0.5;font-size:9px;">✕</span>';
+  area.insertBefore(badge, addBtn);
+}
+function removeBadge(el, cardId) {
+  el.parentElement.remove();
+  saveMemos(cardId);
+}
+document.getElementById('memo-add-1').addEventListener('click', function(e) {
+  e.preventDefault();
+  const wrap = document.getElementById('memo-input-wrap-1');
+  wrap.classList.toggle('active');
+  if(wrap.classList.contains('active')) document.getElementById('memo-input-1').focus();
+});
+document.getElementById('memo-input-1').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter' && this.value.trim()) {
+    addBadge('1', this.value.trim());
+    saveMemos('1');
+    this.value = '';
+    document.getElementById('memo-input-wrap-1').classList.remove('active');
+    e.preventDefault();
+  }
+  if(e.key === 'Escape') {
+    this.value = '';
+    document.getElementById('memo-input-wrap-1').classList.remove('active');
+  }
+});
+document.getElementById('card-1').addEventListener('click', function(e) {
+  if(e.target.closest('.memo-area')) e.preventDefault();
+});
+loadMemos();
+</script>
 </body>
 </html>
