@@ -8,9 +8,9 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   @page { size: A4; margin: 10mm; }
-  body { font-family: 'Noto Sans KR', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }
-  @media print { body { background: white; padding: 0; display: block; } .card { box-shadow: none; border-radius: 0; width: 100%; padding: 20px 28px; } }
-  .card { background: #ffffff; border-radius: 20px; padding: 48px 56px; width: 780px; box-shadow: 0 8px 40px rgba(0,0,0,0.10); }
+  body { font-family: 'Noto Sans KR', sans-serif; background: #f0f2f5; min-height: 100vh; padding: 40px 20px; display: flex; gap: 24px; justify-content: center; align-items: flex-start; }
+  @media print { body { background: white; padding: 0; display: block; } .card { box-shadow: none; border-radius: 0; width: 100%; padding: 20px 28px; } .memo-panel { display: none; } }
+  .card { background: #ffffff; border-radius: 20px; padding: 48px 56px; width: 780px; flex-shrink: 0; box-shadow: 0 8px 40px rgba(0,0,0,0.10); }
   .title { font-size: 13px; font-weight: 700; color: #888; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
   .subtitle { font-size: 22px; font-weight: 900; color: #1a1a2e; margin-bottom: 40px; }
   .parties { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 36px; }
@@ -69,10 +69,29 @@
   .divider { height: 1px; background: #F3F4F6; margin: 28px 0; }
   .note { background: #F8FAFC; border-left: 3px solid #6366F1; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 11px; color: #555; line-height: 1.8; margin-top: 20px; }
   .note strong { color: #6366F1; }
+  /* 메모 패널 */
+  .memo-panel { width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 40px; }
+  .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .memo-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .memo-item { background: #f8fafc; border-radius: 8px; padding: 8px 10px; }
+  .memo-item-date { font-size: 10px; color: #aaa; margin-bottom: 3px; }
+  .memo-item-text { font-size: 12px; color: #374151; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .memo-edit-input { font-size: 12px; font-family: inherit; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; width: 100%; outline: none; }
+  .memo-edit-input:focus { border-color: #F97316; }
+  .memo-del { cursor: pointer; color: #ddd; font-size: 12px; flex-shrink: 0; }
+  .memo-del:hover { color: #f87171; }
+  .memo-input-row { display: flex; flex-direction: column; gap: 6px; }
+  .memo-input { border: 1px solid #e5e7eb; border-radius: 8px; padding: 7px 10px; font-size: 11px; font-family: inherit; outline: none; width: 100%; }
+  .memo-input:focus { border-color: #F97316; }
+  .memo-btn { background: #F97316; color: #fff; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
+  .memo-btn:hover { background: #ea6c0a; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #888; text-decoration: none; margin-bottom: 20px; }
+  .back-btn:hover { color: #1a1a2e; }
 </style>
 </head>
 <body>
 <div class="card">
+  <a class="back-btn" href="index.html">← 목록으로</a>
   <div class="title">거래 프로세스</div>
   <div class="subtitle">부품 판매 후 환불 처리 흐름</div>
   <div class="parties">
@@ -93,5 +112,91 @@
   </div>
   <div class="note"><strong>📌 핵심 포인트</strong><br>수정세금계산서: 공급가액 -100만원 + 부가세 -10만원 전액 취소<br>위약금 30만원은 부가세 과세 대상 아님 → <strong>세금계산서 발행 불가, 영수증으로 처리</strong><br>실제 환불금액: 110만원 - 위약금 30만원 = <strong>80만원</strong></div>
 </div>
+
+<div class="memo-panel">
+  <div class="memo-panel-title">📝 거래처 메모</div>
+  <div class="memo-list" id="memo-list"></div>
+  <div class="memo-input-row">
+    <input class="memo-input" id="memo-input" placeholder="거래처 입력..." />
+    <button class="memo-btn" onclick="addMemo()">+ 추가</button>
+  </div>
+</div>
+
+<script>
+const KEY = 'studynote-memos';
+const CARD = 'refund-process';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { return {}; }
+}
+function save(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+
+function render() {
+  const data = load();
+  const list = data[CARD] || [];
+  const el = document.getElementById('memo-list');
+  if (list.length === 0) {
+    el.innerHTML = '<div style="font-size:11px;color:#ccc;text-align:center;padding:10px 0;">메모 없음</div>';
+    return;
+  }
+  el.innerHTML = list.map((m, i) =>
+    '<div class="memo-item">' +
+    '<div class="memo-item-date">' + m.date + '</div>' +
+    '<div class="memo-item-text">' +
+    '<span id="text-' + i + '">' + m.text + '</span>' +
+    '<span class="memo-del" onclick="delMemo(' + i + ')">✕</span>' +
+    '</div>' +
+    '</div>'
+  ).join('');
+  // 텍스트 클릭 시 수정
+  list.forEach((m, i) => {
+    const span = document.getElementById('text-' + i);
+    if (span) span.onclick = () => startEdit(i, m.text);
+  });
+}
+
+function startEdit(i, oldText) {
+  const span = document.getElementById('text-' + i);
+  if (!span) return;
+  const inp = document.createElement('input');
+  inp.className = 'memo-edit-input';
+  inp.value = oldText;
+  span.replaceWith(inp);
+  inp.focus();
+  inp.onblur = () => commitEdit(i, inp.value);
+  inp.onkeydown = e => { if(e.key === 'Enter') inp.blur(); if(e.key === 'Escape') render(); };
+}
+
+function commitEdit(i, newText) {
+  const data = load();
+  if (!data[CARD]) return;
+  if (newText.trim()) data[CARD][i].text = newText.trim();
+  save(data);
+  render();
+}
+
+function addMemo() {
+  const inp = document.getElementById('memo-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  const data = load();
+  if (!data[CARD]) data[CARD] = [];
+  const now = new Date();
+  data[CARD].push({ date: (now.getMonth()+1) + '/' + now.getDate(), text });
+  save(data);
+  inp.value = '';
+  render();
+}
+
+function delMemo(i) {
+  const data = load();
+  data[CARD].splice(i, 1);
+  save(data);
+  render();
+}
+
+document.getElementById('memo-input').addEventListener('keydown', e => { if(e.key === 'Enter') addMemo(); });
+render();
+</script>
 </body>
 </html>
