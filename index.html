@@ -22,7 +22,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .tag-vat { background:#FFF7ED; color:#F97316; }
 .card-vat { border-top:3px solid #F97316; }
 .memo-area { border-top:1px solid #f0f0f0; padding-top:12px; margin-top:4px; }
-.memo-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; min-height:0; }
+.memo-list { display:flex; flex-direction:column; gap:6px; margin-bottom:8px; }
 .memo-item { display:flex; align-items:center; gap:8px; font-size:11px; }
 .memo-date { color:#aaa; white-space:nowrap; flex-shrink:0; }
 .memo-text { color:#555; font-weight:500; }
@@ -31,7 +31,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .memo-input-row { display:flex; gap:6px; }
 .memo-input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; }
 .memo-input:focus { border-color:#F97316; }
-.memo-btn { background:#F97316; color:#fff; border:none; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.memo-btn { background:#F97316; color:#fff; border:none; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; }
 .memo-btn:hover { background:#ea6c0a; }
 </style>
 </head>
@@ -49,58 +49,46 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
       <div class="card-desc">부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법</div>
     </a>
     <div class="memo-area">
-      <div class="memo-list" id="memo-list-0"></div>
+      <div class="memo-list" id="memo-list-refund-process"></div>
       <div class="memo-input-row">
-        <input class="memo-input" id="memo-input-0" placeholder="거래처 입력..." />
-        <button class="memo-btn" onclick="addMemo(0)">추가</button>
+        <input class="memo-input" id="memo-input-refund-process" placeholder="거래처 입력..." />
+        <button class="memo-btn" onclick="addMemo('refund-process')">추가</button>
       </div>
     </div>
   </div>
 </div>
 <script>
 const STORAGE_KEY = 'studynote-memos';
-
-function loadMemos() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
-}
-function saveMemos(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-function renderMemos(cardIdx) {
-  const data = loadMemos();
-  const list = data[cardIdx] || [];
-  const el = document.getElementById('memo-list-' + cardIdx);
-  el.innerHTML = list.map((m, i) =>
-    '<div class="memo-item">' +
-    '<span class="memo-date">' + m.date + '</span>' +
-    '<span class="memo-text">' + m.text + '</span>' +
-    '<span class="memo-del" onclick="delMemo(' + cardIdx + ',' + i + ')">✕</span>' +
-    '</div>'
+function load() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; } }
+function save(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function render(cardId) {
+  const list = (load()[cardId] || []);
+  const el = document.getElementById('memo-list-' + cardId);
+  if (!el) return;
+  el.innerHTML = list.length === 0 ? '' : list.map((m, i) =>
+    '<div class="memo-item"><span class="memo-date">' + m.date + '</span><span class="memo-text">' + m.text + '</span><span class="memo-del" onclick="delMemo(\'' + cardId + '\',' + i + ')">✕</span></div>'
   ).join('');
 }
-function addMemo(cardIdx) {
-  const input = document.getElementById('memo-input-' + cardIdx);
-  const text = input.value.trim();
+function addMemo(cardId) {
+  const inp = document.getElementById('memo-input-' + cardId);
+  const text = inp.value.trim();
   if (!text) return;
-  const data = loadMemos();
-  if (!data[cardIdx]) data[cardIdx] = [];
+  const data = load();
+  if (!data[cardId]) data[cardId] = [];
   const now = new Date();
-  const date = (now.getMonth()+1) + '/' + now.getDate();
-  data[cardIdx].push({ date, text });
-  saveMemos(data);
-  input.value = '';
-  renderMemos(cardIdx);
+  data[cardId].push({ date: (now.getMonth()+1) + '/' + now.getDate(), text });
+  save(data);
+  inp.value = '';
+  render(cardId);
 }
-function delMemo(cardIdx, idx) {
-  const data = loadMemos();
-  data[cardIdx].splice(idx, 1);
-  saveMemos(data);
-  renderMemos(cardIdx);
+function delMemo(cardId, i) {
+  const data = load();
+  data[cardId].splice(i, 1);
+  save(data);
+  render(cardId);
 }
-document.querySelectorAll('.memo-input').forEach((inp, i) => {
-  inp.addEventListener('keydown', e => { if(e.key === 'Enter') addMemo(i); });
-});
-renderMemos(0);
+document.getElementById('memo-input-refund-process').addEventListener('keydown', e => { if(e.key==='Enter') addMemo('refund-process'); });
+render('refund-process');
 </script>
 </body>
 </html>
