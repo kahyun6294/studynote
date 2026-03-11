@@ -35,53 +35,50 @@
   .step-amount { font-size: 17px; font-weight: 900; white-space: nowrap; text-align: right; }
   .arrow-indicator { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
   .vat-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; background: #F0FDF4; border: 1px solid #86EFAC; color: #16A34A; }
-  .step-1 .step-num { background: #6366F1; color: white; }
-  .step-1 .step-content { background: #F5F3FF; border: 1px solid #DDD6FE; }
-  .step-1 .step-amount { color: #6366F1; }
-  .step-1 .arrow-indicator { background: #EEF2FF; color: #6366F1; }
-  .step-2 .step-num { background: #F97316; color: white; }
-  .step-2 .step-content { background: #FFF7ED; border: 1px solid #FED7AA; }
-  .step-2 .step-amount { color: #F97316; }
-  .step-2 .arrow-indicator { background: #FFF7ED; color: #F97316; }
-  .step-3 .step-num { background: #10B981; color: white; }
-  .step-3 .step-content { background: #ECFDF5; border: 1px solid #A7F3D0; }
-  .step-3 .step-amount { color: #10B981; }
-  .step-3 .arrow-indicator { background: #ECFDF5; color: #10B981; }
+  .step-1 .step-num { background: #6366F1; color: white; } .step-1 .step-content { background: #F5F3FF; border: 1px solid #DDD6FE; } .step-1 .step-amount { color: #6366F1; } .step-1 .arrow-indicator { background: #EEF2FF; color: #6366F1; }
+  .step-2 .step-num { background: #F97316; color: white; } .step-2 .step-content { background: #FFF7ED; border: 1px solid #FED7AA; } .step-2 .step-amount { color: #F97316; } .step-2 .arrow-indicator { background: #FFF7ED; color: #F97316; }
+  .step-3 .step-num { background: #10B981; color: white; } .step-3 .step-content { background: #ECFDF5; border: 1px solid #A7F3D0; } .step-3 .step-amount { color: #10B981; } .step-3 .arrow-indicator { background: #ECFDF5; color: #10B981; }
   .result { margin-top: 32px; border-radius: 12px; overflow: hidden; border: 1.5px solid #E5E7EB; }
   .result-header { display: grid; grid-template-columns: 140px 1fr 1fr; background: #1a1a2e; }
   .result-header-cell { padding: 10px 14px; font-size: 11px; font-weight: 700; color: #aaa; letter-spacing: 1px; text-align: center; border-left: 1px solid rgba(255,255,255,0.08); }
   .result-header-cell:first-child { border-left: none; text-align: left; }
   .result-row { display: grid; grid-template-columns: 140px 1fr 1fr; border-top: 1px solid #F3F4F6; }
-  .result-row.seller { background: #F8F9FF; }
-  .result-row.buyer { background: #FFFBF5; }
+  .result-row.seller { background: #F8F9FF; } .result-row.buyer { background: #FFFBF5; }
   .result-row-label { padding: 14px 16px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border-right: 2px solid #E5E7EB; }
-  .result-row.seller .result-row-label { color: #6366F1; }
-  .result-row.buyer .result-row-label { color: #F97316; }
+  .result-row.seller .result-row-label { color: #6366F1; } .result-row.buyer .result-row-label { color: #F97316; }
   .result-cell { padding: 14px 12px; text-align: center; border-left: 1px solid #F3F4F6; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-  .result-cell-value { font-weight: 700; font-size: 13px; }
-  .result-cell-sub { font-size: 10px; color: #999; }
-  .positive { color: #10B981 !important; }
-  .negative { color: #EF4444 !important; }
+  .result-cell-value { font-weight: 700; font-size: 13px; } .result-cell-sub { font-size: 10px; color: #999; }
+  .positive { color: #10B981 !important; } .negative { color: #EF4444 !important; }
   .divider { height: 1px; background: #F3F4F6; margin: 28px 0; }
   .note { background: #F8FAFC; border-left: 3px solid #6366F1; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 11px; color: #555; line-height: 1.8; margin-top: 20px; }
   .note strong { color: #6366F1; }
-  .memo-panel { width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 40px; }
-  .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; }
-  .memo-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-  .memo-item { background: #f8fafc; border-radius: 8px; padding: 8px 10px; }
-  .memo-item-date { font-size: 10px; color: #aaa; margin-bottom: 3px; }
-  .memo-item-text { font-size: 12px; color: #374151; font-weight: 500; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-  .memo-edit-input { font-size: 12px; font-family: inherit; border: 1px solid #e5e7eb; border-radius: 6px; padding: 3px 6px; width: 100%; outline: none; }
-  .memo-edit-input:focus { border-color: #F97316; }
-  .memo-del { cursor: pointer; color: #ddd; font-size: 12px; flex-shrink: 0; }
-  .memo-del:hover { color: #f87171; }
-  .memo-input-row { display: flex; flex-direction: column; gap: 6px; }
-  .memo-input { border: 1px solid #e5e7eb; border-radius: 8px; padding: 7px 10px; font-size: 11px; font-family: inherit; outline: none; width: 100%; }
-  .memo-input:focus { border-color: #F97316; }
-  .memo-btn { background: #F97316; color: #fff; border: none; border-radius: 8px; padding: 7px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; }
-  .memo-btn:hover { background: #ea6c0a; }
   .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #888; text-decoration: none; margin-bottom: 20px; }
   .back-btn:hover { color: #1a1a2e; }
+  /* 메모 패널 */
+  .memo-panel { width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 40px; }
+  .memo-panel-title { font-size: 13px; font-weight: 900; color: #1a1a2e; margin-bottom: 16px; }
+  .memo-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .memo-item { background: #f8fafc; border-radius: 10px; padding: 10px 12px; position: relative; }
+  .memo-item-date { font-size: 10px; color: #aaa; margin-bottom: 6px; }
+  .memo-item-row { display: flex; align-items: flex-start; gap: 4px; margin-bottom: 4px; }
+  .memo-item-label { font-size: 10px; font-weight: 900; color: #94a3b8; min-width: 36px; padding-top: 1px; }
+  .memo-item-value { font-size: 11px; font-weight: 700; color: #1a1a2e; flex: 1; word-break: break-all; cursor: pointer; }
+  .memo-item-value.memo-text-val { font-weight: 400; color: #555; }
+  .memo-item-value:hover { color: #F97316; }
+  .memo-del { position: absolute; top: 8px; right: 8px; cursor: pointer; color: #ddd; font-size: 11px; }
+  .memo-del:hover { color: #f87171; }
+  .memo-last { font-size: 10px; color: #ccc; text-align: right; margin-top: 8px; }
+  /* 입력폼 */
+  .memo-form { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #f0f0f0; padding-top: 14px; margin-top: 4px; }
+  .memo-form-date { font-size: 10px; color: #aaa; }
+  .memo-form-row { display: flex; flex-direction: column; gap: 2px; }
+  .memo-form-label { font-size: 10px; font-weight: 900; color: #94a3b8; }
+  .memo-form-input { border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 10px; font-size: 11px; font-family: inherit; outline: none; width: 100%; }
+  .memo-form-input:focus { border-color: #F97316; }
+  .memo-btn { background: #F97316; color: #fff; border: none; border-radius: 8px; padding: 8px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 2px; }
+  .memo-btn:hover { background: #ea6c0a; }
+  .memo-edit-input { font-size: 11px; font-family: inherit; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px 6px; width: 100%; outline: none; }
+  .memo-edit-input:focus { border-color: #F97316; }
 </style>
 </head>
 <body>
@@ -100,58 +97,94 @@
   </div>
   <div class="divider"></div>
   <div class="result">
-    <div class="result-header">
-      <div class="result-header-cell">구분</div>
-      <div class="result-header-cell">수정세금계산서</div>
-      <div class="result-header-cell">실제 환불</div>
-    </div>
-    <div class="result-row seller">
-      <div class="result-row-label">🏢 우리 회사</div>
-      <div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div>
-      <div class="result-cell"><div class="result-cell-value negative">-80만원</div><div class="result-cell-sub">110만원 수취 후 80만원 환불</div></div>
-    </div>
-    <div class="result-row buyer">
-      <div class="result-row-label">🏬 거래처</div>
-      <div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div>
-      <div class="result-cell"><div class="result-cell-value positive">+80만원</div><div class="result-cell-sub">110만원 지급 후 80만원 환불</div></div>
-    </div>
+    <div class="result-header"><div class="result-header-cell">구분</div><div class="result-header-cell">수정세금계산서</div><div class="result-header-cell">실제 환불</div></div>
+    <div class="result-row seller"><div class="result-row-label">🏢 우리 회사</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value negative">-80만원</div><div class="result-cell-sub">110만원 수취 후 80만원 환불</div></div></div>
+    <div class="result-row buyer"><div class="result-row-label">🏬 거래처</div><div class="result-cell"><div class="result-cell-value negative">-100만원</div><div class="result-cell-sub">부가세 -10만원</div></div><div class="result-cell"><div class="result-cell-value positive">+80만원</div><div class="result-cell-sub">110만원 지급 후 80만원 환불</div></div></div>
   </div>
   <div class="note"><strong>📌 핵심 포인트</strong><br>수정세금계산서: 공급가액 -100만원 + 부가세 -10만원 전액 취소<br>위약금 30만원은 부가세 과세 대상 아님 → <strong>세금계산서 발행 불가, 영수증으로 처리</strong><br>실제 환불금액: 110만원 - 위약금 30만원 = <strong>80만원</strong></div>
 </div>
+
 <div class="memo-panel">
   <div class="memo-panel-title">📝 거래처 메모</div>
   <div class="memo-list" id="memo-list"></div>
-  <div class="memo-input-row">
-    <input class="memo-input" id="memo-input" placeholder="거래처 입력..." />
+  <div class="memo-form">
+    <div class="memo-form-date" id="form-date"></div>
+    <div class="memo-form-row">
+      <div class="memo-form-label">거래처</div>
+      <input class="memo-form-input" id="inp-client" placeholder="거래처명 입력" />
+    </div>
+    <div class="memo-form-row">
+      <div class="memo-form-label">메모</div>
+      <input class="memo-form-input" id="inp-memo" placeholder="간단한 메모 입력" />
+    </div>
     <button class="memo-btn" onclick="addMemo()">+ 추가</button>
   </div>
 </div>
+
 <script>
 const KEY = 'studynote-memos', CARD = 'refund-process';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)||'{}'); } catch(e) { return {}; } }
 function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.getFullYear()+'.'+(d.getMonth()+1).toString().padStart(2,'0')+'.'+d.getDate().toString().padStart(2,'0')+' '+d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+}
+function fmtShort(iso) {
+  const d = new Date(iso);
+  return (d.getMonth()+1)+'/'+d.getDate();
+}
+
 function render() {
   const list = load()[CARD]||[];
   const el = document.getElementById('memo-list');
-  el.innerHTML = list.length===0 ? '<div style="font-size:11px;color:#ccc;text-align:center;padding:10px 0;">메모 없음</div>'
-    : list.map((m,i)=>'<div class="memo-item"><div class="memo-item-date">'+m.date+'</div><div class="memo-item-text"><span id="t'+i+'">'+m.text+'</span><span class="memo-del" onclick="del('+i+')">✕</span></div></div>').join('');
-  list.forEach((m,i)=>{ const s=document.getElementById('t'+i); if(s) s.onclick=()=>edit(i,m.text); });
+  if(list.length===0) { el.innerHTML='<div style="font-size:11px;color:#ccc;text-align:center;padding:8px 0;">메모 없음</div>'; return; }
+  el.innerHTML = list.map((m,i)=>
+    '<div class="memo-item">'+
+    '<div class="memo-item-date">'+fmtShort(m.created)+'</div>'+
+    '<div class="memo-item-row"><span class="memo-item-label">거래처</span><span class="memo-item-value" id="c'+i+'" onclick="editField('+i+','client',this)">'+m.client+'</span></div>'+
+    '<div class="memo-item-row"><span class="memo-item-label">메모</span><span class="memo-item-value memo-text-val" id="m'+i+'" onclick="editField('+i+','memo',this)">'+m.memo+'</span></div>'+
+    '<span class="memo-del" onclick="del('+i+')">✕</span>'+
+    '</div>'
+  ).join('');
+  // 마지막 작성일시
+  const last = list[list.length-1];
+  const existing = document.querySelector('.memo-last');
+  if(existing) existing.remove();
+  const p = document.createElement('div');
+  p.className='memo-last'; p.textContent='마지막 작성 '+fmtDate(last.created);
+  document.querySelector('.memo-panel').appendChild(p);
 }
-function edit(i,old) {
-  const s=document.getElementById('t'+i); if(!s) return;
-  const inp=document.createElement('input'); inp.className='memo-edit-input'; inp.value=old;
-  s.replaceWith(inp); inp.focus();
-  inp.onblur=()=>{ const d=load(); if(inp.value.trim()) d[CARD][i].text=inp.value.trim(); save(d); render(); };
-  inp.onkeydown=e=>{ if(e.key==='Enter') inp.blur(); if(e.key==='Escape') render(); };
+
+function editField(i, field, el) {
+  const data = load(); const m = data[CARD][i];
+  const inp = document.createElement('input');
+  inp.className='memo-edit-input'; inp.value = field==='client' ? m.client : m.memo;
+  el.replaceWith(inp); inp.focus();
+  inp.onblur = ()=>{ if(inp.value.trim()) { if(field==='client') data[CARD][i].client=inp.value.trim(); else data[CARD][i].memo=inp.value.trim(); save(data); } render(); };
+  inp.onkeydown = e=>{ if(e.key==='Enter') inp.blur(); if(e.key==='Escape') render(); };
 }
+
 function addMemo() {
-  const inp=document.getElementById('memo-input'), text=inp.value.trim(); if(!text) return;
-  const d=load(); if(!d[CARD]) d[CARD]=[];
-  const now=new Date(); d[CARD].push({date:(now.getMonth()+1)+'/'+now.getDate(),text});
-  save(d); inp.value=''; render();
+  const client = document.getElementById('inp-client').value.trim();
+  const memo = document.getElementById('inp-memo').value.trim();
+  if(!client && !memo) return;
+  const d = load(); if(!d[CARD]) d[CARD]=[];
+  d[CARD].push({ created: new Date().toISOString(), client: client||'(거래처 없음)', memo: memo||'' });
+  save(d);
+  document.getElementById('inp-client').value='';
+  document.getElementById('inp-memo').value='';
+  render();
 }
-function del(i) { const d=load(); d[CARD].splice(i,1); save(d); render(); }
-document.getElementById('memo-input').addEventListener('keydown',e=>{ if(e.key==='Enter') addMemo(); });
+
+// 날짜 표시
+function updateFormDate() {
+  const now = new Date();
+  document.getElementById('form-date').textContent = fmtDate(now.toISOString());
+}
+updateFormDate();
+setInterval(updateFormDate, 60000);
+
+document.getElementById('inp-memo').addEventListener('keydown', e=>{ if(e.key==='Enter') addMemo(); });
 render();
 </script>
 </body>
