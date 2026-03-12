@@ -108,7 +108,7 @@ var TAX_META={
   with:{label:"원천세",cls:"tax-with",tagCls:"tag-with",icon:"&#128188;"},
   other:{label:"기타",cls:"tax-other",tagCls:"tag-other",icon:"&#128196;"}
 };
-var FIXED_CARDS=[{id:"refund-process",tax:"vat",title:"환불 프로세스",desc:"부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법",icon:"&#128260;",link:"refund-process.html",fixed:true},{id:"tax-calculator",tax:"corp",title:"법인세 추정 계산기",desc:"매출·원가·판관비 입력 시<br>납부세액 자동 계산 (참고용)",icon:"&#128202;",link:"tax-calculator.html",fixed:true}];
+var FIXED_CARDS=[{id:"refund-process",tax:"vat",title:"환불 프로세스",desc:"부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법",icon:"&#128260;",link:"refund-process.html",fixed:true}];
 function loadCards(){try{return JSON.parse(localStorage.getItem(CKEY)||"[]");}catch(e){return[];}}
 function saveCards(c){localStorage.setItem(CKEY,JSON.stringify(c));}
 function loadMemos(){try{return JSON.parse(localStorage.getItem(SKEY)||"{}");}catch(e){return {};}}
@@ -202,3 +202,4 @@ renderGrid();
 </script>
 </body>
 </html>
+
