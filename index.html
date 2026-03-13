@@ -60,6 +60,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
 .modal-save { flex:2; padding:10px; background:#F97316; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
 .modal-save:hover { background:#ea6c0a; }
+.loading { text-align:center; padding:60px; color:#bbb; font-size:14px; }
 </style>
 </head>
 <body>
@@ -67,7 +68,9 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   <h1>&#128218; 세무 스터디 노트</h1>
   <p>클릭하면 해당 자료로 이동해요</p>
 </div>
-<div class="grid" id="grid"></div>
+<div class="grid" id="grid">
+  <div class="loading">불러오는 중...</div>
+</div>
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <div class="modal-title">&#128203; 새 카드 추가</div>
@@ -99,107 +102,203 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
     </div>
   </div>
 </div>
-<script>
-var SKEY="studynote-memos", CKEY="studynote-cards";
-var TAX_META={
-  vat:{label:"부가세",cls:"tax-vat",tagCls:"tag-vat",icon:"&#128260;"},
-  corp:{label:"법인세",cls:"tax-corp",tagCls:"tag-corp",icon:"&#127970;"},
-  income:{label:"소득세",cls:"tax-income",tagCls:"tag-income",icon:"&#128202;"},
-  with:{label:"원천세",cls:"tax-with",tagCls:"tag-with",icon:"&#128188;"},
-  other:{label:"기타",cls:"tax-other",tagCls:"tag-other",icon:"&#128196;"}
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
+  authDomain: "tax-aaee5.firebaseapp.com",
+  projectId: "tax-aaee5",
+  storageBucket: "tax-aaee5.firebasestorage.app",
+  messagingSenderId: "11651546985",
+  appId: "1:11651546985:web:7843ffed4adf2eb59e47f8"
 };
-var FIXED_CARDS=[{id:"refund-process",tax:"vat",title:"환불 프로세스",desc:"부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법",icon:"&#128260;",link:"refund-process.html",fixed:true}];
-function loadCards(){try{return JSON.parse(localStorage.getItem(CKEY)||"[]");}catch(e){return[];}}
-function saveCards(c){localStorage.setItem(CKEY,JSON.stringify(c));}
-function loadMemos(){try{return JSON.parse(localStorage.getItem(SKEY)||"{}");}catch(e){return {};}}
-function saveMemos(d){localStorage.setItem(SKEY,JSON.stringify(d));}
-function fmtShort(iso){var d=new Date(iso);return(d.getMonth()+1)+"/"+d.getDate();}
-function escHtml(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-function uid(){return"c"+Date.now();}
-function allCards(){return FIXED_CARDS.concat(loadCards());}
-function renderChips(cardId){
-  var list=(loadMemos()[cardId]||[]),el=document.getElementById("chips-"+cardId);
-  if(!el)return;
-  if(!list.length){el.innerHTML='<span class="memo-chip-empty">없음</span>';return;}
-  el.innerHTML=list.map(function(m){
-    var date=m.updated?fmtShort(m.updated):fmtShort(m.created);
-    return'<div class="memo-chip"><span class="memo-chip-date">'+date+'</span><span class="memo-chip-name">'+escHtml(m.client||"")+'</span></div>';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const cardsCol = collection(db, 'studynote-cards');
+const memosCol = collection(db, 'studynote-memos');
+
+const TAX_META = {
+  vat:    { label:"부가세", cls:"tax-vat",    tagCls:"tag-vat",    icon:"&#128260;" },
+  corp:   { label:"법인세", cls:"tax-corp",   tagCls:"tag-corp",   icon:"&#127970;" },
+  income: { label:"소득세", cls:"tax-income", tagCls:"tag-income", icon:"&#128202;" },
+  with:   { label:"원천세", cls:"tax-with",   tagCls:"tag-with",   icon:"&#128188;" },
+  other:  { label:"기타",   cls:"tax-other",  tagCls:"tag-other",  icon:"&#128196;" }
+};
+
+const FIXED_CARDS = [{
+  id:"refund-process", tax:"vat", title:"환불 프로세스",
+  desc:"부품 판매 후 환불 처리 흐름<br>위약금 · 수정세금계산서 처리 방법",
+  icon:"&#128260;", link:"refund-process.html", fixed:true
+}];
+
+// 메모리 저장소
+let allMemosMap = {};   // cardId -> [{client, created, _docId}]
+let customCards  = [];  // [{id, tax, title, desc, icon, link, fixed, _docId}]
+
+function fmtShort(iso) {
+  const d = new Date(iso);
+  return (d.getMonth()+1) + "/" + d.getDate();
+}
+function escHtml(s) {
+  return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function uid() { return "c" + Date.now(); }
+
+a}
+
+async function loadAllData() {
+  // 칄드 불러오기
+  const cardSnap = await getDocs(cardsCol);
+  customCards = cardSnap.docs.map(d => ({ ...d.data(), _docId: d.id }));
+
+  // Ꙕ모 불러오기
+  const memoSnap = await getDocs(memosCol);
+  allMemosMap = {};
+  memoSnap.docs.forEach(d => {
+    const data = { ...d.data(), _docId: d.id };
+    if (!allMemosMap[data.cardId]) allMemosMap[data.cardId] = [];
+    allMemosMap[data.cardId].push(data);
+  });
+}
+
+function renderChips(cardId) {
+  const list = allMemosMap[cardId] || [];
+  const el = document.getElementById("chips-" + cardId);
+  if (!el) return;
+  if (!list.length) {
+    el.innerHTML = '<span class="memo-chip-empty">없음</span>';
+    return;
+  }
+  el.innerHTML = list.map(m => {
+    const date = m.updated ? fmtShort(m.updated) : fmtShort(m.created);
+    return `<div class="memo-chip">
+      <span class="memo-chip-date">${date}</span>
+      <span class="memo-chip-name">${escHtml(m.client||"")}</span>
+    </div>`;
   }).join("");
 }
-function addMemo(cardId){
-  var inp=document.getElementById("inp-"+cardId),client=inp.value.trim();if(!client)return;
-  var d=loadMemos();if(!d[cardId])d[cardId]=[];
-  d[cardId].push({created:new Date().toISOString(),client:client,memo:""});
-  saveMemos(d);inp.value="";renderChips(cardId);
+
+async function addMemo(cardId) {
+  const inp = document.getElementById("inp-" + cardId);
+  const client = inp.value.trim();
+  if (!client) return;
+  const memo = { cardId, created: new Date().toISOString(), client, memo: "" };
+  try {
+    const docRef = await addDoc(memosCol, memo);
+    memo._docId = docRef.id;
+    if (!allMemosMap[cardId]) allMemosMap[cardId] = [];
+    allMemosMap[cardId].push(memo);
+    inp.value = "";
+    renderChips(cardId);
+  } catch(e) { alert("쀀장 실패: " + e.message); }
 }
-function renderGrid(){
-  var cards=allCards(),h="";
-  cards.forEach(function(c){
-    var meta=TAX_META[c.tax]||TAX_META.other;
-    h+='<div class="card '+meta.cls+'">';
-    if(!c.fixed)h+='<button class="card-del" data-id="'+c.id+'">&#10005;</button>';
-    h+=c.link?'<a class="card-link" href="'+c.link+'">':'<div class="card-link">';
-    h+='<div class="card-icon">'+(c.icon||meta.icon)+'</div>';
-    h+='<div class="card-tag '+meta.tagCls+'">'+meta.label+'</div>';
-    h+='<div class="card-title">'+escHtml(c.title)+'</div>';
-    h+='<div class="card-desc">'+(c.desc||"")+'</div>';
-    h+=c.link?"</a>":"</div>";
-    h+='<div class="memo-area"><div class="memo-label">거래처</div>';
-    h+='<div class="memo-chips" id="chips-'+c.id+'"></div>';
-    h+='<div class="memo-input-row"><input class="memo-input" id="inp-'+c.id+'" placeholder="거래처 입력..." />';
-    h+='<button class="memo-btn" data-cid="'+c.id+'">추가</button></div></div></div>';
+
+function renderGrid() {
+  const cards = FIXED_CARDS.concat(customCards);
+  let h = "";
+  cards.forEach(c => {
+    const meta = TAX_META[c.tax] || TAX_META_other;
+    h += `<div class="card ${meta.cls}">`;
+    if (!c.fixed) h += `<button class="card-del" data-id="${c.id}" data-docid="${c._docId||''}">&#10005;</button>`;
+    h += c.link ? `<a class="card-link" href="${c.link}">` : `<div class="card-link">`;
+    h += `<div class="card-icon">${c.icon||meta.icon}</div>`;
+    h += `<div class="card-tag ${meta.tagCls}">${meta.label}</div>`;
+    h += `<div class="card-title">${escHtml(c.title)}</div>`;
+    h += `<div class="card-desc">${c.desc||""}</div>`;
+    h += c.link ? "</a>" : "</div>";
+    h += `<div class="memo-area"><div class="memo-label">거래처</div>`;
+    h += `<div class="memo-chips" id="chips-${c.id}"></div>`;
+    h += `<div class="memo-input-row">
+      <input class="memo-input" id="inp-${c.id}" placeholder="거래처 입력..." />
+      <button class="memo-btn" data-cid="${c.id}">추가</button>
+    </div></div></div>`;
   });
-  h+='<div class="add-card-btn" id="add-card-btn"><div class="add-card-btn-icon">+</div><div class="add-card-btn-text">새 카드 추가</div></div>';
-  document.getElementById("grid").innerHTML=h;
-  cards.forEach(function(c){renderChips(c.id);});
-  document.querySelectorAll(".memo-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){addMemo(this.getAttribute("data-cid"));});
+  h += `<div class="add-card-btn" id="add-card-btn">
+    <div class="add-card-btn-icon">+</div>
+    <div class="add-card-btn-text">새 카드 추� </div>
+  </div>`;
+
+  document.getElementById("grid").innerHTML = h;
+  cards.forEach(c => renderChips(c.id));
+
+  document.querySelectorAll(".memo-btn").forEach(btn => {
+    btn.addEventListener("click", function() { addMemo(this.getAttribute("data-cid")); });
   });
-  document.querySelectorAll(".memo-input").forEach(function(inp){
-    inp.addEventListener("keydown",function(e){if(e.key==="Enter")addMemo(inp.id.replace("inp-",""));});
-  });
-  document.querySelectorAll(".card-del").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      if(!confirm("이 카드를 삭제할까요?"))return;
-      var id=this.getAttribute("data-id");
-      saveCards(loadCards().filter(function(c){return c.id!==id;}));
-      renderGrid();
+  document.querySelectorAll(".memo-input").forEach(inp => {
+    inp.addEventListener("keydown", e => {
+      if (e.key === "Enter") addMemo(inp.id.replace("inp-",""));
     });
   });
-  document.getElementById("add-card-btn").addEventListener("click",openModal);
+  document.querySelectorAll(".card-del").forEach(btn => {
+    btn.addEventListener("click", async function() {
+      if (!confirm("� 카드��p 삭���하까요?")) return;
+      const id = this.getAttribute("data-id");
+      const docId = this.getAttribute("data-docid");
+      try {
+        if (docId) await deleteDoc(doc(db, 'studynote-cards', docId));
+        customCards = customCards.filter(c => c.id !== id);
+        renderGrid();
+      } catch(e) { alert("삭제 실패: " + e.message); }
+    });
+  });
+  document.getElementById("add-card-btn").addEventListener("click", openModal);
 }
-var selectedTax="vat";
-function openModal(){
-  selectedTax="vat";
-  document.getElementById("m-title").value="";
-  document.getElementById("m-desc").value="";
-  document.getElementById("m-icon").value="";
-  document.querySelectorAll(".tax-opt").forEach(function(o){o.classList.toggle("selected",o.getAttribute("data-tax")==="vat");});
+
+// 모달
+let selectedTax = "vat";
+function openModal() {
+  selectedTax = "vat";
+  document.getElementById("m-title").value = "";
+  document.getElementById("m-desc").value = "";
+  document.getElementById("m-icon").value = "";
+  document.querySelectorAll(".tax-opt").forEach(o =>
+    o.classList.toggle("selected", o.getAttribute("data-tax") === "vat")
+  );
   document.getElementById("modal").classList.add("open");
   document.getElementById("m-title").focus();
 }
-document.querySelectorAll(".tax-opt").forEach(function(o){
-  o.addEventListener("click",function(){
-    selectedTax=this.getAttribute("data-tax");
-    document.querySelectorAll(".tax-opt").forEach(function(x){x.classList.remove("selected");});
+
+document.querySelectorAll(".tax-opt").forEach(o => {
+  o.addEventListener("click", function() {
+    selectedTax = this.getAttribute("data-tax");
+    document.querySelectorAll(".tax-opt").forEach(x => x.classList.remove("selected"));
     this.classList.add("selected");
   });
 });
-document.getElementById("modal-cancel").addEventListener("click",function(){document.getElementById("modal").classList.remove("open");});
-document.getElementById("modal").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
-document.getElementById("modal-save").addEventListener("click",function(){
-  var title=document.getElementById("m-title").value.trim();
-  if(!title){document.getElementById("m-title").focus();return;}
-  var raw=document.getElementById("m-desc").value.trim();
-  var desc=raw.split("\n").join("<br>");
-  var cards=loadCards();
-  cards.push({id:uid(),tax:selectedTax,title:title,desc:desc,icon:document.getElementById("m-icon").value.trim()||null,link:null,fixed:false});
-  saveCards(cards);
-  document.getElementById("modal").classList.remove("open");
-  renderGrid();
+document.getElementById("modal-cancel").addEventListener("click", () =>
+  document.getElementById("modal").classList.remove("open")
+);
+document.getElementById("modal").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal"))
+    document.getElementById("modal").classList.remove("open");
 });
-renderGrid();
+document.getElementById("modal-save").addEventListener("click", async function() {
+  const title = document.getElementById("m-title").value.trim();
+  if (!title) { document.getElementById("m-title").focus(); return; }
+  const raw = document.getElementById("m-desc").value.trim();
+  const desc = raw.split("\n").join("<br>");
+  const card = {
+    id: uid(), tax: selectedTax, title, desc,
+    icon: document.getElementById("m-icon").value.trim() || null,
+    link: null, fixed: false
+  };
+  try {
+    const docRef = await addDoc(cardsCol, card);
+    card._docId = docRef.id;
+    customCards.push(card);
+    document.getElementById("modal").classList.remove("open");
+    renderGrid();
+  } catch(e) { alert("쀀장 실패: " + e.message); }
+});
+
+// 초기 로딩
+loadAllData().then(() => renderGrid()).catch(e => {
+  document.getElementById("grid").innerHTML = '<div class="loading" style="color:#f87171;">데이터 드 실패: ' + e.message + '</div>';
+});
 </script>
 </body>
 </html>
-
