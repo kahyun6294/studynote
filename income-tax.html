@@ -8,7 +8,7 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100vh; padding:40px 20px; }
-.container { max-width:1080px; margin:0 auto; }
+.container { max-width:1100px; margin:0 auto; }
 .back-btn { display:inline-block; margin-bottom:20px; font-size:12px; color:#888; text-decoration:none; }
 .back-btn:hover { color:#10B981; }
 .header { text-align:center; margin-bottom:28px; }
@@ -84,8 +84,30 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .ded-item { background:#f8fafc; border-radius:10px; padding:10px 12px; margin-bottom:8px; }
 .ded-item-title { font-size:11px; font-weight:900; color:#64748b; margin-bottom:3px; }
 .ded-item-desc { font-size:10px; color:#94a3b8; margin-bottom:7px; line-height:1.5; }
-.ded-item .inp { font-size:12px; width:130px; }
-.ded-item .hint { font-size:10px; color:#94a3b8; margin-top:3px; }
+.ded-row { display:flex; gap:6px; align-items:center; }
+.ded-row input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:7px 10px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
+.ded-row input:focus { border-color:#10B981; }
+.calc-btn { padding:7px 10px; background:#10B981; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.calc-btn:hover { background:#059669; }
+/* 팝업 */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:#fff; border-radius:20px; padding:28px; width:420px; max-width:95vw; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+.modal-title { font-size:15px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
+.modal-sub { font-size:11px; color:#94a3b8; margin-bottom:20px; line-height:1.6; }
+.modal-field { margin-bottom:14px; }
+.modal-label { font-size:11px; font-weight:700; color:#64748b; margin-bottom:6px; }
+.modal-select { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; }
+.modal-select:focus { border-color:#10B981; }
+.modal-input { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
+.modal-input:focus { border-color:#10B981; }
+.modal-result { background:#ECFDF5; border-radius:10px; padding:14px; margin:16px 0; display:flex; justify-content:space-between; align-items:center; }
+.modal-result-label { font-size:12px; color:#10B981; font-weight:700; }
+.modal-result-value { font-size:18px; font-weight:900; color:#10B981; }
+.modal-actions { display:flex; gap:8px; margin-top:4px; }
+.modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-apply { flex:2; padding:10px; background:#10B981; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-apply:hover { background:#059669; }
 @media(max-width:900px){ .layout{ grid-template-columns:1fr 1fr; } }
 @media(max-width:600px){ .layout{ grid-template-columns:1fr; } }
 </style>
@@ -160,15 +182,23 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
         <div class="sec-title">&#127381; 세액감면·공제</div>
         <div class="ded-item">
           <div class="ded-item-title">중소기업 특별세액감면</div>
-          <div class="ded-item-desc">업종·지역별 산출세액의 10~30%<br>제조업(수도권외) 30% / 서비스업 10%</div>
-          <div class="row"><span class="lbl indent" style="font-size:11px;">감면액</span><input class="inp" id="d-sme" type="text" placeholder="0"/></div>
-          <div class="ded-item hint">산출세액 × 감면율 직접 입력</div>
+          <div class="ded-item-desc">업종·지역별 10~30% 감면</div>
+          <div class="ded-row"><input type="text" id="d-sme" placeholder="0"/><button class="calc-btn" onclick="openModal('sme')">계산하기</button></div>
         </div>
         <div class="ded-item">
           <div class="ded-item-title">창업중소기업 세액감면</div>
-          <div class="ded-item-desc">창업 후 5년간 50% 감면<br>(수도권 과밀억제권역 제외)</div>
-          <div class="row"><span class="lbl indent" style="font-size:11px;">감면액</span><input class="inp" id="d-startup" type="text" placeholder="0"/></div>
-          <div class="ded-item hint">산출세액 × 50% 직접 입력</div>
+          <div class="ded-item-desc">창업 후 5년간 50% 감면</div>
+          <div class="ded-row"><input type="text" id="d-startup" placeholder="0"/><button class="calc-btn" onclick="openModal('startup')">계산하기</button></div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-item-title">R&amp;D 세액공제</div>
+          <div class="ded-item-desc">중소 25% / 중견 8% / 대기업 2%</div>
+          <div class="ded-row"><input type="text" id="d-rnd" placeholder="0"/><button class="calc-btn" onclick="openModal('rnd')">계산하기</button></div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-item-title">통합고용세액공제</div>
+          <div class="ded-item-desc">증가 1인당 중소 450~1,550만원</div>
+          <div class="ded-row"><input type="text" id="d-employ" placeholder="0"/><button class="calc-btn" onclick="openModal('employ')">계산하기</button></div>
         </div>
       </div>
     </div>
@@ -214,9 +244,16 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
     </div>
   </div>
 </div>
+
+<!-- 팝업 모달 -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-body"></div>
+</div>
+
 <script>
 var sgaCnt=0;
 var BRACKETS=[{limit:14000000,rate:0.06,deduc:0},{limit:50000000,rate:0.15,deduc:1260000},{limit:88000000,rate:0.24,deduc:5760000},{limit:150000000,rate:0.35,deduc:15440000},{limit:300000000,rate:0.38,deduc:19940000},{limit:500000000,rate:0.40,deduc:25940000},{limit:1000000000,rate:0.42,deduc:35940000},{limit:Infinity,rate:0.45,deduc:65940000}];
+var currentModalType=null;
 function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
 function parse(id){var el=document.getElementById(id);return el?(parseFloat((el.value||'').replace(/,/g,''))||0):0;}
 function parseEl(el){return parseFloat((el.value||'').replace(/,/g,''))||0;}
@@ -253,26 +290,87 @@ function calc(){
   var base=Math.max(0,totalInc-totalDed);
   var b=BRACKETS.find(function(b){return base<=b.limit;});
   var tax=base>0?Math.max(0,base*b.rate-b.deduc):0;
-  var deduct=parse('d-sme')+parse('d-startup');
-  var determined=Math.max(0,tax-deduct);
-  var local=Math.round(determined*0.1),total=determined+local;
+  var deduct=parse('d-sme')+parse('d-startup')+parse('d-rnd')+parse('d-employ');
+  var determined=Math.max(0,tax-deduct),local=Math.round(determined*0.1),total=determined+local;
   setR('r-base',base);setR('r-tax',tax);
   var deductEl=document.getElementById('r-deduct');
   if(deduct){deductEl.textContent='▼ '+fmt(deduct)+'원';deductEl.className='rv orange';}
   else{deductEl.textContent='-';deductEl.className='rv sub';}
-  setR('r-determined',determined);
-  setR('r-local',local,'sub');setR('r-total',total,'total');
+  setR('r-determined',determined);setR('r-local',local,'sub');setR('r-total',total,'total');
   var prepaid=parse('prepaid'),diff=total-prepaid;
   var diffLbl=document.getElementById('diff-lbl'),diffEl=document.getElementById('r-diff');
   if(prepaid){diffLbl.textContent=diff>=0?'차감납부세액':'환급세액';diffEl.textContent=fmt(Math.abs(diff))+'원';diffEl.className='rv '+(diff>=0?'total':'pos');}
   else{diffLbl.textContent='차감납부세액';diffEl.textContent='-';diffEl.className='rv';}
   document.querySelectorAll('#rate-tbody tr').forEach(function(tr){var min=parseFloat(tr.getAttribute('data-min'));var max=tr.getAttribute('data-max')==='Infinity'?Infinity:parseFloat(tr.getAttribute('data-max'));tr.classList.toggle('active',base>min&&base<=max);});
 }
-['revenue','inv-begin','purchase','inv-end','wage','yellow','pension','prepaid','d-sme','d-startup'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
+['revenue','inv-begin','purchase','inv-end','wage','yellow','pension','prepaid','d-sme','d-startup','d-rnd','d-employ'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
 document.getElementById('wage-toggle').addEventListener('change',function(){var fields=document.getElementById('wage-fields');if(this.checked){fields.classList.add('open');}else{fields.classList.remove('open');document.getElementById('wage').value='';}calc();});
 document.querySelectorAll('.cnt-btn[data-id]').forEach(function(btn){btn.addEventListener('click',function(){var tid=this.getAttribute('data-id');var d=parseInt(this.getAttribute('data-d'));var el=document.getElementById(tid);var v=parseInt(el.textContent)||0;v=Math.max(0,v+d);el.textContent=v;calc();});});
 document.getElementById('add-sga').addEventListener('click',function(){addSgaRow('','');});
-document.getElementById('reset-btn').addEventListener('click',function(){['revenue','inv-begin','purchase','inv-end','cogs','sga-total','wage','wage-ded','wage-net','yellow','pension','biz-income','prepaid','d-sme','d-startup'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('sga-list').innerHTML='';sgaCnt=0;document.getElementById('c-dep').textContent='0';document.getElementById('wage-toggle').checked=false;document.getElementById('wage-fields').classList.remove('open');addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();});
+document.getElementById('reset-btn').addEventListener('click',function(){['revenue','inv-begin','purchase','inv-end','cogs','sga-total','wage','wage-ded','wage-net','yellow','pension','biz-income','prepaid','d-sme','d-startup','d-rnd','d-employ'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('sga-list').innerHTML='';sgaCnt=0;document.getElementById('c-dep').textContent='0';document.getElementById('wage-toggle').checked=false;document.getElementById('wage-fields').classList.remove('open');addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();});
+
+/* ===== 팝업 ===== */
+function getTax(){var el=document.getElementById('r-tax');return el?(parseInt((el.textContent||'').replace(/[^0-9]/g,''))||0):0;}
+function fmtM(el){var v=el.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(v)el.value=parseInt(v).toLocaleString('ko-KR');updateModalResult();}
+function openModal(type){
+  currentModalType=type;var tax=getTax();var html='';
+  if(type==='sme'){
+    html='<div class="modal-title">&#127381; 중소기업 특별세액감면 계산</div>';
+    html+='<div class="modal-sub">업종·지역에 따라 산출세액의 10~30% 감면</div>';
+    html+='<div class="modal-field"><div class="modal-label">지역</div><select class="modal-select" id="m-region"><option value="0">수도권 과밀억제권역</option><option value="1">수도권 외 지역</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">업종</div><select class="modal-select" id="m-sector"><option value="10">도소매·음식·숙박·서비스업 (10%)</option><option value="20">제조업·건설업·물류업 (20%)</option><option value="30">제조업 수도권 외 (30%)</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';
+  } else if(type==='startup'){
+    html='<div class="modal-title">&#127381; 창업중소기업 세액감면 계산</div>';
+    html+='<div class="modal-sub">창업 후 5년간 산출세액의 50% 감면<br>(수도권 과밀억제권역 외 특정 업종)</div>';
+    html+='<div class="modal-field"><div class="modal-label">창업연도</div><select class="modal-select" id="m-startyear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option><option value="2021">2021년</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">귀속연도</div><select class="modal-select" id="m-curyear"><option value="2025">2025년</option><option value="2026">2026년</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';
+  } else if(type==='rnd'){
+    html='<div class="modal-title">&#127381; R&amp;D 세액공제 계산</div>';
+    html+='<div class="modal-sub">당기 연구개발비 × 공제율<br>중소기업 25% / 중견기업 8% / 대기업 2%</div>';
+    html+='<div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-corp"><option value="25">중소기업 (25%)</option><option value="8">중견기업 (8%)</option><option value="2">대기업 (2%)</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">당기 연구개발비</div><input class="modal-input" id="m-rndamt" placeholder="0"/></div>';
+  } else if(type==='employ'){
+    html='<div class="modal-title">&#127381; 통합고용세액공제 계산</div>';
+    html+='<div class="modal-sub">상시근로자 증가 인원 × 1인당 공제액<br>중소기업 청년·장애인 1,550만원 / 일반 450만원</div>';
+    html+='<div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-emptype"><option value="1550">중소기업 - 청년·장애인·60세이상 (1,550만원)</option><option value="450">중소기업 - 일반 (450만원)</option><option value="800">중견기업 - 청년 등 (800만원)</option><option value="450">중견기업 - 일반 (450만원)</option><option value="400">대기업 - 청년 등 (400만원)</option></select></div>';
+    html+='<div class="modal-field"><div class="modal-label">증가 인원 수</div><input class="modal-input" id="m-empcount" placeholder="0" style="text-align:center;"/></div>';
+  }
+  html+='<div class="modal-result"><span class="modal-result-label">공제·감면 예상액</span><span class="modal-result-value" id="m-result">0원</span></div>';
+  html+='<div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">취소</button><button class="modal-apply" onclick="applyModal()">적용하기</button></div>';
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.querySelectorAll('.modal-input').forEach(function(el){el.addEventListener('input',function(){fmtM(this);});el.addEventListener('focus',function(){this.select();});});
+  document.querySelectorAll('.modal-select').forEach(function(el){el.addEventListener('change',updateModalResult);});
+  updateModalResult();
+}
+function updateModalResult(){
+  var result=0;
+  if(currentModalType==='sme'){
+    var taxEl=document.getElementById('m-tax'),secEl=document.getElementById('m-sector'),regEl=document.getElementById('m-region');
+    if(taxEl&&secEl&&regEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;var rate=parseInt(secEl.value)||10;if(regEl.value==='0'&&rate===30)rate=20;result=Math.round(tax*rate/100);}
+  } else if(currentModalType==='startup'){
+    var taxEl=document.getElementById('m-tax'),sy=parseInt((document.getElementById('m-startyear')||{}).value||2025),cy=parseInt((document.getElementById('m-curyear')||{}).value||2025);
+    if(taxEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;var elapsed=cy-sy+1;result=(elapsed>=1&&elapsed<=5)?Math.round(tax*0.5):0;}
+  } else if(currentModalType==='rnd'){
+    var amtEl=document.getElementById('m-rndamt'),corpEl=document.getElementById('m-corp');
+    if(amtEl&&corpEl){var amt=parseInt((amtEl.value||'').replace(/,/g,''))||0;result=Math.round(amt*(parseInt(corpEl.value)||25)/100);}
+  } else if(currentModalType==='employ'){
+    var cntEl2=document.getElementById('m-empcount'),typeEl=document.getElementById('m-emptype');
+    if(cntEl2&&typeEl){var cnt=parseInt((cntEl2.value||'').replace(/,/g,''))||0;result=cnt*(parseInt(typeEl.value)||450)*10000;}
+  }
+  var el=document.getElementById('m-result');if(el)el.textContent=fmt(result)+'원';
+  window._modalResult=result;
+}
+function applyModal(){
+  var result=window._modalResult||0;
+  var targetId={'sme':'d-sme','startup':'d-startup','rnd':'d-rnd','employ':'d-employ'}[currentModalType];
+  if(targetId){document.getElementById(targetId).value=result?fmt(result):'';calc();}
+  closeModal();
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();
 </script>
 </body>
