@@ -7,141 +7,112 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:"Noto Sans KR",sans-serif; background:#f0f2f5; min-height:100vh; padding:40px 20px; }
+body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100vh; padding:40px 20px; }
 .header { text-align:center; margin-bottom:32px; }
 .header h1 { font-size:24px; font-weight:900; color:#1a1a2e; margin-bottom:6px; }
 .header p { font-size:13px; color:#888; }
 .back-btn { display:inline-block; margin-bottom:20px; font-size:12px; color:#888; text-decoration:none; }
-.back-btn:hover { color:#F97316; }
-.wrap { max-width:720px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.back-btn:hover { color:#6366F1; }
+.wrap { max-width:900px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 220px; gap:20px; }
 .card { background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
 .card-title { font-size:13px; font-weight:900; color:#94a3b8; margin-bottom:16px; letter-spacing:0.05em; }
 .field { margin-bottom:14px; }
 .field label { display:block; font-size:11px; font-weight:700; color:#64748b; margin-bottom:5px; }
 .field input { width:100%; border:1px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:13px; font-family:inherit; outline:none; text-align:right; }
-.field input:focus { border-color:#F97316; }
+.field input:focus { border-color:#6366F1; }
 .field input.readonly { background:#f8fafc; color:#64748b; cursor:default; border-color:#f0f0f0; }
 .divider { border:none; border-top:1px solid #f0f0f0; margin:14px 0; }
 .result-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f8fafc; }
 .result-row:last-child { border-bottom:none; }
 .result-label { font-size:12px; color:#64748b; }
 .result-value { font-size:13px; font-weight:700; color:#1a1a2e; }
-.result-value.highlight { color:#F97316; font-size:15px; }
-.result-value.red { color:#ef4444; }
+.result-value.highlight { color:#6366F1; font-size:15px; }
 .result-value.green { color:#10B981; }
-.tax-card { border-top:3px solid #6366F1; }
-.tax-badge { display:inline-block; background:#EEF2FF; color:#6366F1; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:14px; }
+.result-value.red { color:#ef4444; }
 .reset-btn { width:100%; margin-top:16px; padding:10px; background:#f1f5f9; border:none; border-radius:10px; font-size:12px; font-weight:700; color:#64748b; cursor:pointer; font-family:inherit; }
 .reset-btn:hover { background:#e2e8f0; }
-.note { font-size:10px; color:#bbb; margin-top:8px; line-height:1.6; }
-@media(max-width:600px){ .wrap{ grid-template-columns:1fr; } }
+.year-selector { display:flex; gap:8px; margin-bottom:16px; }
+.year-btn { flex:1; padding:8px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; font-size:12px; font-weight:700; color:#94a3b8; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.year-btn.active { background:#6366F1; border-color:#6366F1; color:#fff; }
+.year-btn:hover:not(.active) { border-color:#6366F1; color:#6366F1; }
+.rate-table { width:100%; border-collapse:collapse; font-size:11px; }
+.rate-table th { background:#f8fafc; color:#94a3b8; font-weight:700; padding:7px 8px; text-align:left; border-bottom:1px solid #f0f0f0; }
+.rate-table td { padding:7px 8px; border-bottom:1px solid #f8fafc; color:#64748b; }
+.rate-table tr.active-row td { background:#EEF2FF; color:#6366F1; font-weight:700; }
+.rate-note { font-size:10px; color:#94a3b8; margin-top:10px; line-height:1.6; }
+.rate-change-note { font-size:10px; color:#f59e0b; background:#fffbeb; border-radius:8px; padding:8px; margin-top:10px; line-height:1.6; }
 </style>
 </head>
 <body>
-<div style="max-width:720px;margin:0 auto;">
-  <a class="back-btn" href="tax-main.html">&#8592; 메인으로</a>
-</div>
-<div class="header">
-  <h1>&#128202; 법인세 추정 계산기</h1>
-  <p>대략적인 세금 참고용이에요 (세무조정 미반영)</p>
-</div>
-<div class="wrap">
-  <div class="card">
-    <div class="card-title">손익 입력</div>
-    <div class="field"><label>매출액</label><input type="text" id="revenue" placeholder="0" /></div>
-    <div class="field"><label>매출원가</label><input type="text" id="cogs" placeholder="0" /></div>
-    <div class="field"><label>매출총이익</label><input type="text" id="gross" class="readonly" readonly /></div>
-    <hr class="divider">
-    <div class="field"><label>판매관리비</label><input type="text" id="sga" placeholder="0" /></div>
-    <div class="field"><label>영업이익</label><input type="text" id="opincome" class="readonly" readonly /></div>
-    <hr class="divider">
-    <div class="field"><label>영업외수익</label><input type="text" id="other_inc" placeholder="0" /></div>
-    <div class="field"><label>영업외비용 (이자비용 등)</label><input type="text" id="other_exp" placeholder="0" /></div>
-    <div class="field"><label>세전이익</label><input type="text" id="pretax" class="readonly" readonly /></div>
-    <button class="reset-btn" id="reset-btn">초기화</button>
+  <div style="max-width:900px;margin:0 auto;">
+    <a class="back-btn" href="tax-main.html">← 메인으로</a>
   </div>
-  <div class="card tax-card">
-    <div class="tax-badge">법인세 추정</div>
-    <div class="result-row"><span class="result-label">세전이익</span><span class="result-value" id="r-pretax">-</span></div>
-    <div class="result-row"><span class="result-label">과세표준 (추정)</span><span class="result-value" id="r-taxbase">-</span></div>
-    <hr class="divider">
-    <div class="result-row"><span class="result-label">법인세 (2억 이하 9%)</span><span class="result-value" id="r-tax1">-</span></div>
-    <div class="result-row"><span class="result-label">법인세 (2억 초과분 19%)</span><span class="result-value" id="r-tax2">-</span></div>
-    <div class="result-row"><span class="result-label">법인세 합계</span><span class="result-value" id="r-tax">-</span></div>
-    <div class="result-row"><span class="result-label">지방소득세 (법인세 × 10%)</span><span class="result-value" id="r-local">-</span></div>
-    <hr class="divider">
-    <div class="result-row"><span class="result-label">&#128073; 총 납부세액 (추정)</span><span class="result-value highlight" id="r-total">-</span></div>
-    <div class="result-row"><span class="result-label">세후 당기순이익</span><span class="result-value green" id="r-net">-</span></div>
-    <div class="result-row"><span class="result-label">실효세율</span><span class="result-value" id="r-rate">-</span></div>
-    <p class="note">&#9888; 세무조정 미반영 단순 추정값입니다.<br>실제 납부세액은 세무조정 후 달라질 수 있어요.</p>
+  <div class="header">
+    <h1>&#127970; 법인세 추정 계산기</h1>
+    <p>매출·원가·판관비 입력 시 납부세액 자동 계산 (참고용)</p>
   </div>
-</div>
+  <div class="wrap">
+    <div class="card">
+      <div class="card-title">&#128202; 손익계산서</div>
+      <div class="field"><label>매출액</label><input type="text" id="revenue" placeholder="0" /></div>
+      <div class="field"><label>매출원가</label><input type="text" id="cogs" placeholder="0" /></div>
+      <hr class="divider">
+      <div class="field"><label>매출총이익</label><input type="text" id="gross" class="readonly" readonly placeholder="자동계산" /></div>
+      <div class="field"><label>판매비와관리비</label><input type="text" id="sga" placeholder="0" /></div>
+      <hr class="divider">
+      <div class="field"><label>영업이익</label><input type="text" id="opincome" class="readonly" readonly placeholder="자동계산" /></div>
+      <div class="field"><label>영업외수익</label><input type="text" id="other_inc" placeholder="0" /></div>
+      <div class="field"><label>영업외비용</label><input type="text" id="other_exp" placeholder="0" /></div>
+      <hr class="divider">
+      <div class="field"><label>법인세차감전순이익</label><input type="text" id="pretax" class="readonly" readonly placeholder="자동계산" /></div>
+      <button class="reset-btn" id="reset-btn">초기화</button>
+    </div>
+    <div class="card">
+      <div class="card-title">&#129518; 세액계산</div>
+      <div class="result-row"><span class="result-label">법인세차감전순이익</span><span class="result-value" id="r-pretax">-</span></div>
+      <div class="result-row"><span class="result-label">과세표준</span><span class="result-value" id="r-taxbase">-</span></div>
+      <hr class="divider">
+      <div class="result-row"><span class="result-label">1구간 세액</span><span class="result-value" id="r-tax1">-</span></div>
+      <div class="result-row"><span class="result-label">2구간 세액</span><span class="result-value" id="r-tax2">-</span></div>
+      <div class="result-row"><span class="result-label">3구간 세액</span><span class="result-value" id="r-tax3">-</span></div>
+      <div class="result-row"><span class="result-label">4구간 세액</span><span class="result-value" id="r-tax4">-</span></div>
+      <hr class="divider">
+      <div class="result-row"><span class="result-label">산출세액 (법인세)</span><span class="result-value" id="r-tax">-</span></div>
+      <div class="result-row"><span class="result-label">지방소득세 (10%)</span><span class="result-value" id="r-local">-</span></div>
+      <hr class="divider">
+      <div class="result-row"><span class="result-label">총 납부세액</span><span class="result-value highlight" id="r-total">-</span></div>
+      <hr class="divider">
+      <div class="result-row"><span class="result-label">실효세율</span><span class="result-value" id="r-rate">-</span></div>
+      <div class="result-row"><span class="result-label">세후순이익</span><span class="result-value green" id="r-net">-</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">&#128203; 법인세율표</div>
+      <div class="year-selector">
+        <button class="year-btn active" id="btn-2025" onclick="setYear(2025)">2025년</button>
+        <button class="year-btn" id="btn-2026" onclick="setYear(2026)">2026년~</button>
+      </div>
+      <table class="rate-table">
+        <thead><tr><th>과세표준</th><th>세율</th></tr></thead>
+        <tbody id="rate-tbody"></tbody>
+      </table>
+      <div class="rate-note" id="rate-note"></div>
+      <div class="rate-change-note" id="rate-change-note"></div>
+    </div>
+  </div>
 <script>
-function fmt(n){ return Math.round(n).toLocaleString("ko-KR"); }
-function parse(id){ var v=document.getElementById(id).value.replace(/,/g,""); return parseFloat(v)||0; }
-function setVal(id,n,cls){
-  var el=document.getElementById(id);
-  el.textContent=fmt(n)+"원";
-  el.className="result-value"+(cls?" "+cls:"");
-}
-function calc(){
-  var rev=parse("revenue");
-  var cogs=parse("cogs");
-  var sga=parse("sga");
-  var oinc=parse("other_inc");
-  var oexp=parse("other_exp");
-  var gross=rev-cogs;
-  var op=gross-sga;
-  var pretax=op+oinc-oexp;
-  document.getElementById("gross").value=fmt(gross);
-  document.getElementById("opincome").value=fmt(op);
-  document.getElementById("pretax").value=fmt(pretax);
-  if(pretax<=0){
-    setVal("r-pretax",pretax,"red");
-    ["r-taxbase","r-tax1","r-tax2","r-tax","r-local","r-total","r-net","r-rate"].forEach(function(id){
-      document.getElementById(id).textContent=pretax===0?"-":"결손 (납부세액 없음)";
-      document.getElementById(id).className="result-value";
-    });
-    return;
-  }
-  var taxbase=pretax;
-  var tax1=Math.min(taxbase,200000000)*0.09;
-  var tax2=taxbase>200000000?(taxbase-200000000)*0.19:0;
-  var tax=tax1+tax2;
-  var local=tax*0.1;
-  var total=tax+local;
-  var net=pretax-total;
-  var rate=total/pretax*100;
-  setVal("r-pretax",pretax);
-  setVal("r-taxbase",taxbase);
-  setVal("r-tax1",tax1);
-  setVal("r-tax2",tax2);
-  setVal("r-tax",tax);
-  setVal("r-local",local);
-  setVal("r-total",total,"highlight");
-  setVal("r-net",net,"green");
-  document.getElementById("r-rate").textContent=rate.toFixed(1)+"%";
-  document.getElementById("r-rate").className="result-value";
-}
-function fmtInput(el){
-  var v=el.value.replace(/,/g,"").replace(/[^0-9]/g,"");
-  if(v) el.value=parseInt(v).toLocaleString("ko-KR");
-  calc();
-}
-["revenue","cogs","sga","other_inc","other_exp"].forEach(function(id){
-  var el=document.getElementById(id);
-  el.addEventListener("input",function(){ fmtInput(this); });
-  el.addEventListener("focus",function(){ this.select(); });
-});
-document.getElementById("reset-btn").addEventListener("click",function(){
-  ["revenue","cogs","sga","other_inc","other_exp","gross","opincome","pretax"].forEach(function(id){
-    document.getElementById(id).value="";
-  });
-  ["r-pretax","r-taxbase","r-tax1","r-tax2","r-tax","r-local","r-total","r-net","r-rate"].forEach(function(id){
-    document.getElementById(id).textContent="-";
-    document.getElementById(id).className="result-value";
-  });
-});
+var currentYear=2025;
+var RATES={2025:[{limit:200000000,rate:0.09,label:'2억 이하',rateLabel:'9%'},{limit:20000000000,rate:0.19,label:'2억 ~ 200억',rateLabel:'19%'},{limit:300000000000,rate:0.21,label:'200억 ~ 3,000억',rateLabel:'21%'},{limit:Infinity,rate:0.24,label:'3,000억 초과',rateLabel:'24%'}],2026:[{limit:200000000,rate:0.10,label:'2억 이하',rateLabel:'10%'},{limit:20000000000,rate:0.20,label:'2억 ~ 200억',rateLabel:'20%'},{limit:300000000000,rate:0.22,label:'200억 ~ 3,000억',rateLabel:'22%'},{limit:Infinity,rate:0.25,label:'3,000억 초과',rateLabel:'25%'}]};
+function setYear(y){currentYear=y;document.getElementById('btn-2025').classList.toggle('active',y===2025);document.getElementById('btn-2026').classList.toggle('active',y===2026);renderRateTable(-1);calc();}
+function calcTax(p,y){var r=RATES[y],rem=p,prev=0,t=[];for(var i=0;i<r.length;i++){var b=Math.min(rem,(r[i].limit===Infinity?rem:r[i].limit)-prev);if(b<=0){t.push(0);continue;}t.push(b*r[i].rate);rem-=b;prev=r[i].limit===Infinity?prev:r[i].limit;if(rem<=0)break;}while(t.length<4)t.push(0);return t;}
+function getActiveRow(p,y){var r=RATES[y];if(p<=0)return -1;for(var i=0;i<r.length;i++){if(p<=r[i].limit)return i;}return r.length-1;}
+function renderRateTable(activeRow){var r=RATES[currentYear],h='';for(var i=0;i<r.length;i++){var c=i===activeRow?' class="active-row"':'';h+='<tr'+c+'><td>'+r[i].label+'</td><td>'+r[i].rateLabel+'</td></tr>';}document.getElementById('rate-tbody').innerHTML=h;document.getElementById('rate-note').textContent='※ 지방소득세(10%) 별도';document.getElementById('rate-change-note').textContent=currentYear===2025?'⚠️ 2026년 1월 1일 이후 개시 사업연도부터 전 구간 1%p 인상':'✅ 2026년 1월 1일 이후 개시 사업연도 적용 세율';}
+function fmt(n){return Math.round(n).toLocaleString('ko-KR');}
+function setVal(id,val,cls){var el=document.getElementById(id);if(!el)return;el.textContent=val;el.className='result-value'+(cls?' '+cls:'');}
+function calc(){var g=function(id){return parseInt(document.getElementById(id).value.replace(/,/g,'')||0)||0;};var rev=g('revenue'),cogs=g('cogs'),sga=g('sga'),oi=g('other_inc'),oe=g('other_exp');var gross=rev-cogs,op=gross-sga,pretax=op+oi-oe;document.getElementById('gross').value=gross?fmt(gross):'';document.getElementById('opincome').value=op?fmt(op):'';document.getElementById('pretax').value=pretax?fmt(pretax):'';if(pretax<=0){['r-pretax','r-taxbase','r-tax1','r-tax2','r-tax3','r-tax4','r-tax','r-local','r-total','r-net'].forEach(function(id){document.getElementById(id).textContent='-';});document.getElementById('r-rate').textContent='-';renderRateTable(-1);return;}var taxes=calcTax(pretax,currentYear),tax=taxes.reduce(function(a,b){return a+b;},0),local=tax*0.1,total=tax+local,net=pretax-total,rate=total/pretax*100;renderRateTable(getActiveRow(pretax,currentYear));setVal('r-pretax',fmt(pretax));setVal('r-taxbase',fmt(pretax));setVal('r-tax1',taxes[0]?fmt(taxes[0]):'-');setVal('r-tax2',taxes[1]?fmt(taxes[1]):'-');setVal('r-tax3',taxes[2]?fmt(taxes[2]):'-');setVal('r-tax4',taxes[3]?fmt(taxes[3]):'-');setVal('r-tax',fmt(tax));setVal('r-local',fmt(local));setVal('r-total',fmt(total),'highlight');setVal('r-net',fmt(net),net>=0?'green':'red');document.getElementById('r-rate').textContent=rate.toFixed(1)+'%';}
+function fmtInput(el){var v=el.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(v)el.value=parseInt(v).toLocaleString('ko-KR');calc();}
+['revenue','cogs','sga','other_inc','other_exp'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
+document.getElementById('reset-btn').addEventListener('click',function(){['revenue','cogs','sga','other_inc','other_exp','gross','opincome','pretax'].forEach(function(id){document.getElementById(id).value='';});['r-pretax','r-taxbase','r-tax1','r-tax2','r-tax3','r-tax4','r-tax','r-local','r-total','r-net'].forEach(function(id){document.getElementById(id).textContent='-';});document.getElementById('r-rate').textContent='-';renderRateTable(-1);});
+renderRateTable(-1);
 </script>
 </body>
 </html>
