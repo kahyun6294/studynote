@@ -19,7 +19,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .sec-title { font-size:11px; font-weight:900; color:#94a3b8; letter-spacing:0.08em; margin-bottom:18px; }
 .section.biz-sec { border-top:3px solid #10B981; }
 .section.wage-sec { border-top:3px solid #10B981; }
-.section.ded-sec { border-top:3px solid #F59E0B; }
 .section.res-sec { border-top:3px solid #6366F1; }
 .section.rate-sec { border-top:3px solid #94a3b8; }
 .rate-table { width:100%; border-collapse:collapse; font-size:11px; }
@@ -28,12 +27,11 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .rate-table td { padding:6px 6px; border-bottom:1px solid #f8fafc; color:#374151; text-align:right; }
 .rate-table td:first-child { text-align:left; color:#6b7280; }
 .rate-table tr.active td { background:#EEF2FF; color:#6366F1; font-weight:900; }
-.rate-table tr.active td:first-child { color:#6366F1; }
 .row { display:flex; align-items:center; padding:5px 0; gap:12px; }
 .lbl { flex:1; font-size:13px; color:#374151; }
 .lbl.bold { font-weight:700; }
 .lbl.indent { padding-left:18px; font-size:12px; color:#6b7280; }
-.inp { width:150px; border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 10px; font-size:12px; font-family:inherit; outline:none; text-align:right; transition:border-color 0.15s; }
+.inp { width:150px; border:1.5px solid #e5e7eb; border-radius:8px; padding:8px 10px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
 .inp:focus { border-color:#10B981; }
 .inp.auto { background:#f0fdf4; border-color:#bbf7d0; color:#15803d; font-weight:700; cursor:default; }
 .inp.ro { background:#f8fafc; border-color:#f0f0f0; color:#374151; font-weight:700; cursor:default; }
@@ -97,16 +95,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .modal-field { margin-bottom:14px; }
 .modal-label { font-size:11px; font-weight:700; color:#64748b; margin-bottom:6px; }
 .modal-select { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; }
-.modal-select:focus { border-color:#10B981; }
 .modal-input { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
-.modal-input:focus { border-color:#10B981; }
 .modal-result { background:#ECFDF5; border-radius:10px; padding:14px; margin:16px 0; display:flex; justify-content:space-between; align-items:center; }
 .modal-result-label { font-size:12px; color:#10B981; font-weight:700; }
 .modal-result-value { font-size:18px; font-weight:900; color:#10B981; }
 .modal-actions { display:flex; gap:8px; margin-top:4px; }
 .modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
 .modal-apply { flex:2; padding:10px; background:#10B981; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
-.modal-apply:hover { background:#059669; }
 .employ-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px; }
 .employ-overlay.open { display:flex; }
 .employ-modal { background:#f0f2f5; border-radius:20px; width:100%; max-width:1100px; margin:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
@@ -116,14 +111,12 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .employ-modal-body { padding:20px 24px; }
 .employ-modal-footer { background:#fff; border-radius:0 0 20px 20px; padding:16px 24px; display:flex; gap:10px; justify-content:flex-end; border-top:1px solid #e5e7eb; }
 .close-btn { background:none; border:none; font-size:20px; color:#94a3b8; cursor:pointer; padding:4px; line-height:1; }
-.close-btn:hover { color:#374151; }
 .ec-settings { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:16px; }
 .ec-card { background:#fff; border-radius:14px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
 .ec-card-title { font-size:10px; font-weight:900; color:#94a3b8; letter-spacing:.05em; margin-bottom:12px; text-transform:uppercase; }
-.ec-field { margin-bottom:8px; }.ec-field:last-child { margin-bottom:0; }
+.ec-field { margin-bottom:8px; }
 .ec-field label { display:block; font-size:10px; font-weight:700; color:#64748b; margin-bottom:4px; }
 .ec-field select { width:100%; border:1.5px solid #e2e8f0; border-radius:8px; padding:6px 10px; font-size:11px; font-family:inherit; outline:none; background:#fff; }
-.ec-field select:focus { border-color:#6366F1; }
 .ec-info-row { display:flex; justify-content:space-between; align-items:center; padding:4px 0; border-bottom:1px solid #f8fafc; }
 .ec-info-row:last-child { border-bottom:none; }
 .ec-info-label { font-size:10px; color:#64748b; }
@@ -141,16 +134,15 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .ec-wtable td:first-child { font-weight:700; color:#64748b; font-size:10px; }
 .ec-wtable td.auto-cell { background:#f8fafc; }
 .ec-wtable input { width:68px; border:1.5px solid #e2e8f0; border-radius:6px; padding:4px 6px; font-size:11px; font-family:inherit; text-align:center; outline:none; }
-.ec-wtable input:focus { border-color:#6366F1; }
 .ec-wtable input.auto-inp { background:#EEF2FF; border-color:#c7d2fe; color:#4f46e5; font-weight:700; cursor:default; }
 .ec-auto { background:#f8fafc; color:#64748b; font-size:11px; text-align:center; border-radius:6px; padding:4px 8px; display:inline-block; min-width:60px; }
-.ec-auto.pos { color:#10B981; font-weight:700; }.ec-auto.neg { color:#ef4444; font-weight:700; }
+.ec-auto.pos { color:#10B981; font-weight:700; }
+.ec-auto.neg { color:#ef4444; font-weight:700; }
 .ec-extra { background:#f8fafc; border-radius:8px; padding:10px 12px; margin-top:10px; }
 .ec-extra-title { font-size:9px; font-weight:900; color:#6366F1; margin-bottom:8px; }
-.ec-extra-row { display:flex; align-items:center; gap:6px; margin-bottom:5px; }.ec-extra-row:last-child { margin-bottom:0; }
+.ec-extra-row { display:flex; align-items:center; gap:6px; margin-bottom:5px; }
 .ec-extra-label { font-size:10px; color:#64748b; font-weight:700; min-width:90px; }
 .ec-extra-input { width:60px; border:1.5px solid #e2e8f0; border-radius:6px; padding:4px 6px; font-size:11px; font-family:inherit; text-align:center; outline:none; }
-.ec-extra-input:focus { border-color:#6366F1; }
 .ec-jing-section { background:#fff5f5; border-radius:8px; padding:10px 12px; margin-top:8px; }
 .ec-jing-title { font-size:9px; font-weight:900; color:#ef4444; margin-bottom:8px; }
 .ec-summary { background:#fff; border-radius:14px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); margin-bottom:16px; }
@@ -166,22 +158,22 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .ec-tag-gray { background:#f1f5f9; color:#64748b; }
 .ec-highlight { background:#EEF2FF; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
 /* ===== 인쇄/PDF ===== */
-.print-bar { max-width:1100px; margin:0 auto 16px; display:flex; gap:10px; justify-content:flex-end; }
-.print-btn { padding:10px 20px; background:#10B981; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(16,185,129,0.25); }
+.print-bar { margin-bottom:16px; display:flex; justify-content:flex-end; }
+.print-btn { padding:10px 22px; background:#10B981; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 2px 8px rgba(16,185,129,0.3); }
 .print-btn:hover { background:#059669; }
 .print-hd { display:none; }
 @media print {
-  body { background:#fff !important; padding:10px 16px !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .back-btn,.reset-btn,.calc-btn,.add-btn,.toggle-row,.print-bar,.modal-overlay,.employ-overlay { display:none !important; }
-  .container { max-width:100%; }
-  .header { margin-bottom:10px; }
-  .header h1 { font-size:18px; }
-  .header p { display:none; }
-  .layout { grid-template-columns:1fr 1fr 1fr 170px; gap:8px; }
-  .section { box-shadow:none !important; border:1px solid #e5e7eb; border-radius:6px; padding:12px; break-inside:avoid; }
+  body { background:#fff!important; padding:8px 14px!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .back-btn,.reset-btn,.calc-btn,.print-bar,.modal-overlay,.employ-overlay,.add-btn,.cnt-btn,.toggle { display:none!important; }
+  .header { margin-bottom:8px; }
+  .header h1 { font-size:17px; }
+  .header p { font-size:10px; }
+  .layout { grid-template-columns:1fr 1fr 1fr 170px; gap:8px; max-width:100%; }
+  .section { box-shadow:none!important; border:1px solid #ddd; border-radius:6px; padding:11px; break-inside:avoid; }
   .sec-title { font-size:10px; margin-bottom:10px; }
   .lbl { font-size:11px; }
-  .inp { padding:4px 8px !important; font-size:11px !important; width:120px; }
+  .inp { font-size:11px!important; padding:4px 7px!important; border:1px solid #ddd!important; width:120px; }
+  .sub-row { padding:7px 10px; }
   .sub-lbl { font-size:11px; }
   .sub-val { font-size:13px; }
   .ded-item { padding:6px 8px; margin-bottom:4px; }
@@ -192,11 +184,11 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   .rv { font-size:11px; }
   .rv.total { font-size:13px; }
   .rate-table { font-size:10px; }
-  .wage-fields { max-height:none !important; overflow:visible !important; }
-  .print-hd { display:block !important; border-bottom:2px solid #10B981; padding-bottom:8px; margin-bottom:14px; }
-  .print-hd-title { font-size:16px; font-weight:900; color:#1a1a2e; }
-  .print-hd-info { display:flex; gap:16px; margin-top:4px; font-size:10px; color:#64748b; flex-wrap:wrap; }
-  .print-hd-badge { background:#ECFDF5; color:#059669; border-radius:4px; padding:1px 7px; font-size:10px; font-weight:700; }
+  .wage-fields { max-height:none!important; }
+  .print-hd { display:block!important; border-bottom:2px solid #10B981; padding-bottom:6px; margin-bottom:10px; }
+  .print-hd-title { font-size:14px; font-weight:900; color:#1a1a2e; }
+  .print-hd-info { display:flex; gap:14px; margin-top:3px; font-size:10px; color:#64748b; align-items:center; }
+  .print-hd-badge { background:#ECFDF5; color:#059669; border-radius:4px; padding:1px 6px; font-size:9px; font-weight:700; }
 }
 @media(max-width:900px){ .layout{ grid-template-columns:1fr 1fr; } }
 @media(max-width:600px){ .layout{ grid-template-columns:1fr; } }
@@ -204,14 +196,14 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 </head>
 <body>
 <div class="container">
-<!-- 인쇄용 헤더 (화면에선 숨겨짐) -->
+<a class="back-btn" href="tax-main.html">&#8592; 메인으로</a>
+<!-- 인쇄용 헤더 -->
 <div class="print-hd" id="print-hd">
   <div class="print-hd-title">&#129534; 종합소득세 추정 계산 내역</div>
-  <div class="print-hd-info"><span id="ph-date"></span><span class="print-hd-badge">참고용 계산</span><span>※ 실제 납부세액은 달라질 수 있습니다</span></div>
+  <div class="print-hd-info"><span id="ph-date"></span><span class="print-hd-badge">종합소득세</span><span style="color:#aaa;">| 참고용 추정 계산입니다</span></div>
 </div>
 <!-- 인쇄 버튼 -->
 <div class="print-bar"><button class="print-btn" onclick="doPrint()">&#128424;&#65039; PDF 저장 / 인쇄</button></div>
-<a class="back-btn" href="tax-main.html">&#8592; 메인으로</a>
 <div class="header"><h1>&#129534; 종합소득세 추정 계산기</h1><p>세액공제 미반영 단순 참고용</p></div>
 <div class="layout">
   <div style="display:flex;flex-direction:column;gap:14px;">
@@ -244,13 +236,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
       <div class="wage-fields" id="wage-fields">
         <hr class="divd" style="margin-top:10px;">
         <div class="row"><span class="lbl bold">총급여</span><input class="inp" id="wage" type="text" placeholder="0"/></div>
-        <div class="row"><span class="lbl indent">근로소득공제 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="wage-ded" type="text" readonly placeholder="-"/></div>
-        <div class="row"><span class="lbl indent">근로소득금액 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="wage-net" type="text" readonly placeholder="-"/></div>
+        <div class="row"><span class="lbl indent">근로소득공제 (자동)</span><input class="inp ro" id="wage-ded" type="text" readonly placeholder="-"/></div>
+        <div class="row"><span class="lbl indent">근로소득금액 (자동)</span><input class="inp auto" id="wage-net" type="text" readonly placeholder="-"/></div>
       </div>
     </div>
   </div>
   <div style="display:flex;flex-direction:column;gap:14px;">
-    <div class="section ded-sec">
+    <div class="section" style="border-top:3px solid #F59E0B;">
       <div class="sec-title">&#9314; 소득공제</div>
       <div class="row" style="margin-bottom:8px;"><span class="lbl bold">인적공제</span></div>
       <div class="per-row"><span class="per-lbl">본인</span><span style="font-size:12px;font-weight:700;color:#374151;margin-left:auto;">1명 × 150만원</span></div>
@@ -259,7 +251,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
         <div class="counter"><button class="cnt-btn" data-id="c-dep" data-d="-1">&#8722;</button><span class="cnt-val" id="c-dep">0</span><button class="cnt-btn" data-id="c-dep" data-d="1">+</button></div>
         <span class="per-amt">× 150만원</span>
       </div>
-      <div class="row" style="margin-top:6px;"><span class="lbl indent">인적공제 합계 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="per-ded" type="text" readonly placeholder="-"/></div>
+      <div class="row" style="margin-top:6px;"><span class="lbl indent">인적공제 합계 (자동)</span><input class="inp auto" id="per-ded" type="text" readonly placeholder="-"/></div>
       <hr class="divd">
       <div class="row"><span class="lbl bold">노란우산공제</span><input class="inp" id="yellow" type="text" placeholder="0"/></div>
       <div class="row"><span class="lbl bold">국민연금보험료</span><input class="inp" id="pension" type="text" placeholder="0"/></div>
@@ -271,7 +263,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
       <div class="ded-item"><div class="ded-item-title">중소기업 특별세액감면</div><div class="ded-item-desc">업종·지역별 10~30% 감면</div><div class="ded-row"><input type="text" id="d-sme" placeholder="0"/><button class="calc-btn" onclick="openModal('sme')">계산하기</button></div></div>
       <div class="ded-item"><div class="ded-item-title">창업중소기업 세액감면</div><div class="ded-item-desc">창업 후 5년간 50% 감면</div><div class="ded-row"><input type="text" id="d-startup" placeholder="0"/><button class="calc-btn" onclick="openModal('startup')">계산하기</button></div></div>
       <div class="ded-item"><div class="ded-item-title">R&amp;D 세액공제</div><div class="ded-item-desc">중소 25% / 중견 8% / 대기업 2%</div><div class="ded-row"><input type="text" id="d-rnd" placeholder="0"/><button class="calc-btn" onclick="openModal('rnd')">계산하기</button></div></div>
-      <div class="ded-item"><div class="ded-item-title">통합고용세액공제</div><div class="ded-item-desc">전년 대비 증가인원 × 1인당 공제액 (청년등/일반 + 추가공제 + 추징)</div><div class="ded-row"><input type="text" id="d-employ" placeholder="0"/><button class="calc-btn" onclick="openEmployModal()">계산하기</button></div></div>
+      <div class="ded-item"><div class="ded-item-title">통합고용세액공제</div><div class="ded-item-desc">전년 대비 증가인원 × 1인당 공제액</div><div class="ded-row"><input type="text" id="d-employ" placeholder="0"/><button class="calc-btn" onclick="openEmployModal()">계산하기</button></div></div>
     </div>
   </div>
   <div class="section res-sec">
@@ -317,36 +309,20 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   <div class="employ-modal">
     <div class="employ-modal-header">
       <div><div class="employ-modal-title">&#128100; 통합고용세액공제 계산기</div><div class="employ-modal-sub">조특법 §29의8 | 기본공제 + 추가공제 + 추징 (참고용)</div></div>
-      <button class="close-btn" onclick="closeEmployModal()">✕</button>
+      <button class="close-btn" onclick="closeEmployModal()">&#10005;</button>
     </div>
     <div class="employ-modal-body">
       <div class="ec-settings">
-        <div class="ec-card">
-          <div class="ec-card-title">⚙️ 기본 설정</div>
-          <div class="ec-field"><label>기업구분</label><select id="ec-corp" onchange="ecRecalc()"><option value="sme">중소기업</option><option value="mid">중견기업</option><option value="big">대기업</option></select></div>
-          <div class="ec-field" id="ec-region-wrap"><label>사업장 소재지</label><select id="ec-region" onchange="ecRecalc()"><option value="metro">수도권 내</option><option value="local">수도권 밖</option></select></div>
-          <div class="ec-field"><label>최초 공제 귀속연도</label><select id="ec-base-year" onchange="ecBuildYears()"><option value="2023">2023년</option><option value="2024">2024년</option><option value="2025" selected>2025년</option></select></div>
-        </div>
-        <div class="ec-card">
-          <div class="ec-card-title">&#128203; 1인당 공제액</div>
-          <div class="ec-info-row"><span class="ec-info-label">청년등 기본공제</span><span class="ec-info-val" id="ec-info-youth">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">청년외 기본공제</span><span class="ec-info-val" id="ec-info-general">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">정규직 전환 (추가)</span><span class="ec-info-val" id="ec-info-convert">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">육아휴직 복귀 (추가)</span><span class="ec-info-val" id="ec-info-parental">-</span></div>
-          <div class="ec-note">청년등 = 청년(15~34세)·장애인·60세이상·경력단절여성</div>
-        </div>
+        <div class="ec-card"><div class="ec-card-title">기본 설정</div><div class="ec-field"><label>기업구분</label><select id="ec-corp" onchange="ecRecalc()"><option value="sme">중소기업</option><option value="mid">중견기업</option><option value="big">대기업</option></select></div><div class="ec-field" id="ec-region-wrap"><label>사업장 소재지</label><select id="ec-region" onchange="ecRecalc()"><option value="metro">수도권 내</option><option value="local">수도권 밖</option></select></div><div class="ec-field"><label>최초 공제 귀속연도</label><select id="ec-base-year" onchange="ecBuildYears()"><option value="2023">2023년</option><option value="2024">2024년</option><option value="2025" selected>2025년</option></select></div></div>
+        <div class="ec-card"><div class="ec-card-title">1인당 공제액</div><div class="ec-info-row"><span class="ec-info-label">청년등 기본공제</span><span class="ec-info-val" id="ec-info-youth">-</span></div><div class="ec-info-row"><span class="ec-info-label">청년외 기본공제</span><span class="ec-info-val" id="ec-info-general">-</span></div><div class="ec-info-row"><span class="ec-info-label">정규직 전환 (추가)</span><span class="ec-info-val" id="ec-info-convert">-</span></div><div class="ec-info-row"><span class="ec-info-label">육아휴직 복귀 (추가)</span><span class="ec-info-val" id="ec-info-parental">-</span></div><div class="ec-note">청년등 = 청년(15~34세)·장애인·60세이상·경력단절여성</div></div>
       </div>
-      <div style="font-size:12px;font-weight:900;color:#334155;margin-bottom:10px;">&#128229; 연도별 상시근로자 입력</div>
+      <div style="font-size:12px;font-weight:900;color:#334155;margin-bottom:10px;">연도별 상시근로자 입력</div>
       <div class="ec-year-grid" id="ec-years-container"></div>
-      <div class="ec-summary">
-        <div class="ec-card-title">&#128202; 연도별 공제·추징 요약</div>
-        <div id="ec-summary-wrap"></div>
-        <div id="ec-total-box" style="margin-top:10px;"></div>
-      </div>
+      <div class="ec-summary"><div class="ec-card-title">연도별 공제·추징 요약</div><div id="ec-summary-wrap"></div><div id="ec-total-box" style="margin-top:10px;"></div></div>
     </div>
     <div class="employ-modal-footer">
       <button class="modal-cancel" onclick="closeEmployModal()">닫기</button>
-      <button class="modal-apply" style="background:#10B981;" onclick="applyEmploy()">✓ 이 연도 공제액 적용하기</button>
+      <button class="modal-apply" style="background:#10B981;" onclick="applyEmploy()">&#10003; 이 연도 공제액 적용하기</button>
     </div>
   </div>
 </div>
@@ -369,16 +345,16 @@ document.getElementById('wage-toggle').addEventListener('change',function(){var 
 document.querySelectorAll('.cnt-btn[data-id]').forEach(function(btn){btn.addEventListener('click',function(){var tid=this.getAttribute('data-id');var d=parseInt(this.getAttribute('data-d'));var el=document.getElementById(tid);var v=parseInt(el.textContent)||0;v=Math.max(0,v+d);el.textContent=v;calc();});});
 document.getElementById('add-sga').addEventListener('click',function(){addSgaRow('','');});
 document.getElementById('reset-btn').addEventListener('click',function(){['revenue','inv-begin','purchase','inv-end','cogs','sga-total','wage','wage-ded','wage-net','yellow','pension','biz-income','prepaid','d-sme','d-startup','d-rnd','d-employ'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('sga-list').innerHTML='';sgaCnt=0;document.getElementById('c-dep').textContent='0';document.getElementById('wage-toggle').checked=false;document.getElementById('wage-fields').classList.remove('open');addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();});
+function doPrint(){var d=new Date();var el=document.getElementById('ph-date');if(el)el.textContent='출력일: '+d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();setTimeout(function(){window.print();},80);}
 function getTax(){var el=document.getElementById('r-tax');return el?(parseInt((el.textContent||'').replace(/[^0-9]/g,''))||0):0;}
 function fmtM(el){var v=el.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(v)el.value=parseInt(v).toLocaleString('ko-KR');updateModalResult();}
-function openModal(type){currentModalType=type;var tax=getTax();var html='';if(type==='sme'){html='<div class="modal-title">&#127381; 중소기업 특별세액감면 계산</div><div class="modal-sub">업종·지역에 따라 산출세액의 10~30% 감면</div><div class="modal-field"><div class="modal-label">지역</div><select class="modal-select" id="m-region"><option value="0">수도권 과밀억제권역</option><option value="1">수도권 외 지역</option></select></div><div class="modal-field"><div class="modal-label">업종</div><select class="modal-select" id="m-sector"><option value="10">도소매·음식·숙박·서비스업 (10%)</option><option value="20">제조업·건설업·물류업 (20%)</option><option value="30">제조업 수도권 외 (30%)</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='startup'){html='<div class="modal-title">&#127381; 창업중소기업 세액감면 계산</div><div class="modal-sub">창업 후 5년간 산출세액의 50% 감면<br>(수도권 과밀억제권역 외 특정 업종)</div><div class="modal-field"><div class="modal-label">창업연도</div><select class="modal-select" id="m-startyear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option><option value="2021">2021년</option></select></div><div class="modal-field"><div class="modal-label">귀속연도</div><select class="modal-select" id="m-curyear"><option value="2025">2025년</option><option value="2026">2026년</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='rnd'){html='<div class="modal-title">&#127381; R&amp;D 세액공제 계산</div><div class="modal-sub">당기 연구개발비 × 공제율<br>중소기업 25% / 중견기업 8% / 대기업 2%</div><div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-corp"><option value="25">중소기업 (25%)</option><option value="8">중견기업 (8%)</option><option value="2">대기업 (2%)</option></select></div><div class="modal-field"><div class="modal-label">당기 연구개발비</div><input class="modal-input" id="m-rndamt" placeholder="0"/></div>';}html+='<div class="modal-result"><span class="modal-result-label">공제·감면 예상액</span><span class="modal-result-value" id="m-result">0원</span></div><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">취소</button><button class="modal-apply" onclick="applyModal()">적용하기</button></div>';document.getElementById('modal-body').innerHTML=html;document.getElementById('modal-overlay').classList.add('open');document.querySelectorAll('.modal-input').forEach(function(el){el.addEventListener('input',function(){fmtM(this);});el.addEventListener('focus',function(){this.select();});});document.querySelectorAll('.modal-select').forEach(function(el){el.addEventListener('change',updateModalResult);});updateModalResult();}
-function updateModalResult(){var result=0;if(currentModalType==='sme'){var taxEl=document.getElementById('m-tax'),secEl=document.getElementById('m-sector'),regEl=document.getElementById('m-region');if(taxEl&&secEl&&regEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;var rate=parseInt(secEl.value)||10;if(regEl.value==='0'&&rate===30)rate=20;result=Math.round(tax*rate/100);}}else if(currentModalType==='startup'){var taxEl=document.getElementById('m-tax'),sy=parseInt((document.getElementById('m-startyear')||{}).value||2025),cy=parseInt((document.getElementById('m-curyear')||{}).value||2025);if(taxEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;result=(cy-sy+1>=1&&cy-sy+1<=5)?Math.round(tax*0.5):0;}}else if(currentModalType==='rnd'){var amtEl=document.getElementById('m-rndamt'),corpEl=document.getElementById('m-corp');if(amtEl&&corpEl){result=Math.round((parseInt((amtEl.value||'').replace(/,/g,''))||0)*(parseInt(corpEl.value)||25)/100);}}var el=document.getElementById('m-result');if(el)el.textContent=fmt(result)+'원';window._modalResult=result;}
-function applyModal(){var result=window._modalResult||0;var targetId={'sme':'d-sme','startup':'d-startup','rnd':'d-rnd'}[currentModalType];if(targetId){document.getElementById(targetId).value=result?fmt(result):'';calc();}closeModal();}
+function openModal(type){currentModalType=type;var tax=getTax();var html='';if(type==='sme'){html='<div class="modal-title">중소기업 특별세액감면 계산</div><div class="modal-sub">업종·지역에 따라 산출세액의 10~30% 감면</div><div class="modal-field"><div class="modal-label">지역</div><select class="modal-select" id="m-region"><option value="0">수도권 과밀억제권역</option><option value="1">수도권 외 지역</option></select></div><div class="modal-field"><div class="modal-label">업종</div><select class="modal-select" id="m-sector"><option value="10">도소매·음식·숙박·서비스업 (10%)</option><option value="20">제조업·건설업·물류업 (20%)</option><option value="30">제조업 수도권 외 (30%)</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='startup'){html='<div class="modal-title">창업중소기업 세액감면 계산</div><div class="modal-sub">창업 후 5년간 산출세액의 50% 감면</div><div class="modal-field"><div class="modal-label">창업연도</div><select class="modal-select" id="m-startyear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option><option value="2021">2021년</option></select></div><div class="modal-field"><div class="modal-label">귀속연도</div><select class="modal-select" id="m-curyear"><option value="2025">2025년</option><option value="2026">2026년</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='rnd'){html='<div class="modal-title">R&D 세액공제 계산</div><div class="modal-sub">당기 연구개발비 × 공제율</div><div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-corp"><option value="25">중소기업 (25%)</option><option value="8">중견기업 (8%)</option><option value="2">대기업 (2%)</option></select></div><div class="modal-field"><div class="modal-label">당기 연구개발비</div><input class="modal-input" id="m-rndamt" placeholder="0"/></div>';}html+='<div class="modal-result"><span class="modal-result-label">공제·감면 예상액</span><span class="modal-result-value" id="m-result">0원</span></div><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">취소</button><button class="modal-apply" onclick="applyModal()">적용하기</button></div>';document.getElementById('modal-body').innerHTML=html;document.getElementById('modal-overlay').classList.add('open');document.querySelectorAll('.modal-input').forEach(function(el){el.addEventListener('input',function(){fmtM(this);});el.addEventListener('focus',function(){this.select();});});document.querySelectorAll('.modal-select').forEach(function(el){el.addEventListener('change',updateModalResult);});updateModalResult();}
+function updateModalResult(){var result=0;if(currentModalType==='sme'){var taxEl=document.getElementById('m-tax'),secEl=document.getElementById('m-sector'),regEl=document.getElementById('m-region');if(taxEl&&secEl&&regEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0,rate=parseInt(secEl.value)||10;if(regEl.value==='0'&&rate===30)rate=20;result=Math.round(tax*rate/100);}}else if(currentModalType==='startup'){var taxEl=document.getElementById('m-tax'),sy=parseInt((document.getElementById('m-startyear')||{}).value||2025),cy=parseInt((document.getElementById('m-curyear')||{}).value||2025);if(taxEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;result=(cy-sy+1>=1&&cy-sy+1<=5)?Math.round(tax*0.5):0;}}else if(currentModalType==='rnd'){var amtEl=document.getElementById('m-rndamt'),corpEl=document.getElementById('m-corp');if(amtEl&&corpEl)result=Math.round((parseInt((amtEl.value||'').replace(/,/g,''))||0)*(parseInt(corpEl.value)||25)/100);}var el=document.getElementById('m-result');if(el)el.textContent=fmt(result)+'원';window._modalResult=result;}
+function applyModal(){var result=window._modalResult||0,targetId={'sme':'d-sme','startup':'d-startup','rnd':'d-rnd'}[currentModalType];if(targetId){document.getElementById(targetId).value=result?fmt(result):'';calc();}closeModal();}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
 var EC_RATES={sme:{metro:{youth:14500000,general:8500000},local:{youth:15500000,general:9500000},convert:13000000,parental:13000000},mid:{metro:{youth:8000000,general:4500000},local:{youth:8000000,general:4500000},convert:9000000,parental:9000000},big:{metro:{youth:4000000,general:0},local:{youth:4000000,general:0},convert:0,parental:0}};
-var EC_MAX={sme:3,mid:3,big:2};
-var ecLastResult=[];
+var EC_MAX={sme:3,mid:3,big:2};var ecLastResult=[];
 function openEmployModal(){document.getElementById('employ-overlay').classList.add('open');ecBuildYears();}
 function closeEmployModal(){document.getElementById('employ-overlay').classList.remove('open');}
 document.getElementById('employ-overlay').addEventListener('click',function(e){if(e.target===this)closeEmployModal();});
@@ -388,7 +364,7 @@ function ecSetText(id,t){var el=document.getElementById(id);if(el)el.textContent
 function ecSetHtml(id,h){var el=document.getElementById(id);if(el)el.innerHTML=h;}
 function ecGetRates(){var c=ecVal('ec-corp'),r=ecVal('ec-region'),rv=EC_RATES[c][r];return{youth:rv.youth,general:rv.general,convert:EC_RATES[c].convert,parental:EC_RATES[c].parental};}
 function ecUpdateInfo(){var r=ecGetRates();function lbl(v){return v?fmt(v/10000)+'만원':'해당없음';}ecSetText('ec-info-youth',lbl(r.youth));ecSetText('ec-info-general',lbl(r.general));ecSetText('ec-info-convert',lbl(r.convert));ecSetText('ec-info-parental',lbl(r.parental));document.getElementById('ec-region-wrap').style.display=ecVal('ec-corp')==='sme'?'':'none';}
-function ecBuildYears(){var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('ec-corp'),maxY=EC_MAX[c],grid=document.getElementById('ec-years-container');grid.innerHTML='';for(var offset=0;offset<=maxY;offset++){var yr=baseYear-1+offset,isBase=(offset===0),card=document.createElement('div');card.className='ec-year-card';var badge=isBase?'<span class="ec-badge ec-badge-gray">기준(전년)</span>':'<span class="ec-badge">'+offset+'차 공제</span>';var h='<div class="ec-year-title">'+badge+'<span style="color:'+(isBase?'#64748b':'#6366F1')+';">'+yr+'년</span></div><table class="ec-wtable"><thead><tr><th>구분</th><th>인원수(명)</th><th>전년비</th></tr></thead><tbody><tr><td>청년등</td><td><input type="text" id="ec-youth-'+yr+'" placeholder="0" oninput="ecWorkerInput(this,'+yr+')" onfocus="this.select()"/></td><td><span id="ec-dy-'+yr+'" class="ec-auto">-</span></td></tr><tr><td>청년외</td><td><input type="text" id="ec-general-'+yr+'" placeholder="0" oninput="ecWorkerInput(this,'+yr+')" onfocus="this.select()"/></td><td><span id="ec-dg-'+yr+'" class="ec-auto">-</span></td></tr><tr><td>전체 합계</td><td class="auto-cell"><input type="text" id="ec-total-'+yr+'" class="auto-inp" readonly placeholder="자동"/></td><td><span id="ec-dt-'+yr+'" class="ec-auto">-</span></td></tr></tbody></table>';if(!isBase){h+='<div class="ec-extra"><div class="ec-extra-title">② 추가공제</div><div class="ec-extra-row"><span class="ec-extra-label">정규직 전환</span><input type="text" class="ec-extra-input" id="ec-conv-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div><div class="ec-extra-row"><span class="ec-extra-label">육아휴직 복귀</span><input type="text" class="ec-extra-input" id="ec-par-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div></div><div class="ec-jing-section"><div class="ec-jing-title">⚠️ 추징 (해당시만)</div><div class="ec-extra-row"><span class="ec-extra-label">정규직 2년내 퇴사</span><input type="text" class="ec-extra-input" id="ec-xconv-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div><div class="ec-extra-row"><span class="ec-extra-label">육아휴직 2년내 퇴사</span><input type="text" class="ec-extra-input" id="ec-xpar-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div></div>';}card.innerHTML=h;grid.appendChild(card);}ecRecalc();}
+function ecBuildYears(){var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('ec-corp'),maxY=EC_MAX[c],grid=document.getElementById('ec-years-container');grid.innerHTML='';for(var offset=0;offset<=maxY;offset++){var yr=baseYear-1+offset,isBase=(offset===0),card=document.createElement('div');card.className='ec-year-card';var badge=isBase?'<span class="ec-badge ec-badge-gray">기준(전년)</span>':'<span class="ec-badge">'+offset+'차 공제</span>';var h='<div class="ec-year-title">'+badge+'<span style="color:'+(isBase?'#64748b':'#6366F1')+';">'+yr+'년</span></div><table class="ec-wtable"><thead><tr><th>구분</th><th>인원수(명)</th><th>전년비</th></tr></thead><tbody><tr><td>청년등</td><td><input type="text" id="ec-youth-'+yr+'" placeholder="0" oninput="ecWorkerInput(this,'+yr+')" onfocus="this.select()"/></td><td><span id="ec-dy-'+yr+'" class="ec-auto">-</span></td></tr><tr><td>청년외</td><td><input type="text" id="ec-general-'+yr+'" placeholder="0" oninput="ecWorkerInput(this,'+yr+')" onfocus="this.select()"/></td><td><span id="ec-dg-'+yr+'" class="ec-auto">-</span></td></tr><tr><td>전체 합계</td><td class="auto-cell"><input type="text" id="ec-total-'+yr+'" class="auto-inp" readonly placeholder="자동"/></td><td><span id="ec-dt-'+yr+'" class="ec-auto">-</span></td></tr></tbody></table>';if(!isBase){h+='<div class="ec-extra"><div class="ec-extra-title">② 추가공제</div><div class="ec-extra-row"><span class="ec-extra-label">정규직 전환</span><input type="text" class="ec-extra-input" id="ec-conv-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div><div class="ec-extra-row"><span class="ec-extra-label">육아휴직 복귀</span><input type="text" class="ec-extra-input" id="ec-par-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div></div><div class="ec-jing-section"><div class="ec-jing-title">추징 (해당시만)</div><div class="ec-extra-row"><span class="ec-extra-label">정규직 2년내 퇴사</span><input type="text" class="ec-extra-input" id="ec-xconv-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div><div class="ec-extra-row"><span class="ec-extra-label">육아휴직 2년내 퇴사</span><input type="text" class="ec-extra-input" id="ec-xpar-'+yr+'" placeholder="0" oninput="ecRecalc()" onfocus="this.select()"/><span style="font-size:9px;color:#94a3b8;">명</span></div></div>';}card.innerHTML=h;grid.appendChild(card);}ecRecalc();}
 function ecWorkerInput(el,yr){el.value=el.value.replace(/[^0-9.]/g,'');ecUpdateTotals();ecUpdateDiffs();ecRecalc();}
 function ecGetW(yr){var y=ecNum('ec-youth-'+yr),g=ecNum('ec-general-'+yr);return{youth:y,general:g,total:y+g};}
 function ecUpdateTotals(){var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('ec-corp'),maxY=EC_MAX[c];for(var offset=0;offset<=maxY;offset++){var yr=baseYear-1+offset,w=ecGetW(yr),el=document.getElementById('ec-total-'+yr);if(el)el.value=(w.youth||w.general)?w.total.toFixed(2):'';}}
@@ -396,9 +372,8 @@ function ecUpdateDiffs(){var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('e
 function ecCalcYear(offset,baseYear,rates){var yr=baseYear-1+offset,pYr=yr-1;if(!document.getElementById('ec-youth-'+yr))return null;var cur=ecGetW(yr),prev=ecGetW(pYr),bW=ecGetW(baseYear),bWp=ecGetW(baseYear-1);var dT=cur.total-prev.total,dY=cur.youth-prev.youth,dG=cur.general-prev.general;var tInc=Math.max(0,dT),yInc=Math.min(Math.max(0,dY),tInc),gInc=Math.min(Math.max(0,dG),tInc-yInc);var dY2=yInc*rates.youth,dG2=gInc*rates.general;var conv=ecNum('ec-conv-'+yr)||0,par=ecNum('ec-par-'+yr)||0;var dConv=conv*rates.convert,dPar=par*rates.parental,dTotal=dY2+dG2+dConv+dPar;var xConv=ecNum('ec-xconv-'+yr)||0,xPar=ecNum('ec-xpar-'+yr)||0;var jConv=xConv*rates.convert,jPar=xPar*rates.parental,jEmp=0;if(offset>=2){var b0dT=bW.total-bWp.total,b0dY=bW.youth-bWp.youth;var cvT=cur.total-bWp.total,cvY=cur.youth-bWp.youth;var decT=Math.max(0,-cvT),decY=Math.max(0,-cvY);if(decT>0||decY>0){var b0D=Math.max(0,b0dY)*rates.youth+Math.max(0,b0dT-Math.max(0,b0dY))*rates.general;var j=ecCalcJing(decY,decT,b0dY,rates);if(offset===2)jEmp=Math.min(j,b0D);else if(offset===3)jEmp=Math.min(j*2,b0D*2);}}var jTotal=jConv+jPar+jEmp;return{yr,offset,dT,dY,dG,tInc,yInc,gInc,dY2,dG2,dConv,dPar,dTotal,conv,par,xConv,xPar,jConv,jPar,jEmp,jTotal};}
 function ecCalcJing(dY,dT,b0dY,rates){if(dY>=dT&&dT>0)return Math.max(0,(Math.min(Math.max(0,b0dY),dY)-dT)*(rates.youth-rates.general))+dT*rates.youth;return Math.min(dY,dT)*rates.youth+Math.min(Math.max(0,dT-dY),dT)*rates.general;}
 function ecRecalc(){ecUpdateInfo();ecUpdateTotals();ecUpdateDiffs();var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('ec-corp'),maxY=EC_MAX[c],rates=ecGetRates(),results=[];for(var offset=1;offset<=maxY;offset++){var r=ecCalcYear(offset,baseYear,rates);if(r)results.push(r);}ecRenderSummary(results);ecLastResult=results;}
-function ecRenderSummary(results){if(!results.length){ecSetHtml('ec-summary-wrap','');ecSetHtml('ec-total-box','');return;}var tD=0,tJ=0,rows=results.map(function(r){tD+=r.dTotal;tJ+=r.jTotal;var net=r.dTotal-r.jTotal,tag=r.jTotal>0?'<span class="ec-tag ec-tag-red">추징</span>':(r.dTotal>0?'<span class="ec-tag ec-tag-green">공제</span>':'<span class="ec-tag ec-tag-gray">-</span>');return'<tr><td>'+r.yr+'년 ('+r.offset+'차)</td><td>'+(r.dT>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dT.toFixed(2)+'명</span></td><td>'+(r.dY>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dY.toFixed(2)+'</span> / '+(r.dG>=0?'+':'')+r.dG.toFixed(2)+'</td><td>'+(r.dTotal>0?fmt(r.dTotal):'-')+'</td><td>'+(r.jTotal>0?'<span style="color:#ef4444">'+fmt(r.jTotal)+'</span>':'-')+'</td><td style="font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+(net!==0?fmt(Math.abs(net))+(net<0?' (납부)':''):'-')+'</td><td>'+tag+'</td></tr>';});var net=tD-tJ;ecSetHtml('ec-summary-wrap','<table class="ec-sum-table"><thead><tr><th>귀속연도</th><th>전체증감</th><th>청년등/청년외</th><th>공제액</th><th>추징액</th><th>실질공제</th><th>상태</th></tr></thead><tbody>'+rows.join('')+'<tr class="ec-total"><td>합 계</td><td></td><td></td><td>'+fmt(tD)+'</td><td>'+(tJ>0?fmt(tJ):'-')+'</td><td>'+fmt(net)+'</td><td></td></tr></tbody></table>');ecSetHtml('ec-total-box','<div class="ec-highlight"><span style="font-size:11px;font-weight:700;color:'+(net>=0?'#6366F1':'#ef4444')+';">📊 총 실질 세액공제</span><span style="font-size:16px;font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+fmt(Math.abs(net))+'원'+(net<0?' (납부)':'')+'</span></div>');}
+function ecRenderSummary(results){if(!results.length){ecSetHtml('ec-summary-wrap','');ecSetHtml('ec-total-box','');return;}var tD=0,tJ=0,rows=results.map(function(r){tD+=r.dTotal;tJ+=r.jTotal;var net=r.dTotal-r.jTotal,tag=r.jTotal>0?'<span class="ec-tag ec-tag-red">추징</span>':(r.dTotal>0?'<span class="ec-tag ec-tag-green">공제</span>':'<span class="ec-tag ec-tag-gray">-</span>');return'<tr><td>'+r.yr+'년 ('+r.offset+'차)</td><td>'+(r.dT>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dT.toFixed(2)+'명</span></td><td>'+(r.dY>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dY.toFixed(2)+'</span>/'+r.dG.toFixed(2)+'</td><td>'+(r.dTotal>0?fmt(r.dTotal):'-')+'</td><td>'+(r.jTotal>0?'<span style="color:#ef4444">'+fmt(r.jTotal)+'</span>':'-')+'</td><td style="font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+(net!==0?fmt(Math.abs(net))+(net<0?' (납부)':''):'-')+'</td><td>'+tag+'</td></tr>';});var net=tD-tJ;ecSetHtml('ec-summary-wrap','<table class="ec-sum-table"><thead><tr><th>귀속연도</th><th>전체증감</th><th>청년등/청년외</th><th>공제액</th><th>추징액</th><th>실질공제</th><th>상태</th></tr></thead><tbody>'+rows.join('')+'<tr class="ec-total"><td>합 계</td><td></td><td></td><td>'+fmt(tD)+'</td><td>'+(tJ>0?fmt(tJ):'-')+'</td><td>'+fmt(net)+'</td><td></td></tr></tbody></table>');ecSetHtml('ec-total-box','<div class="ec-highlight"><span style="font-size:11px;font-weight:700;color:'+(net>=0?'#6366F1':'#ef4444')+';">총 실질 세액공제</span><span style="font-size:16px;font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+fmt(Math.abs(net))+'원'+(net<0?' (납부)':'')+'</span></div>');}
 function applyEmploy(){var results=ecLastResult;if(!results||!results.length){alert('먼저 인원을 입력해주세요.');return;}var r1=results.find(function(r){return r.offset===1;});if(!r1){alert('1차 공제 연도 데이터가 없습니다.');return;}var net=Math.max(0,r1.dTotal-r1.jTotal);document.getElementById('d-employ').value=net?fmt(net):'';calc();closeEmployModal();}
-function doPrint(){var d=new Date();var el=document.getElementById('ph-date');if(el)el.textContent='출력일: '+d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();setTimeout(function(){window.print();},100);}
 addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();
 </script>
 </body>
