@@ -46,8 +46,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .ded-item-desc { font-size:10px; color:#94a3b8; margin-bottom:7px; line-height:1.5; }
 .ded-row { display:flex; gap:6px; align-items:center; }
 .ded-row input { flex:1; border:1px solid #e5e7eb; border-radius:8px; padding:7px 10px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
+.ded-row input:focus { border-color:#6366F1; }
 .calc-btn { padding:7px 10px; background:#6366F1; color:#fff; border:none; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap; }
 .calc-btn:hover { background:#4f46e5; }
+/* 팝업 */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1000; align-items:center; justify-content:center; }
 .modal-overlay.open { display:flex; }
 .modal { background:#fff; border-radius:20px; padding:28px; width:480px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
@@ -56,13 +58,19 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .modal-field { margin-bottom:14px; }
 .modal-label { font-size:11px; font-weight:700; color:#64748b; margin-bottom:6px; display:block; }
 .modal-select { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; }
+.modal-select:focus { border-color:#6366F1; }
 .modal-input { width:100%; border:1.5px solid #e5e7eb; border-radius:10px; padding:9px 12px; font-size:12px; font-family:inherit; outline:none; text-align:right; }
+.modal-input:focus { border-color:#6366F1; }
 .modal-result { background:#EEF2FF; border-radius:10px; padding:14px; margin:16px 0; display:flex; justify-content:space-between; align-items:center; }
 .modal-result-label { font-size:12px; color:#6366F1; font-weight:700; }
 .modal-result-value { font-size:18px; font-weight:900; color:#6366F1; }
 .modal-actions { display:flex; gap:8px; margin-top:4px; }
 .modal-cancel { flex:1; padding:10px; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; color:#94a3b8; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-print { padding:10px 14px; border:1.5px solid #6366F1; border-radius:10px; background:#fff; color:#6366F1; font-size:13px; cursor:pointer; font-family:inherit; }
+.modal-print:hover { background:#EEF2FF; }
 .modal-apply { flex:2; padding:10px; background:#6366F1; border:none; border-radius:10px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.modal-apply:hover { background:#4f46e5; }
+/* 통합고용 팝업 */
 .employ-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px; }
 .employ-overlay.open { display:flex; }
 .employ-modal { background:#f0f2f5; border-radius:20px; width:100%; max-width:1100px; margin:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
@@ -118,7 +126,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .ec-tag-red { background:#fee2e2; color:#991b1b; }
 .ec-tag-gray { background:#f1f5f9; color:#64748b; }
 .ec-highlight { background:#EEF2FF; border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
-/* ===== 인쇄/PDF ===== */
+/* 전체 인쇄/PDF */
 .print-bar { max-width:1100px; margin:0 auto 16px; display:flex; justify-content:flex-end; }
 .print-btn { padding:10px 22px; background:#6366F1; color:#fff; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 2px 8px rgba(99,102,241,0.3); }
 .print-btn:hover { background:#4f46e5; }
@@ -153,16 +161,10 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 </head>
 <body>
 <div style="max-width:1100px;margin:0 auto;"><a class="back-btn" href="tax-main.html">&#8592; 메인으로</a></div>
-<!-- 인쇄용 헤더 (화면에선 숨김) -->
 <div class="print-hd" id="print-hd">
   <div class="print-hd-title">&#127970; 법인세 추정 계산 내역</div>
-  <div class="print-hd-info">
-    <span id="ph-date"></span>
-    <span class="print-hd-badge" id="ph-year"></span>
-    <span style="color:#aaa;">| 참고용 추정 계산입니다</span>
-  </div>
+  <div class="print-hd-info"><span id="ph-date"></span><span class="print-hd-badge" id="ph-year"></span><span style="color:#aaa;">| 참고용 추정 계산입니다</span></div>
 </div>
-<!-- 인쇄 버튼 -->
 <div class="print-bar"><button class="print-btn" onclick="doPrint()">&#128424;&#65039; PDF 저장 / 인쇄</button></div>
 <div class="header"><h1>&#127970; 법인세 추정 계산기</h1><p>매출·원가·판관비 입력 시 납부세액 자동 계산 (참고용)</p></div>
 <div class="wrap">
@@ -225,31 +227,16 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
     </div>
     <div class="employ-modal-body">
       <div class="ec-settings">
-        <div class="ec-card">
-          <div class="ec-card-title">기본 설정</div>
-          <div class="ec-field"><label>기업구분</label><select id="ec-corp" onchange="ecRecalc()"><option value="sme">중소기업</option><option value="mid">중견기업</option><option value="big">대기업</option></select></div>
-          <div class="ec-field" id="ec-region-wrap"><label>사업장 소재지</label><select id="ec-region" onchange="ecRecalc()"><option value="metro">수도권 내</option><option value="local">수도권 밖</option></select></div>
-          <div class="ec-field"><label>최초 공제 귀속연도</label><select id="ec-base-year" onchange="ecBuildYears()"><option value="2023">2023년</option><option value="2024">2024년</option><option value="2025" selected>2025년</option></select></div>
-        </div>
-        <div class="ec-card">
-          <div class="ec-card-title">1인당 공제액</div>
-          <div class="ec-info-row"><span class="ec-info-label">청년등 기본공제</span><span class="ec-info-val" id="ec-info-youth">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">청년외 기본공제</span><span class="ec-info-val" id="ec-info-general">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">정규직 전환 (추가)</span><span class="ec-info-val" id="ec-info-convert">-</span></div>
-          <div class="ec-info-row"><span class="ec-info-label">육아휴직 복귀 (추가)</span><span class="ec-info-val" id="ec-info-parental">-</span></div>
-          <div class="ec-note">청년등 = 청년(15~34세)·장애인·60세이상·경력단절여성</div>
-        </div>
+        <div class="ec-card"><div class="ec-card-title">기본 설정</div><div class="ec-field"><label>기업구분</label><select id="ec-corp" onchange="ecRecalc()"><option value="sme">중소기업</option><option value="mid">중견기업</option><option value="big">대기업</option></select></div><div class="ec-field" id="ec-region-wrap"><label>사업장 소재지</label><select id="ec-region" onchange="ecRecalc()"><option value="metro">수도권 내</option><option value="local">수도권 밖</option></select></div><div class="ec-field"><label>최초 공제 귀속연도</label><select id="ec-base-year" onchange="ecBuildYears()"><option value="2023">2023년</option><option value="2024">2024년</option><option value="2025" selected>2025년</option></select></div></div>
+        <div class="ec-card"><div class="ec-card-title">1인당 공제액</div><div class="ec-info-row"><span class="ec-info-label">청년등 기본공제</span><span class="ec-info-val" id="ec-info-youth">-</span></div><div class="ec-info-row"><span class="ec-info-label">청년외 기본공제</span><span class="ec-info-val" id="ec-info-general">-</span></div><div class="ec-info-row"><span class="ec-info-label">정규직 전환 (추가)</span><span class="ec-info-val" id="ec-info-convert">-</span></div><div class="ec-info-row"><span class="ec-info-label">육아휴직 복귀 (추가)</span><span class="ec-info-val" id="ec-info-parental">-</span></div><div class="ec-note">청년등 = 청년(15~34세)·장애인·60세이상·경력단절여성</div></div>
       </div>
       <div style="font-size:12px;font-weight:900;color:#334155;margin-bottom:10px;">연도별 상시근로자 입력</div>
       <div class="ec-year-grid" id="ec-years-container"></div>
-      <div class="ec-summary">
-        <div class="ec-card-title">연도별 공제·추징 요약</div>
-        <div id="ec-summary-wrap"></div>
-        <div id="ec-total-box" style="margin-top:10px;"></div>
-      </div>
+      <div class="ec-summary"><div class="ec-card-title">연도별 공제·추징 요약</div><div id="ec-summary-wrap"></div><div id="ec-total-box" style="margin-top:10px;"></div></div>
     </div>
     <div class="employ-modal-footer">
       <button class="modal-cancel" onclick="closeEmployModal()">닫기</button>
+      <button class="modal-print" onclick="printEmployModal()" title="인쇄/PDF">&#128424;&#65039;</button>
       <button class="modal-apply" onclick="applyEmploy()">&#10003; 이 연도 공제액 적용하기</button>
     </div>
   </div>
@@ -270,13 +257,43 @@ function fmtInput(el){var v=el.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(v
 ['revenue','cogs','sga','other_inc','other_exp','d-sme','d-startup','d-rnd','d-employ'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
 document.getElementById('reset-btn').addEventListener('click',function(){['revenue','cogs','sga','other_inc','other_exp','gross','opincome','pretax','d-sme','d-startup','d-rnd','d-employ'].forEach(function(id){document.getElementById(id).value='';});['r-pretax','r-taxbase','r-tax1','r-tax2','r-tax3','r-tax4','r-tax','r-deduct','r-determined','r-local','r-total','r-net'].forEach(function(id){document.getElementById(id).textContent='-';});document.getElementById('r-rate').textContent='-';renderRateTable(-1);});
 function doPrint(){var d=new Date();var el=document.getElementById('ph-date');if(el)el.textContent='출력일: '+d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();var yb=document.getElementById('ph-year');if(yb)yb.textContent=currentYear+'년 세율';setTimeout(function(){window.print();},80);}
+/* ===== 팝업 ===== */
 function getTax(){return getNum('r-tax')||0;}
 function fmtM(el){var v=el.value.replace(/,/g,'').replace(/[^0-9]/g,'');if(v)el.value=parseInt(v).toLocaleString('ko-KR');updateModalResult();}
-function openModal(type){currentModalType=type;var tax=getTax();var html='';if(type==='sme'){html='<div class="modal-title">중소기업 특별세액감면 계산</div><div class="modal-sub">업종·지역에 따라 산출세액의 10~30% 감면</div><div class="modal-field"><div class="modal-label">지역</div><select class="modal-select" id="m-region"><option value="0">수도권 과밀억제권역</option><option value="1">수도권 외 지역</option></select></div><div class="modal-field"><div class="modal-label">업종</div><select class="modal-select" id="m-sector"><option value="10">도소매·음식·숙박·서비스업 (10%)</option><option value="20">제조업·건설업·물류업 (20%)</option><option value="30">제조업 수도권 외 (30%)</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='startup'){html='<div class="modal-title">창업중소기업 세액감면 계산</div><div class="modal-sub">창업 후 5년간 산출세액의 50% 감면</div><div class="modal-field"><div class="modal-label">창업연도</div><select class="modal-select" id="m-startyear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option><option value="2021">2021년</option></select></div><div class="modal-field"><div class="modal-label">귀속연도</div><select class="modal-select" id="m-curyear"><option value="2025">2025년</option><option value="2026">2026년</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}else if(type==='rnd'){html='<div class="modal-title">R&D 세액공제 계산</div><div class="modal-sub">당기 연구개발비 × 공제율</div><div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-corp"><option value="25">중소기업 (25%)</option><option value="8">중견기업 (8%)</option><option value="2">대기업 (2%)</option></select></div><div class="modal-field"><div class="modal-label">당기 연구개발비</div><input class="modal-input" id="m-rndamt" placeholder="0"/></div>';}html+='<div class="modal-result"><span class="modal-result-label">공제·감면 예상액</span><span class="modal-result-value" id="m-result">0원</span></div><div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">취소</button><button class="modal-apply" onclick="applyModal()">적용하기</button></div>';document.getElementById('modal-body').innerHTML=html;document.getElementById('modal-overlay').classList.add('open');document.querySelectorAll('.modal-input').forEach(function(el){el.addEventListener('input',function(){fmtM(this);});el.addEventListener('focus',function(){this.select();});});document.querySelectorAll('.modal-select').forEach(function(el){el.addEventListener('change',updateModalResult);});updateModalResult();}
+var _modalTitleStr='';
+function openModal(type){
+  currentModalType=type;var tax=getTax();var html='';
+  var titles={sme:'중소기업 특별세액감면',startup:'창업중소기업 세액감면',rnd:'R&D 세액공제'};
+  _modalTitleStr=titles[type]||'세액감면·공제';
+  if(type==='sme'){html='<div class="modal-title">&#127381; 중소기업 특별세액감면 계산</div><div class="modal-sub">업종·지역에 따라 산출세액의 10~30% 감면</div><div class="modal-field"><div class="modal-label">지역</div><select class="modal-select" id="m-region"><option value="0">수도권 과밀억제권역</option><option value="1">수도권 외 지역</option></select></div><div class="modal-field"><div class="modal-label">업종</div><select class="modal-select" id="m-sector"><option value="10">도소매·음식·숙박·서비스업 (10%)</option><option value="20">제조업·건설업·물류업 (20%)</option><option value="30">제조업 수도권 외 (30%)</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}
+  else if(type==='startup'){html='<div class="modal-title">&#127381; 창업중소기업 세액감면 계산</div><div class="modal-sub">창업 후 5년간 산출세액의 50% 감면</div><div class="modal-field"><div class="modal-label">창업연도</div><select class="modal-select" id="m-startyear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option><option value="2021">2021년</option></select></div><div class="modal-field"><div class="modal-label">귀속연도</div><select class="modal-select" id="m-curyear"><option value="2025">2025년</option><option value="2026">2026년</option></select></div><div class="modal-field"><div class="modal-label">산출세액</div><input class="modal-input" id="m-tax" value="'+(tax?fmt(tax):'')+'" placeholder="0"/></div>';}
+  else if(type==='rnd'){html='<div class="modal-title">&#127381; R&amp;D 세액공제 계산</div><div class="modal-sub">당기 연구개발비 × 공제율</div><div class="modal-field"><div class="modal-label">기업구분</div><select class="modal-select" id="m-corp"><option value="25">중소기업 (25%)</option><option value="8">중견기업 (8%)</option><option value="2">대기업 (2%)</option></select></div><div class="modal-field"><div class="modal-label">당기 연구개발비</div><input class="modal-input" id="m-rndamt" placeholder="0"/></div>';}
+  html+='<div class="modal-result"><span class="modal-result-label">공제·감면 예상액</span><span class="modal-result-value" id="m-result">0원</span></div>';
+  html+='<div class="modal-actions"><button class="modal-cancel" onclick="closeModal()">취소</button><button class="modal-print" onclick="printModal()" title="이 창 인쇄/PDF">&#128424;&#65039;</button><button class="modal-apply" onclick="applyModal()">적용하기</button></div>';
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.querySelectorAll('.modal-input').forEach(function(el){el.addEventListener('input',function(){fmtM(this);});el.addEventListener('focus',function(){this.select();});});
+  document.querySelectorAll('.modal-select').forEach(function(el){el.addEventListener('change',updateModalResult);});
+  updateModalResult();
+}
 function updateModalResult(){var result=0;if(currentModalType==='sme'){var taxEl=document.getElementById('m-tax'),secEl=document.getElementById('m-sector'),regEl=document.getElementById('m-region');if(taxEl&&secEl&&regEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0,rate=parseInt(secEl.value)||10;if(regEl.value==='0'&&rate===30)rate=20;result=Math.round(tax*rate/100);}}else if(currentModalType==='startup'){var taxEl=document.getElementById('m-tax'),sy=parseInt((document.getElementById('m-startyear')||{}).value||2025),cy=parseInt((document.getElementById('m-curyear')||{}).value||2025);if(taxEl){var tax=parseInt((taxEl.value||'').replace(/,/g,''))||0;result=(cy-sy+1>=1&&cy-sy+1<=5)?Math.round(tax*0.5):0;}}else if(currentModalType==='rnd'){var amtEl=document.getElementById('m-rndamt'),corpEl=document.getElementById('m-corp');if(amtEl&&corpEl)result=Math.round((parseInt((amtEl.value||'').replace(/,/g,''))||0)*(parseInt(corpEl.value)||25)/100);}var el=document.getElementById('m-result');if(el)el.textContent=fmt(result)+'원';window._modalResult=result;}
 function applyModal(){var result=window._modalResult||0,targetId={'sme':'d-sme','startup':'d-startup','rnd':'d-rnd'}[currentModalType];if(targetId){document.getElementById(targetId).value=result?fmt(result):'';calc();}closeModal();}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+function printModal(){
+  var d=new Date(),dateStr=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+  var bodyEl=document.getElementById('modal-body');
+  var content=bodyEl?bodyEl.innerHTML:'';
+  var w=window.open('','_blank','width=500,height=600');
+  w.document.write('<html><head><title>'+_modalTitleStr+'</title><style>body{font-family:"Noto Sans KR",sans-serif;padding:24px;max-width:420px;margin:0 auto;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}h2{font-size:13px;font-weight:900;color:#6366F1;border-bottom:2px solid #6366F1;padding-bottom:6px;margin-bottom:14px;}.modal-title{font-size:15px;font-weight:900;margin-bottom:4px;}.modal-sub{font-size:11px;color:#888;margin-bottom:14px;line-height:1.5;}.modal-field{margin-bottom:10px;}.modal-label{font-size:11px;font-weight:700;color:#64748b;margin-bottom:4px;display:block;}.modal-select,.modal-input{width:100%;border:1px solid #ddd;border-radius:6px;padding:7px 10px;font-size:12px;box-sizing:border-box;}.modal-result{background:#EEF2FF;border-radius:8px;padding:12px;margin:14px 0;display:flex;justify-content:space-between;align-items:center;}.modal-result-label{font-size:12px;color:#6366F1;font-weight:700;}.modal-result-value{font-size:18px;font-weight:900;color:#6366F1;}.modal-actions{display:none;}.print-footer{margin-top:16px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px;}@media print{.no-print{display:none;}}</style></head><body>');
+  w.document.write('<h2>&#127970; 법인세 추정 계산기 | '+_modalTitleStr+'</h2>');
+  w.document.write(content);
+  w.document.write('<div class="print-footer">출력일: '+dateStr+' | 참고용 추정 계산입니다</div>');
+  w.document.write('<div class="no-print" style="margin-top:16px;text-align:right;"><button onclick="window.print()" style="padding:8px 16px;background:#6366F1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">&#128424;&#65039; 인쇄/PDF저장</button></div>');
+  w.document.write('</body></html>');
+  w.document.close();
+}
+/* ===== 통합고용 팝업 ===== */
 var EC_RATES={sme:{metro:{youth:14500000,general:8500000},local:{youth:15500000,general:9500000},convert:13000000,parental:13000000},mid:{metro:{youth:8000000,general:4500000},local:{youth:8000000,general:4500000},convert:9000000,parental:9000000},big:{metro:{youth:4000000,general:0},local:{youth:4000000,general:0},convert:0,parental:0}};
 var EC_MAX={sme:3,mid:3,big:2};var ecLastResult=[];
 function openEmployModal(){document.getElementById('employ-overlay').classList.add('open');ecBuildYears();}
@@ -298,6 +315,24 @@ function ecCalcJing(dY,dT,b0dY,rates){if(dY>=dT&&dT>0)return Math.max(0,(Math.mi
 function ecRecalc(){ecUpdateInfo();ecUpdateTotals();ecUpdateDiffs();var baseYear=parseInt(ecVal('ec-base-year')),c=ecVal('ec-corp'),maxY=EC_MAX[c],rates=ecGetRates(),results=[];for(var offset=1;offset<=maxY;offset++){var r=ecCalcYear(offset,baseYear,rates);if(r)results.push(r);}ecRenderSummary(results);ecLastResult=results;}
 function ecRenderSummary(results){if(!results.length){ecSetHtml('ec-summary-wrap','');ecSetHtml('ec-total-box','');return;}var tD=0,tJ=0,rows=results.map(function(r){tD+=r.dTotal;tJ+=r.jTotal;var net=r.dTotal-r.jTotal,tag=r.jTotal>0?'<span class="ec-tag ec-tag-red">추징</span>':(r.dTotal>0?'<span class="ec-tag ec-tag-green">공제</span>':'<span class="ec-tag ec-tag-gray">-</span>');return'<tr><td>'+r.yr+'년 ('+r.offset+'차)</td><td>'+(r.dT>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dT.toFixed(2)+'명</span></td><td>'+(r.dY>=0?'<span style="color:#10B981">+':'<span style="color:#ef4444">')+r.dY.toFixed(2)+'</span>/'+r.dG.toFixed(2)+'</td><td>'+(r.dTotal>0?fmt(r.dTotal):'-')+'</td><td>'+(r.jTotal>0?'<span style="color:#ef4444">'+fmt(r.jTotal)+'</span>':'-')+'</td><td style="font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+(net!==0?fmt(Math.abs(net))+(net<0?' (납부)':''):'-')+'</td><td>'+tag+'</td></tr>';});var net=tD-tJ;ecSetHtml('ec-summary-wrap','<table class="ec-sum-table"><thead><tr><th>귀속연도</th><th>전체증감</th><th>청년등/청년외</th><th>공제액</th><th>추징액</th><th>실질공제</th><th>상태</th></tr></thead><tbody>'+rows.join('')+'<tr class="ec-total"><td>합 계</td><td></td><td></td><td>'+fmt(tD)+'</td><td>'+(tJ>0?fmt(tJ):'-')+'</td><td>'+fmt(net)+'</td><td></td></tr></tbody></table>');ecSetHtml('ec-total-box','<div class="ec-highlight"><span style="font-size:11px;font-weight:700;color:'+(net>=0?'#6366F1':'#ef4444')+';">총 실질 세액공제</span><span style="font-size:16px;font-weight:900;color:'+(net>=0?'#6366F1':'#ef4444')+';">'+fmt(Math.abs(net))+'원'+(net<0?' (납부)':'')+'</span></div>');}
 function applyEmploy(){var results=ecLastResult;if(!results||!results.length){alert('먼저 인원을 입력해주세요.');return;}var r1=results.find(function(r){return r.offset===1;});if(!r1){alert('1차 공제 연도 데이터가 없습니다.');return;}var net=Math.max(0,r1.dTotal-r1.jTotal);document.getElementById('d-employ').value=net?fmt(net):'';calc();closeEmployModal();}
+function printEmployModal(){
+  var d=new Date(),dateStr=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();
+  var corp={'sme':'중소기업','mid':'중견기업','big':'대기업'}[ecVal('ec-corp')]||'';
+  var region={'metro':'수도권 내','local':'수도권 밖'}[ecVal('ec-region')]||'';
+  var baseYear=ecVal('ec-base-year');
+  var sumWrap=document.getElementById('ec-summary-wrap');
+  var totalBox=document.getElementById('ec-total-box');
+  var sumHtml=(sumWrap?sumWrap.innerHTML:'')+(totalBox?totalBox.innerHTML:'');
+  var w=window.open('','_blank','width=800,height=700');
+  w.document.write('<html><head><title>통합고용세액공제 계산 내역</title><style>body{font-family:"Noto Sans KR",sans-serif;padding:24px;max-width:760px;margin:0 auto;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}h2{font-size:13px;font-weight:900;color:#6366F1;border-bottom:2px solid #6366F1;padding-bottom:6px;margin-bottom:4px;}.meta{font-size:11px;color:#64748b;margin-bottom:16px;}.ec-sum-table{width:100%;border-collapse:collapse;font-size:12px;}.ec-sum-table th{background:#EEF2FF;color:#6366F1;font-weight:700;font-size:10px;padding:7px 10px;text-align:center;border-bottom:1.5px solid #c7d2fe;}.ec-sum-table th:first-child{text-align:left;}.ec-sum-table td{padding:7px 10px;border-bottom:1px solid #f0f0f0;text-align:center;}.ec-sum-table td:first-child{text-align:left;font-weight:700;color:#64748b;}.ec-sum-table tr.ec-total td{font-weight:900;background:#EEF2FF;color:#6366F1;}.ec-tag{display:inline-block;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:700;}.ec-tag-green{background:#d1fae5;color:#065f46;}.ec-tag-red{background:#fee2e2;color:#991b1b;}.ec-tag-gray{background:#f1f5f9;color:#64748b;}.ec-highlight{background:#EEF2FF;border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:10px;}.print-footer{margin-top:16px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px;}.no-print{margin-top:16px;text-align:right;}@media print{.no-print{display:none;}}</style></head><body>');
+  w.document.write('<h2>&#128100; 통합고용세액공제 계산 내역</h2>');
+  w.document.write('<div class="meta">'+corp+(region?' · '+region:'')+' | 최초 귀속연도: '+baseYear+'년</div>');
+  w.document.write(sumHtml);
+  w.document.write('<div class="print-footer">출력일: '+dateStr+' | 조특법 §29의8 | 참고용 추정 계산입니다</div>');
+  w.document.write('<div class="no-print"><button onclick="window.print()" style="padding:8px 16px;background:#6366F1;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">&#128424;&#65039; 인쇄/PDF저장</button></div>');
+  w.document.write('</body></html>');
+  w.document.close();
+}
 renderRateTable(-1);
 </script>
 </body>
