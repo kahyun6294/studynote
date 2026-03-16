@@ -8,20 +8,19 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100vh; padding:40px 20px; }
-.container { max-width:1000px; margin:0 auto; }
+.container { max-width:1080px; margin:0 auto; }
 .back-btn { display:inline-block; margin-bottom:20px; font-size:12px; color:#888; text-decoration:none; }
 .back-btn:hover { color:#10B981; }
 .header { text-align:center; margin-bottom:28px; }
 .header h1 { font-size:22px; font-weight:900; color:#1a1a2e; margin-bottom:5px; }
 .header p { font-size:12px; color:#aaa; }
-.layout { display:grid; grid-template-columns:1fr 1fr 200px; gap:14px; align-items:start; }
-.col-left, .col-right, .col-tax { display:flex; flex-direction:column; gap:14px; }
+.layout { display:grid; grid-template-columns:1fr 1fr 1fr 200px; gap:14px; align-items:start; }
 .section { background:#fff; border-radius:16px; padding:22px 24px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
 .sec-title { font-size:11px; font-weight:900; color:#94a3b8; letter-spacing:0.08em; margin-bottom:18px; }
-.section.biz-sec  { border-top:3px solid #10B981; }
+.section.biz-sec { border-top:3px solid #10B981; }
 .section.wage-sec { border-top:3px solid #10B981; }
-.section.ded-sec  { border-top:3px solid #F59E0B; }
-.section.res-sec  { border-top:3px solid #6366F1; }
+.section.ded-sec { border-top:3px solid #F59E0B; }
+.section.res-sec { border-top:3px solid #6366F1; }
 .section.rate-sec { border-top:3px solid #94a3b8; }
 .rate-table { width:100%; border-collapse:collapse; font-size:11px; }
 .rate-table th { font-size:10px; font-weight:900; color:#94a3b8; padding:4px 6px; border-bottom:1.5px solid #e5e7eb; text-align:right; }
@@ -30,8 +29,6 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .rate-table td:first-child { text-align:left; color:#6b7280; }
 .rate-table tr.active td { background:#EEF2FF; color:#6366F1; font-weight:900; }
 .rate-table tr.active td:first-child { color:#6366F1; }
-@media(max-width:900px){ .layout{ grid-template-columns:1fr 1fr; } .col-tax{ grid-column:1/-1; } }
-@media(max-width:600px){ .layout{ grid-template-columns:1fr; } }
 .row { display:flex; align-items:center; padding:5px 0; gap:12px; }
 .lbl { flex:1; font-size:13px; color:#374151; }
 .lbl.bold { font-weight:700; }
@@ -41,13 +38,13 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .inp.auto { background:#f0fdf4; border-color:#bbf7d0; color:#15803d; font-weight:700; cursor:default; }
 .inp.ro { background:#f8fafc; border-color:#f0f0f0; color:#374151; font-weight:700; cursor:default; }
 .inp.linked { background:#ECFDF5; border-color:#6ee7b7; color:#065f46; font-weight:900; cursor:default; }
-.div  { border:none; border-top:1.5px solid #f0f0f0; margin:12px 0; }
+.div { border:none; border-top:1.5px solid #f0f0f0; margin:12px 0; }
 .divd { border:none; border-top:1.5px dashed #e5e7eb; margin:8px 0; }
 .sub-row { display:flex; align-items:center; background:#f8fafc; border-radius:8px; padding:10px 14px; margin:8px 0; }
 .sub-lbl { flex:1; font-size:13px; font-weight:900; color:#1a1a2e; }
 .sub-val { font-size:15px; font-weight:900; }
 .sub-val.green { color:#15803d; }
-.sub-val.red   { color:#dc2626; }
+.sub-val.red { color:#dc2626; }
 .sub-val.amber { color:#d97706; }
 .del-btn { background:none; border:none; color:#ddd; font-size:13px; cursor:pointer; padding:0 2px; flex-shrink:0; }
 .del-btn:hover { color:#f87171; }
@@ -70,19 +67,27 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
 .cnt-btn:hover { border-color:#10B981; color:#10B981; }
 .cnt-val { width:24px; text-align:center; font-size:14px; font-weight:700; color:#1a1a2e; }
 .per-amt { font-size:11px; color:#94a3b8; white-space:nowrap; }
-.res-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f8fafc; }
+.res-row { display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid #f8fafc; }
 .res-row:last-child { border-bottom:none; }
 .rl { font-size:12px; color:#6b7280; }
 .rl.indent { padding-left:14px; font-size:11px; color:#9ca3af; }
 .rl.bold { font-weight:900; color:#1a1a2e; font-size:13px; }
 .rv { font-size:13px; font-weight:700; color:#1a1a2e; }
-.rv.sub   { font-size:12px; color:#9ca3af; font-weight:400; }
+.rv.sub { font-size:12px; color:#9ca3af; font-weight:400; }
 .rv.total { color:#6366F1; font-size:16px; }
-.rv.pos   { color:#10B981; }
+.rv.pos { color:#10B981; }
+.rv.orange { color:#f59e0b; }
 .link-arrow { text-align:center; font-size:18px; color:#6ee7b7; margin:2px 0; line-height:1; }
 .reset-btn { width:100%; margin-top:14px; padding:11px; background:#f1f5f9; border:none; border-radius:10px; font-size:12px; font-weight:700; color:#94a3b8; cursor:pointer; font-family:inherit; }
 .reset-btn:hover { background:#e2e8f0; }
 .note-box { font-size:11px; color:#6b7280; margin-top:12px; line-height:1.7; padding:10px 12px; background:#f8fafc; border-radius:8px; }
+.ded-item { background:#f8fafc; border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+.ded-item-title { font-size:11px; font-weight:900; color:#64748b; margin-bottom:3px; }
+.ded-item-desc { font-size:10px; color:#94a3b8; margin-bottom:7px; line-height:1.5; }
+.ded-item .inp { font-size:12px; width:130px; }
+.ded-item .hint { font-size:10px; color:#94a3b8; margin-top:3px; }
+@media(max-width:900px){ .layout{ grid-template-columns:1fr 1fr; } }
+@media(max-width:600px){ .layout{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -93,45 +98,44 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
     <p>세액공제 미반영 단순 참고용</p>
   </div>
   <div class="layout">
-    <div class="col-left">
+    <!-- 1열: 사업소득 + 근로소득 -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
       <div class="section biz-sec">
         <div class="sec-title">&#9312; 사업소득 (손익계산서)</div>
-        <div class="row"><span class="lbl bold">매출액</span><input class="inp" id="revenue" type="text" placeholder="0" /></div>
+        <div class="row"><span class="lbl bold">매출액</span><input class="inp" id="revenue" type="text" placeholder="0"/></div>
         <hr class="divd">
-        <div class="row"><span class="lbl indent">기초재고</span><input class="inp" id="inv-begin" type="text" placeholder="0" /></div>
-        <div class="row"><span class="lbl indent">당기매입액</span><input class="inp" id="purchase" type="text" placeholder="0" /></div>
-        <div class="row"><span class="lbl indent">기말재고</span><input class="inp" id="inv-end" type="text" placeholder="0" /></div>
-        <div class="row"><span class="lbl indent">매출원가 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="cogs" type="text" readonly placeholder="-" /></div>
+        <div class="row"><span class="lbl indent">기초재고</span><input class="inp" id="inv-begin" type="text" placeholder="0"/></div>
+        <div class="row"><span class="lbl indent">당기매입액</span><input class="inp" id="purchase" type="text" placeholder="0"/></div>
+        <div class="row"><span class="lbl indent">기말재고</span><input class="inp" id="inv-end" type="text" placeholder="0"/></div>
+        <div class="row"><span class="lbl indent">매출원가 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="cogs" type="text" readonly placeholder="-"/></div>
         <hr class="div">
         <div class="sub-row"><span class="sub-lbl">매출총이익</span><span class="sub-val green" id="gross-val">-</span></div>
         <hr class="div">
         <div class="row" style="margin-bottom:6px;"><span class="lbl bold">판매비와관리비</span></div>
         <div id="sga-list"></div>
         <button class="add-btn" id="add-sga">+ 항목 추가</button>
-        <div class="row" style="margin-top:10px;"><span class="lbl indent bold">합계 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="sga-total" type="text" readonly placeholder="-" /></div>
+        <div class="row" style="margin-top:10px;"><span class="lbl indent bold">합계 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="sga-total" type="text" readonly placeholder="-"/></div>
         <hr class="div">
         <div class="sub-row"><span class="sub-lbl" id="op-lbl">영업이익</span><span class="sub-val green" id="op-val">-</span></div>
         <div class="link-arrow">&#8595;</div>
-        <div class="row" style="background:#F0FDF4; border-radius:8px; padding:8px 14px; margin-top:4px;">
-          <span class="lbl bold" style="color:#065f46;">&#128279; 사업소득금액 (자동 연결)</span>
-          <input class="inp linked" id="biz-income" type="text" readonly placeholder="-" />
+        <div class="row" style="background:#F0FDF4;border-radius:8px;padding:8px 14px;margin-top:4px;">
+          <span class="lbl bold" style="color:#065f46;">&#128279; 사업소득금액 (자동)</span>
+          <input class="inp linked" id="biz-income" type="text" readonly placeholder="-"/>
         </div>
       </div>
       <div class="section wage-sec">
         <div class="sec-title">&#9313; 근로소득 (선택)</div>
-        <div class="toggle-row">
-          <span>근로소득 있음</span>
-          <label class="toggle"><input type="checkbox" id="wage-toggle" /><span class="tog-sl"></span></label>
-        </div>
+        <div class="toggle-row"><span>근로소득 있음</span><label class="toggle"><input type="checkbox" id="wage-toggle"/><span class="tog-sl"></span></label></div>
         <div class="wage-fields" id="wage-fields">
           <hr class="divd" style="margin-top:10px;">
-          <div class="row"><span class="lbl bold">총급여</span><input class="inp" id="wage" type="text" placeholder="0" /></div>
-          <div class="row"><span class="lbl indent">근로소득공제 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="wage-ded" type="text" readonly placeholder="-" /></div>
-          <div class="row"><span class="lbl indent">근로소득금액 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="wage-net" type="text" readonly placeholder="-" /></div>
+          <div class="row"><span class="lbl bold">총급여</span><input class="inp" id="wage" type="text" placeholder="0"/></div>
+          <div class="row"><span class="lbl indent">근로소득공제 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp ro" id="wage-ded" type="text" readonly placeholder="-"/></div>
+          <div class="row"><span class="lbl indent">근로소득금액 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="wage-net" type="text" readonly placeholder="-"/></div>
         </div>
       </div>
     </div>
-    <div class="col-right">
+    <!-- 2열: 소득공제 + 감면공제 -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
       <div class="section ded-sec">
         <div class="sec-title">&#9314; 소득공제</div>
         <div class="row" style="margin-bottom:8px;"><span class="lbl bold">인적공제</span></div>
@@ -145,51 +149,68 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
           </div>
           <span class="per-amt">× 150만원</span>
         </div>
-        <div class="row" style="margin-top:6px;"><span class="lbl indent">인적공제 합계 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="per-ded" type="text" readonly placeholder="-" /></div>
+        <div class="row" style="margin-top:6px;"><span class="lbl indent">인적공제 합계 <span style="font-size:10px;color:#aaa;">(자동)</span></span><input class="inp auto" id="per-ded" type="text" readonly placeholder="-"/></div>
         <hr class="divd">
-        <div class="row"><span class="lbl bold">노란우산공제</span><input class="inp" id="yellow" type="text" placeholder="0" /></div>
-        <div class="row"><span class="lbl bold">국민연금보험료</span><input class="inp" id="pension" type="text" placeholder="0" /></div>
+        <div class="row"><span class="lbl bold">노란우산공제</span><input class="inp" id="yellow" type="text" placeholder="0"/></div>
+        <div class="row"><span class="lbl bold">국민연금보험료</span><input class="inp" id="pension" type="text" placeholder="0"/></div>
         <hr class="div">
         <div class="sub-row"><span class="sub-lbl">소득공제 합계</span><span class="sub-val amber" id="ded-total">-</span></div>
       </div>
-      <div class="section res-sec">
-        <div class="sec-title">&#9315; 세액계산</div>
-        <div class="res-row"><span class="rl">사업소득금액</span><span class="rv" id="r-biz">-</span></div>
-        <div class="res-row" id="r-wage-row" style="display:none;"><span class="rl">근로소득금액</span><span class="rv" id="r-wage">-</span></div>
-        <div class="res-row"><span class="rl bold">종합소득금액</span><span class="rv" id="r-inc">-</span></div>
-        <div class="res-row"><span class="rl">소득공제 합계</span><span class="rv" id="r-ded">-</span></div>
-        <hr class="div" style="margin:4px 0;">
-        <div class="res-row"><span class="rl bold">과세표준</span><span class="rv" id="r-base">-</span></div>
-        <hr class="div" style="margin:4px 0;">
-        <div class="res-row"><span class="rl">산출세액</span><span class="rv" id="r-tax">-</span></div>
-        <div class="res-row"><span class="rl indent">지방소득세 (× 10%)</span><span class="rv sub" id="r-local">-</span></div>
-        <hr class="div" style="margin:4px 0;">
-        <div class="res-row"><span class="rl bold">&#128073; 총 납부세액 (추정)</span><span class="rv total" id="r-total">-</span></div>
-        <hr class="div" style="margin:4px 0;">
-        <div class="res-row"><span class="rl">기납부세액</span><input class="inp" id="prepaid" type="text" placeholder="0" style="width:130px;font-size:12px;" /></div>
-        <hr class="div" style="margin:4px 0;">
-        <div class="res-row"><span class="rl bold" id="diff-lbl">차감납부세액</span><span class="rv" id="r-diff">-</span></div>
-        <button class="reset-btn" id="reset-btn">&#8635; 초기화</button>
-        <p class="note-box">&#9888; 공제/감면 미반영<br>실제 납부세액은 달라질 수 있습니다.</p>
+      <div class="section" style="border-top:3px solid #f59e0b;">
+        <div class="sec-title">&#127381; 세액감면·공제</div>
+        <div class="ded-item">
+          <div class="ded-item-title">중소기업 특별세액감면</div>
+          <div class="ded-item-desc">업종·지역별 산출세액의 10~30%<br>제조업(수도권외) 30% / 서비스업 10%</div>
+          <div class="row"><span class="lbl indent" style="font-size:11px;">감면액</span><input class="inp" id="d-sme" type="text" placeholder="0"/></div>
+          <div class="ded-item hint">산출세액 × 감면율 직접 입력</div>
+        </div>
+        <div class="ded-item">
+          <div class="ded-item-title">창업중소기업 세액감면</div>
+          <div class="ded-item-desc">창업 후 5년간 50% 감면<br>(수도권 과밀억제권역 제외)</div>
+          <div class="row"><span class="lbl indent" style="font-size:11px;">감면액</span><input class="inp" id="d-startup" type="text" placeholder="0"/></div>
+          <div class="ded-item hint">산출세액 × 50% 직접 입력</div>
+        </div>
       </div>
     </div>
-    <div class="col-tax">
-      <div class="section rate-sec">
-        <div class="sec-title">종합소득세 세율표</div>
-        <table class="rate-table">
-          <thead><tr><th>과세표준</th><th>세율</th></tr></thead>
-          <tbody id="rate-tbody">
-            <tr data-min="0" data-max="14000000"><td>1,400만 이하</td><td>6%</td></tr>
-            <tr data-min="14000000" data-max="50000000"><td>~5,000만</td><td>15%</td></tr>
-            <tr data-min="50000000" data-max="88000000"><td>~8,800만</td><td>24%</td></tr>
-            <tr data-min="88000000" data-max="150000000"><td>~1.5억</td><td>35%</td></tr>
-            <tr data-min="150000000" data-max="300000000"><td>~3억</td><td>38%</td></tr>
-            <tr data-min="300000000" data-max="500000000"><td>~5억</td><td>40%</td></tr>
-            <tr data-min="500000000" data-max="1000000000"><td>~10억</td><td>42%</td></tr>
-            <tr data-min="1000000000" data-max="Infinity"><td>10억 초과</td><td>45%</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- 3열: 세액계산 -->
+    <div class="section res-sec">
+      <div class="sec-title">&#9315; 세액계산</div>
+      <div class="res-row"><span class="rl">사업소득금액</span><span class="rv" id="r-biz">-</span></div>
+      <div class="res-row" id="r-wage-row" style="display:none;"><span class="rl">근로소득금액</span><span class="rv" id="r-wage">-</span></div>
+      <div class="res-row"><span class="rl bold">종합소득금액</span><span class="rv" id="r-inc">-</span></div>
+      <div class="res-row"><span class="rl">소득공제 합계</span><span class="rv" id="r-ded">-</span></div>
+      <hr class="div" style="margin:4px 0;">
+      <div class="res-row"><span class="rl bold">과세표준</span><span class="rv" id="r-base">-</span></div>
+      <hr class="div" style="margin:4px 0;">
+      <div class="res-row"><span class="rl">산출세액</span><span class="rv" id="r-tax">-</span></div>
+      <div class="res-row"><span class="rl indent">세액감면·공제 합계</span><span class="rv orange" id="r-deduct">-</span></div>
+      <div class="res-row"><span class="rl">결정세액</span><span class="rv" id="r-determined">-</span></div>
+      <div class="res-row"><span class="rl indent">지방소득세 (× 10%)</span><span class="rv sub" id="r-local">-</span></div>
+      <hr class="div" style="margin:4px 0;">
+      <div class="res-row"><span class="rl bold">&#128073; 총 납부세액 (추정)</span><span class="rv total" id="r-total">-</span></div>
+      <hr class="div" style="margin:4px 0;">
+      <div class="res-row"><span class="rl">기납부세액</span><input class="inp" id="prepaid" type="text" placeholder="0" style="width:130px;font-size:12px;"/></div>
+      <hr class="div" style="margin:4px 0;">
+      <div class="res-row"><span class="rl bold" id="diff-lbl">차감납부세액</span><span class="rv" id="r-diff">-</span></div>
+      <button class="reset-btn" id="reset-btn">&#8635; 초기화</button>
+      <p class="note-box">&#9888; 결정세액 = 산출세액 - 감면·공제<br>실제 납부세액은 달라질 수 있습니다.</p>
+    </div>
+    <!-- 4열: 세율표 -->
+    <div class="section rate-sec">
+      <div class="sec-title">종합소득세 세율표</div>
+      <table class="rate-table">
+        <thead><tr><th>과세표준</th><th>세율</th></tr></thead>
+        <tbody id="rate-tbody">
+          <tr data-min="0" data-max="14000000"><td>1,400만 이하</td><td>6%</td></tr>
+          <tr data-min="14000000" data-max="50000000"><td>~5,000만</td><td>15%</td></tr>
+          <tr data-min="50000000" data-max="88000000"><td>~8,800만</td><td>24%</td></tr>
+          <tr data-min="88000000" data-max="150000000"><td>~1.5억</td><td>35%</td></tr>
+          <tr data-min="150000000" data-max="300000000"><td>~3억</td><td>38%</td></tr>
+          <tr data-min="300000000" data-max="500000000"><td>~5억</td><td>40%</td></tr>
+          <tr data-min="500000000" data-max="1000000000"><td>~10억</td><td>42%</td></tr>
+          <tr data-min="1000000000" data-max="Infinity"><td>10억 초과</td><td>45%</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
@@ -205,12 +226,53 @@ function wageDeduction(w){if(w<=5000000)return w*0.70;if(w<=15000000)return 3500
 function getSgaTotal(){var t=0;document.querySelectorAll('.sga-amt').forEach(function(el){t+=parseEl(el);});return t;}
 function addSgaRow(name,amt){sgaCnt++;var idx=sgaCnt;var div=document.createElement('div');div.className='row';div.id='sga-'+idx;div.innerHTML='<input style="flex:1;border:1.5px solid #e5e7eb;border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:#374151;" placeholder="항목명" value="'+(name||'')+'" /><input class="inp sga-amt" type="text" placeholder="0" value="'+(amt||'')+'" /><button class="del-btn" data-idx="'+idx+'">&#10005;</button>';document.getElementById('sga-list').appendChild(div);div.querySelector('.sga-amt').addEventListener('input',function(){fmtInput(this);});div.querySelector('.sga-amt').addEventListener('focus',function(){this.select();});div.querySelector('.del-btn').addEventListener('click',function(){document.getElementById('sga-'+this.getAttribute('data-idx')).remove();calc();});}
 function setR(id,n,cls){var el=document.getElementById(id);if(!el)return;if(n===null){el.textContent='-';el.className='rv';return;}el.textContent=fmt(n)+'원';el.className='rv'+(cls?' '+cls:'');}
-function calc(){var rev=parse('revenue');var invBegin=parse('inv-begin');var purchase=parse('purchase');var invEnd=parse('inv-end');var cogs=invBegin+purchase-invEnd;var gross=rev-cogs;var sgaTotal=getSgaTotal();var op=gross-sgaTotal;var hasBiz=rev||invBegin||purchase||invEnd||sgaTotal;document.getElementById('cogs').value=(invBegin||purchase||invEnd)?fmt(cogs):'';document.getElementById('sga-total').value=sgaTotal?fmt(sgaTotal):'';var gEl=document.getElementById('gross-val');if(!hasBiz){gEl.textContent='-';gEl.className='sub-val green';}else{gEl.textContent=fmt(gross)+'원';gEl.className='sub-val '+(gross<0?'red':'green');}var opLbl=document.getElementById('op-lbl');var opVal=document.getElementById('op-val');if(!hasBiz){opLbl.textContent='영업이익';opVal.textContent='-';opVal.className='sub-val green';}else{opLbl.textContent=op<0?'영업손실':'영업이익';opVal.textContent=fmt(Math.abs(op))+'원';opVal.className='sub-val '+(op<0?'red':'green');}document.getElementById('biz-income').value=hasBiz?fmt(op):'';var hasWage=document.getElementById('wage-toggle').checked;var wage=hasWage?parse('wage'):0;var wDed=wage?wageDeduction(wage):0;var wNet=wage-wDed;document.getElementById('wage-ded').value=wage?fmt(wDed):'';document.getElementById('wage-net').value=wage?fmt(wNet):'';var totalInc=op+wNet;var dep=cntEl('c-dep');var perDed=(1+dep)*1500000;document.getElementById('per-ded').value=fmt(perDed);var yellow=parse('yellow');var pension=parse('pension');var totalDed=perDed+yellow+pension;var dEl=document.getElementById('ded-total');dEl.textContent=fmt(totalDed)+'원';dEl.className='sub-val amber';document.getElementById('r-wage-row').style.display=hasWage?'flex':'none';if(!hasBiz){['r-biz','r-wage','r-inc','r-ded','r-base','r-tax','r-local','r-total','r-diff'].forEach(function(id){setR(id,null);});return;}setR('r-biz',op);if(hasWage)setR('r-wage',wNet);setR('r-inc',totalInc);setR('r-ded',totalDed);var base=Math.max(0,totalInc-totalDed);var b=BRACKETS.find(function(b){return base<=b.limit;});var tax=base>0?Math.max(0,base*b.rate-b.deduc):0;var local=Math.round(tax*0.1);var total=tax+local;setR('r-base',base);setR('r-tax',tax);setR('r-local',local,'sub');setR('r-total',total,'total');var prepaid=parse('prepaid');var diff=total-prepaid;var diffLbl=document.getElementById('diff-lbl');var diffEl=document.getElementById('r-diff');if(prepaid){diffLbl.textContent=diff>=0?'차감납부세액':'환급세액';diffEl.textContent=fmt(Math.abs(diff))+'원';diffEl.className='rv '+(diff>=0?'total':'pos');}else{diffLbl.textContent='차감납부세액';diffEl.textContent='-';diffEl.className='rv';}document.querySelectorAll('#rate-tbody tr').forEach(function(tr){var min=parseFloat(tr.getAttribute('data-min'));var max=tr.getAttribute('data-max')==='Infinity'?Infinity:parseFloat(tr.getAttribute('data-max'));tr.classList.toggle('active',base>min&&base<=max);});}
-['revenue','inv-begin','purchase','inv-end','wage','yellow','pension','prepaid'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
+function calc(){
+  var rev=parse('revenue'),invBegin=parse('inv-begin'),purchase=parse('purchase'),invEnd=parse('inv-end');
+  var cogs=invBegin+purchase-invEnd,gross=rev-cogs,sgaTotal=getSgaTotal(),op=gross-sgaTotal;
+  var hasBiz=rev||invBegin||purchase||invEnd||sgaTotal;
+  document.getElementById('cogs').value=(invBegin||purchase||invEnd)?fmt(cogs):'';
+  document.getElementById('sga-total').value=sgaTotal?fmt(sgaTotal):'';
+  var gEl=document.getElementById('gross-val');
+  if(!hasBiz){gEl.textContent='-';gEl.className='sub-val green';}
+  else{gEl.textContent=fmt(gross)+'원';gEl.className='sub-val '+(gross<0?'red':'green');}
+  var opLbl=document.getElementById('op-lbl'),opVal=document.getElementById('op-val');
+  if(!hasBiz){opLbl.textContent='영업이익';opVal.textContent='-';opVal.className='sub-val green';}
+  else{opLbl.textContent=op<0?'영업손실':'영업이익';opVal.textContent=fmt(Math.abs(op))+'원';opVal.className='sub-val '+(op<0?'red':'green');}
+  document.getElementById('biz-income').value=hasBiz?fmt(op):'';
+  var hasWage=document.getElementById('wage-toggle').checked,wage=hasWage?parse('wage'):0;
+  var wDed=wage?wageDeduction(wage):0,wNet=wage-wDed;
+  document.getElementById('wage-ded').value=wage?fmt(wDed):'';
+  document.getElementById('wage-net').value=wage?fmt(wNet):'';
+  var totalInc=op+wNet,dep=cntEl('c-dep'),perDed=(1+dep)*1500000;
+  document.getElementById('per-ded').value=fmt(perDed);
+  var yellow=parse('yellow'),pension=parse('pension'),totalDed=perDed+yellow+pension;
+  var dEl=document.getElementById('ded-total');dEl.textContent=fmt(totalDed)+'원';dEl.className='sub-val amber';
+  document.getElementById('r-wage-row').style.display=hasWage?'flex':'none';
+  if(!hasBiz){['r-biz','r-wage','r-inc','r-ded','r-base','r-tax','r-deduct','r-determined','r-local','r-total','r-diff'].forEach(function(id){setR(id,null);});document.getElementById('r-deduct').className='rv';return;}
+  setR('r-biz',op);if(hasWage)setR('r-wage',wNet);setR('r-inc',totalInc);setR('r-ded',totalDed);
+  var base=Math.max(0,totalInc-totalDed);
+  var b=BRACKETS.find(function(b){return base<=b.limit;});
+  var tax=base>0?Math.max(0,base*b.rate-b.deduc):0;
+  var deduct=parse('d-sme')+parse('d-startup');
+  var determined=Math.max(0,tax-deduct);
+  var local=Math.round(determined*0.1),total=determined+local;
+  setR('r-base',base);setR('r-tax',tax);
+  var deductEl=document.getElementById('r-deduct');
+  if(deduct){deductEl.textContent='▼ '+fmt(deduct)+'원';deductEl.className='rv orange';}
+  else{deductEl.textContent='-';deductEl.className='rv sub';}
+  setR('r-determined',determined);
+  setR('r-local',local,'sub');setR('r-total',total,'total');
+  var prepaid=parse('prepaid'),diff=total-prepaid;
+  var diffLbl=document.getElementById('diff-lbl'),diffEl=document.getElementById('r-diff');
+  if(prepaid){diffLbl.textContent=diff>=0?'차감납부세액':'환급세액';diffEl.textContent=fmt(Math.abs(diff))+'원';diffEl.className='rv '+(diff>=0?'total':'pos');}
+  else{diffLbl.textContent='차감납부세액';diffEl.textContent='-';diffEl.className='rv';}
+  document.querySelectorAll('#rate-tbody tr').forEach(function(tr){var min=parseFloat(tr.getAttribute('data-min'));var max=tr.getAttribute('data-max')==='Infinity'?Infinity:parseFloat(tr.getAttribute('data-max'));tr.classList.toggle('active',base>min&&base<=max);});
+}
+['revenue','inv-begin','purchase','inv-end','wage','yellow','pension','prepaid','d-sme','d-startup'].forEach(function(id){var el=document.getElementById(id);el.addEventListener('input',function(){fmtInput(this);});el.addEventListener('focus',function(){this.select();});});
 document.getElementById('wage-toggle').addEventListener('change',function(){var fields=document.getElementById('wage-fields');if(this.checked){fields.classList.add('open');}else{fields.classList.remove('open');document.getElementById('wage').value='';}calc();});
 document.querySelectorAll('.cnt-btn[data-id]').forEach(function(btn){btn.addEventListener('click',function(){var tid=this.getAttribute('data-id');var d=parseInt(this.getAttribute('data-d'));var el=document.getElementById(tid);var v=parseInt(el.textContent)||0;v=Math.max(0,v+d);el.textContent=v;calc();});});
 document.getElementById('add-sga').addEventListener('click',function(){addSgaRow('','');});
-document.getElementById('reset-btn').addEventListener('click',function(){['revenue','inv-begin','purchase','inv-end','cogs','sga-total','wage','wage-ded','wage-net','yellow','pension','biz-income','prepaid'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('sga-list').innerHTML='';sgaCnt=0;document.getElementById('c-dep').textContent='0';document.getElementById('wage-toggle').checked=false;document.getElementById('wage-fields').classList.remove('open');addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();});
+document.getElementById('reset-btn').addEventListener('click',function(){['revenue','inv-begin','purchase','inv-end','cogs','sga-total','wage','wage-ded','wage-net','yellow','pension','biz-income','prepaid','d-sme','d-startup'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});document.getElementById('sga-list').innerHTML='';sgaCnt=0;document.getElementById('c-dep').textContent='0';document.getElementById('wage-toggle').checked=false;document.getElementById('wage-fields').classList.remove('open');addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();});
 addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();
 </script>
 </body>
