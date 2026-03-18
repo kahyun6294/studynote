@@ -284,19 +284,18 @@ function ecCalcYear(offset,baseYear,rates){
   var jPar=xPar*rates.parental,jEmp=0;
   if(offset>=2){
     // 1차연도 청년등/청년외 증가인원 (공제받은 인원)
-    var b0T=bW.total-bWp.total,b0Y_raw=bW.youth-bWp.youth,b0G_raw=bW.general-bWp.general;
+    var b0T=bW.total-bWp.total,b0Y_raw=prev.youth,b0G_raw=prev.general;
     var b0Y=Math.max(0,b0Y_raw);  // 1차 청년등 증가인원
     var b0G=Math.max(0,b0G_raw);  // 1차 청년외 증가인원
     // 1차 공제세액 (추징 한도)
     var b0Deduct=b0Y*rates.youth+b0G*rates.general;
     // 기준전년(baseYear-1) 대비 현재(yr) 감소인원
-    var decT=Math.max(0,bWp.total-cur.total);
-    var decY=Math.max(0,bWp.youth-cur.youth);
-    var decG=Math.max(0,bWp.general-cur.general);
+    var decT=Math.max(0,prev.total-cur.total);
+    var decY=Math.max(0,prev.youth-cur.youth);
+    var decG=Math.max(0,prev.general-cur.general);
     if(decT>0||decY>0||decG>0){
       var rawJing=ecCalcJing(b0Y,b0G,decT,decY,decG,rates);
-      if(offset===2)jEmp=Math.min(rawJing,b0Deduct);
-      else if(offset===3)jEmp=Math.min(rawJing*2,b0Deduct*2);
+      jEmp=rawJing;
     }
   }
   var jTotal=jPar+jEmp;
