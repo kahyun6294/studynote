@@ -376,19 +376,18 @@ function ecCalcYear(offset,baseYear,rates){
   var jPar=xPar*rates.parental,jEmp=0;
   if(offset>=2){
     // 1ì°¨ì°ë ì²­ëë±/ì²­ëì¸ ì¦ê°ì¸ì (ê³µì ë°ì ì¸ì)
-    var b0T=bW.total-bWp.total,b0Y_raw=bW.youth-bWp.youth,b0G_raw=bW.general-bWp.general;
+    var b0T=bW.total-bWp.total,b0Y_raw=prev.youth,b0G_raw=prev.general;
     var b0Y=Math.max(0,b0Y_raw);  // 1ì°¨ ì²­ëë± ì¦ê°ì¸ì
     var b0G=Math.max(0,b0G_raw);  // 1ì°¨ ì²­ëì¸ ì¦ê°ì¸ì
     // 1ì°¨ ê³µì ì¸ì¡ (ì¶ì§ íë)
     var b0Deduct=b0Y*rates.youth+b0G*rates.general;
     // ê¸°ì¤ì ë(baseYear-1) ëë¹ íì¬(yr) ê°ìì¸ì
-    var decT=Math.max(0,bWp.total-cur.total);
-    var decY=Math.max(0,bWp.youth-cur.youth);
-    var decG=Math.max(0,bWp.general-cur.general);
+    var decT=Math.max(0,prev.total-cur.total);
+    var decY=Math.max(0,prev.youth-cur.youth);
+    var decG=Math.max(0,prev.general-cur.general);
     if(decT>0||decY>0||decG>0){
       var rawJing=ecCalcJing(b0Y,b0G,decT,decY,decG,rates);
-      if(offset===2)jEmp=Math.min(rawJing,b0Deduct);
-      else if(offset===3)jEmp=Math.min(rawJing*2,b0Deduct*2);
+      jEmp=rawJing;
     }
   }
   var jTotal=jPar+jEmp;
