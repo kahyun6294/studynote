@@ -228,7 +228,9 @@ body{background:#f0f2f5;min-height:100vh;padding:24px 16px;}
 </div>
 </div>
 <script>
-var ecLastResult=[];
+
+var EC_RATES={sme:{metro:{youth:14500000,general:8500000},local:{youth:15500000,general:9500000},convert:13000000,parental:13000000},mid:{metro:{youth:8000000,general:4500000},local:{youth:8000000,general:4500000},convert:9000000,parental:9000000},big:{metro:{youth:4000000,general:0},local:{youth:4000000,general:0},convert:0,parental:0}};
+var EC_MAX={sme:3,mid:3,big:2};var ecLastResult=[];
 function openEmployModal(){ecBuildYears();}
 function closeEmployModal(){}
 document.getElementById('employ-overlay').addEventListener('click',function(e){if(e.target===this)closeEmployModal();});
@@ -325,7 +327,7 @@ function printEmployModal(){
 }
 addSgaRow('급여','');addSgaRow('복리후생비','');addSgaRow('감가상각비','');calc();
 
-function applyEmploy(){alert('출력 버튼을 이용해 인쇄하세요.');}
+function applyEmploy(){printEmployModal();}
 window.addEventListener('DOMContentLoaded',function(){openEmployModal();});
 </script>
 </body>
