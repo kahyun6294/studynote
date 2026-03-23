@@ -448,8 +448,17 @@
 })();
 
 // ② 숫자 자동 포맷 (원 자동 추가)
+function addCommas(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 function formatNum(el) {
-  const raw = el.textContent.rf (type === 'card-amount') el.textContent = fmt;
+  const raw = el.textContent.replace(/[^0-9]/g, '');
+  if (!raw) return;
+  const n = parseInt(raw, 10);
+  const fmt = addCommas(n);
+  const type = el.dataset.type;
+  if (type === 'amount-minus') el.textContent = '▲ ' + fmt + ' 원';
+  else if (type === 'card-amount') el.textContent = fmt;
   else el.textContent = fmt + ' 원';
 }
 
@@ -495,17 +504,17 @@ function getRawEl(el) {
 function setAuto(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.textContent = val > 0 ? val.toLocaleString('ko-KR') + ' 원' : (val === 0 ? '0 원' : '');
+  el.textContent = val > 0 ? addCommas(val) + ' 원' : (val === 0 ? '0 원' : '');
 }
 function setAutoMinus(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.textContent = val > 0 ? '▲ ' + val.toLocaleString('ko-KR') + ' 원' : (val === 0 ? '0 원' : '');
+  el.textContent = val > 0 ? '▲ ' + addCommas(val) + ' 원' : (val === 0 ? '0 원' : '');
 }
 function setAutoCard(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.textContent = val >= 0 ? val.toLocaleString('ko-KR') : '0';
+  el.textContent = val >= 0 ? addCommas(val) : '0';
 }
 
 function recalc() {
@@ -561,10 +570,6 @@ function addDeductRow() {
       </div>
     </td>
     <td class="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
-        style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
-  tbody.appendChild(tr);
-  // 라벨 포커스
-  cons="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
         style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
   tbody.appendChild(tr);
   // 라벨 포커스
