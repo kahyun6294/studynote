@@ -21,6 +21,64 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
   }
 
+  /* 고객 선택 영역 */
+  .client-selector-wrap {
+    max-width: 680px;
+    margin: 0 auto 20px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .client-selector-wrap label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    white-space: nowrap;
+  }
+  .client-selector-wrap select {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #1e293b;
+    background: #f8fafc;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    transition: border-color 0.2s;
+  }
+  .client-selector-wrap select:focus {
+    outline: none;
+    border-color: #2563a8;
+    background-color: #fff;
+  }
+  .client-selector-wrap .loading-text {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+  .client-selector-wrap .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #94a3b8;
+    flex-shrink: 0;
+  }
+  .client-selector-wrap .status-dot.connected {
+    background: #22c55e;
+  }
+  .client-selector-wrap .status-dot.error {
+    background: #ef4444;
+  }
+
   /* 헤더 */
   .header {
     background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%);
@@ -241,7 +299,7 @@
     white-space: pre-wrap;
   }
 
-  /* 푸톰 */
+  /* 푸터 */
   .footer {
     border-top: 1px solid #e2e8f0;
     padding: 20px 40px;
@@ -278,6 +336,15 @@
 </head>
 <body>
 
+<!-- 고객 선택 (인쇄 제외) -->
+<div class="client-selector-wrap no-print">
+  <div class="status-dot" id="statusDot"></div>
+  <label>👤 고객 선택</label>
+  <select id="clientSelect" disabled>
+    <option value="">불러오는 중...</option>
+  </select>
+</div>
+
 <div class="page">
 
   <!-- 헤더 -->
@@ -292,11 +359,15 @@
     <div class="recipient-box">
       <div class="recipient-item">
         <label>법인명</label>
-        <span contenteditable="true">○○ 주식회사</span>
+        <span id="corpName" contenteditable="true">○○ 주식회사</span>
       </div>
       <div class="recipient-item">
         <label>사업자등록번호</label>
-        <span contenteditable="true">000 - 00 - 00000</span>
+        <span id="corpBrn" contenteditable="true">000 - 00 - 00000</span>
+      </div>
+      <div class="recipient-item">
+        <label>대표자</label>
+        <span id="corpCeo" contenteditable="true">홍 길 동</span>
       </div>
       <div class="recipient-item">
         <label>신고·납부기한</label>
@@ -433,6 +504,65 @@
   <button onclick="window.print()" style="background:#2563a8;color:#fff;border:none;border-radius:8px;padding:12px 32px;font-size:14px;font-family:inherit;cursor:pointer;font-weight:600;">🖨️ 인쇄 / PDF 저장</button>
   <p style="margin-top:10px;font-size:12px;color:#94a3b8;">파란 점선 표시된 항목은 클릭하여 직접 수정할 수 있습니다.</p>
 </div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
+    authDomain: "tax-aaee5.firebaseapp.com",
+    projectId: "tax-aaee5",
+    storageBucket: "tax-aaee5.firebasestorage.app",
+    messagingSenderId: "11651546985",
+    appId: "1:11651546985:web:7843ffed4adf2eb59e47f8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const select = document.getElementById('clientSelect');
+  const statusDot = document.getElementById('statusDot');
+
+  async function loadClients() {
+    try {
+      const q = query(collection(db, 'clients'), orderBy('name'));
+      const snapshot = await getDocs(q);
+
+      select.innerHTML = '<option value="">-- 고객을 선택하세요 --</option>';
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const option = document.createElement('option');
+        option.value = doc.id;
+        option.textContent = data.name || '(이름 없음)';
+        option.dataset.brn = data.brn || '';
+        option.dataset.ceo = data.ceo || '';
+        option.dataset.name = data.name || '';
+        select.appendChild(option);
+      });
+
+      select.disabled = false;
+      statusDot.classList.add('connected');
+    } catch (err) {
+      console.error('Firestore 로드 오류:', err);
+      select.innerHTML = '<option value="">⚠ 불러오기 실패 — 새로고침해 주세요</option>';
+      statusDot.classList.add('error');
+    }
+  }
+
+  select.addEventListener('change', () => {
+    const selected = select.options[select.selectedIndex];
+    if (!selected.value) return;
+
+    document.getElementById('corpName').textContent = selected.dataset.name;
+    document.getElementById('corpBrn').textContent = selected.dataset.brn;
+    document.getElementById('corpCeo').textContent = selected.dataset.ceo;
+  });
+
+  loadClients();
+</script>
 
 </body>
 </html>
