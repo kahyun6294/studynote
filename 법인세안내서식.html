@@ -211,6 +211,26 @@
   .num-field:focus::before { content: '숫자만 입력'; }
   .num-field:empty:not(:focus)::before { content: attr(data-placeholder); color: #cbd5e1; font-weight: 400; }
 
+  /* 자동계산 필드 */
+  .auto-field {
+    background: #eff6ff;
+    color: #2563a8 !important;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: default;
+    user-select: none;
+  }
+  .auto-field:empty::before { content: '—'; color: #93c5fd; }
+  .auto-field-minus {
+    background: #fff1f2;
+    color: #be123c !important;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: default;
+    user-select: none;
+  }
+  .auto-field-minus:empty::before { content: '—'; color: #fca5a5; }
+
   /* 인쇄 */
   @media print {
     body { background: #fff; padding: 0; }
@@ -278,21 +298,21 @@
     <table class="calc-table">
       <tr>
         <td>① 과세표준</td>
-        <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
+        <td id="taxBase" class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
       </tr>
       <tr>
         <td>② 산출세액</td>
-        <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
+        <td id="taxCalc" class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
       </tr>
       <tr>
         <td class="indent">감면세액 합계</td>
-        <td class="minus num-field" contenteditable="true" data-type="amount-minus" data-placeholder="금액 입력" style="text-align:right;font-weight:600;"></td>
+        <td id="deductTotal" class="auto-field-minus" style="text-align:right;font-weight:600;"></td>
       </tr>
       <tr class="deduct-row">
         <td class="indent" style="padding-left:32px; font-size:13px; color:#94a3b8;">
           <div class="deduct-label"><span>— 통합고용세액공제</span></div>
         </td>
-        <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
+        <td id="taxIntegrated" class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
       </tr>
       <!-- ③ 기타 공제·감면 (라벨 편집 가능 + 삭제 가능) -->
       <tbody id="deductionRows">
@@ -303,7 +323,7 @@
               <button class="btn-del-row no-print" onclick="delDeductRow(this)" title="행 삭제">×</button>
             </div>
           </td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
+          <td class="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
         </tr>
       </tbody>
       <tr class="no-print">
@@ -313,11 +333,11 @@
       </tr>
       <tr style="border-top:2px solid #334155;">
         <td style="font-weight:700;">③ 결정세액 (②－감면)</td>
-        <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:700;color:#1e293b;font-size:15px;"></td>
+        <td id="taxDecide" class="auto-field" style="text-align:right;font-weight:700;font-size:15px;"></td>
       </tr>
       <tr>
         <td class="indent">기납부세액 (중간예납 등)</td>
-        <td class="minus num-field" contenteditable="true" data-type="amount-minus" data-placeholder="금액 입력" style="text-align:right;font-weight:600;"></td>
+        <td id="taxPrepaid" class="minus num-field" contenteditable="true" data-type="amount-minus" data-placeholder="금액 입력" style="text-align:right;font-weight:600;"></td>
       </tr>
     </table>
 
@@ -326,17 +346,17 @@
     <div class="pay-grid">
       <div class="pay-card highlight">
         <div class="card-label">법인세<br>추가납부세액</div>
-        <div class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0"></div>
+        <div id="taxFinal" class="card-amount auto-field" style="font-size:18px;font-weight:700;"></div>
         <div class="card-note">원</div>
       </div>
       <div class="pay-card">
         <div class="card-label">지방소득세<br>(법인세의 10%)</div>
-        <div class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0"></div>
-        <div class="card-note">원</div>
+        <div id="taxLocal" class="card-amount auto-field" style="font-size:18px;font-weight:700;"></div>
+        <div class="card-note">원 (자동계산)</div>
       </div>
       <div class="pay-card">
         <div class="card-label">농어촌특별세<br>납부세액</div>
-        <div class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0"></div>
+        <div id="taxSpecial" class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0"></div>
         <div class="card-note">원</div>
       </div>
     </div>
@@ -351,22 +371,22 @@
       <tbody>
         <tr>
           <td>법인세</td><td>추가납부분</td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
+          <td id="taxFinalTable" class="auto-field" style="text-align:right;"></td>
           <td contenteditable="true">2025. 03. 31.</td>
         </tr>
         <tr>
           <td>지방소득세</td><td>법인분</td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
+          <td id="taxLocalTable" class="auto-field" style="text-align:right;"></td>
           <td contenteditable="true">2025. 04. 30.</td>
         </tr>
         <tr>
           <td>농어촌특별세</td><td>감면분</td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
+          <td id="taxSpecialTable" class="auto-field" style="text-align:right;"></td>
           <td contenteditable="true">2025. 03. 31.</td>
         </tr>
         <tr>
           <td colspan="2"><strong>총 납부 예정액</strong></td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
+          <td id="taxTotal" class="auto-field" style="text-align:right;font-weight:700;"></td>
           <td>—</td>
         </tr>
       </tbody>
@@ -450,7 +470,10 @@ document.addEventListener('focusin', e => {
   if (e.target.classList.contains('num-field')) stripNum(e.target);
 });
 document.addEventListener('focusout', e => {
-  if (e.target.classList.contains('num-field')) formatNum(e.target);
+  if (e.target.classList.contains('num-field')) {
+    formatNum(e.target);
+    recalc();
+  }
 });
 // 숫자 외 입력 차단
 document.addEventListener('keypress', e => {
@@ -461,7 +484,72 @@ document.addEventListener('keypress', e => {
   }
 });
 
-// ③ 공제·감면 행 추�  / 삭제
+// ④ 자동계산
+function getRaw(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+}
+function getRawEl(el) {
+  return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+}
+function setAuto(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val > 0 ? val.toLocaleString('ko-KR') + ' 원' : (val === 0 ? '0 원' : '');
+}
+function setAutoMinus(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val > 0 ? '▲ ' + val.toLocaleString('ko-KR') + ' 원' : (val === 0 ? '0 원' : '');
+}
+function setAutoCard(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val >= 0 ? val.toLocaleString('ko-KR') : '0';
+}
+
+function recalc() {
+  // ① 산출세액
+  const taxCalc = getRaw('taxCalc');
+
+  // 감면 합계 = 통합고용 + deductionRows 의 모든 금액
+  const integrated = getRaw('taxIntegrated');
+  let deductSum = integrated;
+  document.querySelectorAll('#deductionRows .num-field').forEach(el => {
+    deductSum += getRawEl(el);
+  });
+
+  // 감면세액 합계 표시
+  setAutoMinus('deductTotal', deductSum);
+
+  // ③ 결정세액 = 산출세액 - 감면합계
+  const taxDecide = Math.max(0, taxCalc - deductSum);
+  setAuto('taxDecide', taxDecide);
+
+  // 기납부세액
+  const taxPrepaid = getRaw('taxPrepaid');
+
+  // 법인세 추가납부세액 = 결정세액 - 기납부세액
+  const taxFinal = Math.max(0, taxDecide - taxPrepaid);
+  setAutoCard('taxFinal', taxFinal);
+  setAuto('taxFinalTable', taxFinal);
+
+  // 지방소득세 = 법인세 × 10%
+  const taxLocal = Math.round(taxFinal * 0.1);
+  setAutoCard('taxLocal', taxLocal);
+  setAuto('taxLocalTable', taxLocal);
+
+  // 농어촌특별세 (카드에서 직접 입력)
+  const taxSpecial = getRaw('taxSpecial');
+  setAuto('taxSpecialTable', taxSpecial);
+
+  // 총 납부 예정액
+  const taxTotal = taxFinal + taxLocal + taxSpecial;
+  setAuto('taxTotal', taxTotal);
+}
+
+// ③ 공제·감면 행 추가 / 삭제
 function addDeductRow() {
   const tbody = document.getElementById('deductionRows');
   const tr = document.createElement('tr');
@@ -473,7 +561,7 @@ function addDeductRow() {
         <button class="btn-del-row no-print" onclick="delDeductRow(this)" title="행 삭제">×</button>
       </div>
     </td>
-    <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
+    <td class="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
         style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
   tbody.appendChild(tr);
   // 라벨 포커스
@@ -485,6 +573,7 @@ function addDeductRow() {
 function delDeductRow(btn) {
   const tr = btn.closest('tr');
   if (tr) tr.remove();
+  recalc();
 }
 </script>
 
