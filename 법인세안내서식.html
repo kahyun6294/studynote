@@ -411,8 +411,8 @@
   <!-- 푸터 -->
   <div class="footer">
     <div>
-      <div class="firm-name" contenteditable="true">○○ 세무회계사무소</div>
-      <div>담당자: <span contenteditable="true">홍길동</span> &nbsp;|&nbsp; 연락처: <span contenteditable="true">02-000-0000</span></div>
+      <div class="firm-name" id="officeName" contenteditable="true">○○ 세무회계사무소</div>
+      <div>연락처: <span id="officeTel" contenteditable="true">02-000-0000</span></div>
     </div>
     <div style="text-align:right;">
       작성일: <span contenteditable="true">2025. 03. 00.</span>
@@ -579,7 +579,7 @@ function delDeductRow(btn) {
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, orderBy, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
@@ -626,7 +626,19 @@ function delDeductRow(btn) {
     document.getElementById('corpCeo').textContent = opt.dataset.ceo;
   });
 
+  async function loadOffice() {
+    try {
+      const snap = await getDoc(doc(db, 'settings', 'office'));
+      if (snap.exists()) {
+        const d = snap.data();
+        if (d.name) document.getElementById('officeName').textContent = d.name;
+        if (d.tel)  document.getElementById('officeTel').textContent = d.tel;
+      }
+    } catch(e) {}
+  }
+
   loadClients();
+  loadOffice();
 </script>
 
 </body>
