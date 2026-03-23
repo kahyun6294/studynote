@@ -349,9 +349,9 @@
         <div class="card-note">원</div>
       </div>
       <div class="pay-card">
-        <div class="card-label">지방소득세<br>(법인세의 10%)</div>
-        <div id="taxLocal" class="card-amount auto-field" style="font-size:18px;font-weight:700;"></div>
-        <div class="card-note">원 (자동계산)</div>
+        <div class="card-label">지방소득세<br>납부세액</div>
+        <div id="taxLocal" class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0" style="font-size:18px;font-weight:700;"></div>
+        <div class="card-note">원</div>
       </div>
       <div class="pay-card">
         <div class="card-label">농어촌특별세<br>납부세액</div>
@@ -543,9 +543,8 @@ function recalc() {
   setAutoCard('taxFinal', taxFinal);
   setAuto('taxFinalTable', taxFinal);
 
-  // 지방소득세 = 법인세 × 10%
-  const taxLocal = Math.round(taxFinal * 0.1);
-  setAutoCard('taxLocal', taxLocal);
+  // 지방소득세 (직접 입력)
+  const taxLocal = getRaw('taxLocal');
   setAuto('taxLocalTable', taxLocal);
 
   // 농어촌특별세 (카드에서 직접 입력)
@@ -572,10 +571,12 @@ function addDeductRow() {
     <td class="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
         style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
   tbody.appendChild(tr);
-  // 라벨 포커스
-  const label = tr.querySelector('[contenteditable="true"]');
-  label.focus();
-  document.execCommand('selectAll');
+  // 금액 필드 포커스 (바로 입력 가능하도록)
+  const amountCell = tr.querySelector('.num-field');
+  if (amountCell) {
+    amountCell.focus();
+  }
+  recalc();
 }
 
 function delDeductRow(btn) {
