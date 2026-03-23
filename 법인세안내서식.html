@@ -207,6 +207,8 @@
   .footer { border-top: 1px solid #e2e8f0; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; }
   .firm-name { font-weight: 700; color: #475569; font-size: 13px; }
 
+  /* 숫자 필드 편집 힌트 */
+  .num-field:focus::before { content: '숫자만 입력'; }
   .num-field:empty:not(:focus)::before { content: attr(data-placeholder); color: #cbd5e1; font-weight: 400; }
 
   /* 인쇄 */
@@ -245,6 +247,7 @@
         <div class="doc-title">법인세 신고 안내</div>
         <div class="doc-subtitle">Corporate Income Tax Return Notice</div>
       </div>
+      <!-- ① 사업연도 드롭다운 -->
       <select class="doc-year-select" id="yearSelect"></select>
     </div>
     <div class="recipient-box">
@@ -267,9 +270,11 @@
     </div>
   </div>
 
+  <!-- 본문 -->
   <div class="body">
 
-    <div class="section-title">산출세액 및 감면 내역 /</div>
+    <!-- 산출세액 및 감면 -->
+    <div class="section-title">산출세액 및 감면 내역</div>
     <table class="calc-table">
       <tr>
         <td>① 과세표준</td>
@@ -285,10 +290,11 @@
       </tr>
       <tr class="deduct-row">
         <td class="indent" style="padding-left:32px; font-size:13px; color:#94a3b8;">
-          <div class="deduct-label"><span>— 綌헐고</span></div>
+          <div class="deduct-label"><span>— 통합고용세액공제</span></div>
         </td>
         <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
       </tr>
+      <!-- ③ 기타 공제·감면 (라벨 편집 가능 + 삭제 가능) -->
       <tbody id="deductionRows">
         <tr class="deduct-row">
           <td class="indent" style="padding-left:32px; font-size:13px; color:#94a3b8;">
@@ -302,8 +308,7 @@
       </tbody>
       <tr class="no-print">
         <td colspan="2" style="padding-top:4px; padding-bottom:8px;">
-          <button class="btn-add-row" onclick="addDeductRow()">＋ 공제·감면 항목 
-추가</button>
+          <button class="btn-add-row" onclick="addDeductRow()">＋ 공제·감면 항목 추가</button>
         </td>
       </tr>
       <tr style="border-top:2px solid #334155;">
@@ -316,6 +321,7 @@
       </tr>
     </table>
 
+    <!-- 납부세액 카드 -->
     <div class="section-title">최종 납부세액</div>
     <div class="pay-grid">
       <div class="pay-card highlight">
@@ -335,37 +341,55 @@
       </div>
     </div>
 
+    <!-- 합계 테이블 -->
     <table class="sub-table">
-      <thead><tr><th>구분</th><th>세목</th><th>납부세액</th><th>납부기한</th></tr></thead>
+      <thead>
+        <tr>
+          <th>구분</th><th>세목</th><th>납부세액</th><th>납부기한</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td>법인세</td><td>추가납부분</td>
+        <tr>
+          <td>법인세</td><td>추가납부분</td>
           <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
-          <td contenteditable="true">2025. 03. 31.</td></tr>
-        <tr><td>지방소득세</td><td>법인분</td>
+          <td contenteditable="true">2025. 03. 31.</td>
+        </tr>
+        <tr>
+          <td>지방소득세</td><td>법인분</td>
           <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
-          <td contenteditable="true">2025. 04. 30.</td></tr>
-        <tr><td>농어촌특별세</td><td>감면분</td>
+          <td contenteditable="true">2025. 04. 30.</td>
+        </tr>
+        <tr>
+          <td>농어촌특별세</td><td>감면분</td>
           <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
-          <td contenteditable="true">2025. 03. 31.</td></tr>
-        <tr><td colspan="2"><strong>촜 납부 예정액</strong></td>
-          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td><td>—</td></tr>
+          <td contenteditable="true">2025. 03. 31.</td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>총 납부 예정액</strong></td>
+          <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"></td>
+          <td>—</td>
+        </tr>
       </tbody>
     </table>
 
+    <!-- 납부기한 배너 -->
     <div class="deadline-banner">
       <div class="deadline-icon">📅</div>
       <div class="deadline-text">
-        <strong>납부기한을 뫭 확인해 주세요</strong>
-        <span>기한 낤 미납부 시 납부지자가 산세(1일 0.022%)가 부과됩니다. 분납 또는 연장이 필요하신 경우 사전에 알려주시기 바랍니다.</span>
+        <strong>납부기한을 꼭 확인해 주세요</strong>
+        <span>기한 내 미납부 시 납부지연가산세(1일 0.022%)가 부과됩니다. 분납 또는 연장이 필요하신 경우 사전에 알려주시기 바랍니다.</span>
       </div>
     </div>
 
+    <!-- 메모 -->
     <div class="memo-box">
-      <div class="memo-title">📝 담당자 메모 / 추�  안내사항</div>
-      <div class="memo-content" contenteditable="true">특이傌항이킠 추�  안내 내용을 재기 입력하세요.</div>
+      <div class="memo-title">📝 담당자 메모 / 추가 안내사항</div>
+      <div class="memo-content" contenteditable="true">특이사항이나 추가 안내 내용을 여기에 입력하세요.</div>
     </div>
+
   </div>
 
+  <!-- 푸터 -->
   <div class="footer">
     <div>
       <div class="firm-name" contenteditable="true">○○ 세무회계사무소</div>
@@ -375,14 +399,17 @@
       작성일: <span contenteditable="true">2025. 03. 00.</span>
     </div>
   </div>
+
 </div>
 
+<!-- 인쇄 버튼 -->
 <div class="no-print" style="text-align:center; margin-top:24px;">
   <button onclick="window.print()" style="background:#2563a8;color:#fff;border:none;border-radius:8px;padding:12px 32px;font-size:14px;font-family:inherit;cursor:pointer;font-weight:600;">🖨️ 인쇄 / PDF 저장</button>
   <p style="margin-top:10px;font-size:12px;color:#94a3b8;">파란 점선 표시된 항목은 클릭하여 직접 수정할 수 있습니다.</p>
 </div>
 
 <script>
+// ① 사업연도 드롭다운 초기화
 (function() {
   const sel = document.getElementById('yearSelect');
   const curYear = new Date().getFullYear();
@@ -390,11 +417,12 @@
     const opt = document.createElement('option');
     opt.value = y;
     opt.textContent = y + ' 사업연도';
-    if (y === curYear - 1) opt.selected = true;
+    if (y === curYear - 1) opt.selected = true; // 기본값: 전년도
     sel.appendChild(opt);
   }
 })();
 
+// ② 숫자 자동 포맷 (원 자동 추가)
 function formatNum(el) {
   const raw = el.textContent.replace(/[^0-9]/g, '');
   if (!raw) return;
@@ -409,6 +437,7 @@ function formatNum(el) {
 function stripNum(el) {
   const raw = el.textContent.replace(/[^0-9]/g, '');
   el.textContent = raw;
+  // 커서를 끝으로 이동
   const range = document.createRange();
   const sel = window.getSelection();
   range.selectNodeContents(el);
@@ -423,6 +452,7 @@ document.addEventListener('focusin', e => {
 document.addEventListener('focusout', e => {
   if (e.target.classList.contains('num-field')) formatNum(e.target);
 });
+// 숫자 외 입력 차단
 document.addEventListener('keypress', e => {
   if (e.target.classList.contains('num-field')) {
     if (!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
@@ -431,18 +461,22 @@ document.addEventListener('keypress', e => {
   }
 });
 
+// ③ 공제·감면 행 추�  / 삭제
 function addDeductRow() {
   const tbody = document.getElementById('deductionRows');
   const tr = document.createElement('tr');
   tr.className = 'deduct-row';
-  tr.innerHTML = `<td class="indent" style="padding-left:32px;font-size:13px;color:#94a3b8;">
+  tr.innerHTML = `
+    <td class="indent" style="padding-left:32px; font-size:13px; color:#94a3b8;">
       <div class="deduct-label">
-        <span contenteditable="true">— 항목계 입력</span>
-        <button class="btn-del-row no-print" onclick="delDeductRow(this)" title="행 
-삭제">×</button>
-      </div></td>
-    <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
+        <span contenteditable="true">— 항목명 입력</span>
+        <button class="btn-del-row no-print" onclick="delDeductRow(this)" title="행 삭제">×</button>
+      </div>
+    </td>
+    <td class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
+        style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
   tbody.appendChild(tr);
+  // 라벨 포커스
   const label = tr.querySelector('[contenteditable="true"]');
   label.focus();
   document.execCommand('selectAll');
@@ -454,31 +488,35 @@ function delDeductRow(btn) {
 }
 </script>
 
+<!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
   import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
   const firebaseConfig = {
-    apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E3KpfdZwbA",
+    apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
     authDomain: "tax-aaee5.firebaseapp.com",
     projectId: "tax-aaee5",
     storageBucket: "tax-aaee5.firebasestorage.app",
     messagingSenderId: "11651546985",
     appId: "1:11651546985:web:7843ffed4adf2eb59e47f8"
   };
+
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const select = document.getElementById('clientSelect');
   const statusDot = document.getElementById('statusDot');
+
   async function loadClients() {
     try {
       const q = query(collection(db, 'clients'), orderBy('name'));
       const snapshot = await getDocs(q);
-      select.innerHTML = '<option value="">-- 고객을 선택안세요 --</option>';
+      select.innerHTML = '<option value="">-- 고객을 선택하세요 --</option>';
       snapshot.forEach(doc => {
         const data = doc.data();
         const opt = document.createElement('option');
         opt.value = doc.id;
-        opt.textContent = data.name || '(이멄 없음)';
+        opt.textContent = data.name || '(이름 없음)';
         opt.dataset.brn = data.brn || '';
         opt.dataset.ceo = data.ceo || '';
         opt.dataset.name = data.name || '';
@@ -487,10 +525,11 @@ function delDeductRow(btn) {
       select.disabled = false;
       statusDot.classList.add('connected');
     } catch (err) {
-      select.innerHTML = '<option value="">⚠ 추기실패 - 새로고침해 주세요</option>';
+      select.innerHTML = '<option value="">⚠ 불러오기 실패 — 새로고침해 주세요</option>';
       statusDot.classList.add('error');
     }
   }
+
   select.addEventListener('change', () => {
     const opt = select.options[select.selectedIndex];
     if (!opt.value) return;
@@ -498,6 +537,7 @@ function delDeductRow(btn) {
     document.getElementById('corpBrn').textContent = opt.dataset.brn;
     document.getElementById('corpCeo').textContent = opt.dataset.ceo;
   });
+
   loadClients();
 </script>
 
