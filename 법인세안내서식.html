@@ -396,7 +396,7 @@
       <div class="deadline-icon">📅</div>
       <div class="deadline-text">
         <strong>납부기한을 꼭 확인해 주세요</strong>
-        <span>기한 내 미납부 시 납부지연가산세(1일 0.022%)가 부과됩니다. 분납 또는 연장이 필요하신 경우 사전에 알려주시기 바랍니다.</span>
+        <span>기한 내 미납부 시 납부지연가산세가 부과됩니다.</span>
       </div>
     </div>
 
@@ -415,7 +415,7 @@
       <div>연락처: <span id="officeTel" contenteditable="true">02-000-0000</span></div>
     </div>
     <div style="text-align:right;">
-      작성일: <span contenteditable="true">2025. 03. 00.</span>
+      작성일: <span id="issueDate" contenteditable="true">2025. 03. 00.</span>
     </div>
   </div>
 
@@ -439,17 +439,17 @@
     if (y === curYear - 1) opt.selected = true; // 기본값: 전년도
     sel.appendChild(opt);
   }
+  // ① 작성일 오늘 날짜 자동입력
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm   = String(today.getMonth() + 1).padStart(2, '0');
+  const dd   = String(today.getDate()).padStart(2, '0');
+  document.getElementById('issueDate').textContent = `${yyyy}. ${mm}. ${dd}.`;
 })();
 
 // ② 숫자 자동 포맷 (원 자동 추가)
 function formatNum(el) {
-  const raw = el.textContent.replace(/[^0-9]/g, '');
-  if (!raw) return;
-  const n = parseInt(raw, 10);
-  const fmt = n.toLocaleString('ko-KR');
-  const type = el.dataset.type;
-  if (type === 'amount-minus') el.textContent = '▲ ' + fmt + ' 원';
-  else if (type === 'card-amount') el.textContent = fmt;
+  const raw = el.textContent.rf (type === 'card-amount') el.textContent = fmt;
   else el.textContent = fmt + ' 원';
 }
 
@@ -561,6 +561,10 @@ function addDeductRow() {
       </div>
     </td>
     <td class="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
+        style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
+  tbody.appendChild(tr);
+  // 라벨 포커스
+  cons="num-field deduct-amount" contenteditable="true" data-type="amount" data-placeholder="금액 입력"
         style="text-align:right;font-size:13px;color:#94a3b8;"></td>`;
   tbody.appendChild(tr);
   // 라벨 포커스
