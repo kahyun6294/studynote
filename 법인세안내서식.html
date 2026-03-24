@@ -314,7 +314,7 @@
     <table class="calc-table">
       <tr>
         <td>① 과세표준</td>
-        <td id="taxBase" class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
+        <td id="taxBase" class="num-field" contenteditable="true" data-type="amount-signed" data-placeholder="금액 입력" style="text-align:right;font-weight:600;color:#1e293b;"></td>
       </tr>
       <tr>
         <td>② 산출세액</td>
@@ -361,18 +361,18 @@
     <div class="section-title">최종 납부세액</div>
     <div class="pay-grid">
       <div class="pay-card highlight">
-        <div class="card-label">법인세<br>추가납부세액</div>
+        <div class="card-label" id="taxFinalLabel">법인세<br>추가납부세액</div>
         <div id="taxFinal" class="card-amount auto-field" style="font-size:18px;font-weight:700;"></div>
         <div class="card-note">원</div>
       </div>
-      <div class="pay-card">
+      <div class="pay-card highlight">
         <div class="card-label">지방소득세<br>납부세액</div>
         <div id="taxLocal" class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0" style="font-size:18px;font-weight:700;"></div>
         <div class="card-note">원</div>
       </div>
-      <div class="pay-card">
+      <div class="pay-card highlight">
         <div class="card-label">농어촌특별세<br>납부세액</div>
-        <div id="taxSpecial" class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0"></div>
+        <div id="taxSpecial" class="card-amount num-field" contenteditable="true" data-type="card-amount" data-placeholder="0" style="font-size:18px;font-weight:700;"></div>
         <div class="card-note">원</div>
       </div>
     </div>
@@ -386,19 +386,19 @@
       </thead>
       <tbody>
         <tr>
-          <td>법인세</td><td>추가납부분</td>
+          <td>법인세</td><td id="taxFinalSubLabel">추가납부분</td>
           <td id="taxFinalTable" class="auto-field" style="text-align:right;"></td>
-          <td contenteditable="true">2025. 03. 31.</td>
+          <td contenteditable="true" style="font-weight:700;">2025. 03. 31.</td>
         </tr>
         <tr>
           <td>지방소득세</td><td>법인분</td>
           <td id="taxLocalTable" class="auto-field" style="text-align:right;"></td>
-          <td contenteditable="true">2026. 04. 30.<br><span style="font-size:11px;color:#e05c5c;font-weight:600;">(26년 4월 30일까지)</span></td>
+          <td contenteditable="true" style="font-weight:700;">2026. 04. 30.</td>
         </tr>
         <tr>
           <td>농어촌특별세</td><td>감면분</td>
           <td id="taxSpecialTable" class="auto-field" style="text-align:right;"></td>
-          <td contenteditable="true">2025. 03. 31.</td>
+          <td contenteditable="true" style="font-weight:700;">2025. 03. 31.</td>
         </tr>
         <tr>
           <td colspan="2"><strong>총 납부 예정액</strong></td>
@@ -469,18 +469,21 @@ function addCommas(n) {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 function formatNum(el) {
-  const raw = el.textContent.replace(/[^0-9]/g, '');
-  if (!raw) return;
-  const n = parseInt(raw, 10);
-  const fmt = addCommas(n);
   const type = el.dataset.type;
-  if (type === 'amount-minus') el.textContent = '▲ ' + fmt + ' 원';
-  else if (type === 'card-amount') el.textContent = fmt;
-  else el.textContent = fmt + ' 원';
+  const signed = type === 'amount-signed';
+  const raw = el.textContent.replace(signed ? /[^0-9\-]/g : /[^0-9]/g, '');
+  if (!raw || raw === '-') return;
+  const n = parseInt(raw, 10);
+  const abs = addCommas(Math.abs(n));
+  if (type === 'amount-minus') el.textContent = '▲ ' + abs + ' 원';
+  else if (type === 'card-amount') el.textContent = abs;
+  else if (signed) el.textContent = (n < 0 ? '▲ ' : '') + abs + ' 원';
+  else el.textContent = abs + ' 원';
 }
 
 function stripNum(el) {
-  const raw = el.textContent.replace(/[^0-9]/g, '');
+  const signed = el.dataset.type === 'amount-signed';
+  const raw = el.textContent.replace(signed ? /[^0-9\-]/g : /[^0-9]/g, '');
   el.textContent = raw;
   // 커서를 끝으로 이동
   const range = document.createRange();
@@ -500,10 +503,12 @@ document.addEventListener('focusout', e => {
     recalc();
   }
 });
-// 숫자 외 입력 차단
+// 숫자 외 입력 차단 (amount-signed는 맨 앞 - 허용)
 document.addEventListener('keypress', e => {
   if (e.target.classList.contains('num-field')) {
-    if (!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
+    const signed = e.target.dataset.type === 'amount-signed';
+    const allowMinus = signed && e.key === '-' && e.target.textContent.replace(/[^0-9]/g,'') === '' && !e.target.textContent.includes('-');
+    if (!/[0-9]/.test(e.key) && !allowMinus && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
       e.preventDefault();
     }
   }
@@ -513,7 +518,10 @@ document.addEventListener('keypress', e => {
 function getRaw(id) {
   const el = document.getElementById(id);
   if (!el) return 0;
-  return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+  const signed = el.dataset.type === 'amount-signed';
+  const neg = signed && (el.textContent.includes('-') || el.textContent.includes('▲'));
+  const n = parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
+  return neg ? -n : n;
 }
 function getRawEl(el) {
   return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
@@ -548,8 +556,23 @@ function recalc() {
   // 기납부세액
   const taxPrepaid = getRaw('taxPrepaid');
 
-  // 법인세 추가납부세액 = 결정세액 - 기납부세액
-  const taxFinal = Math.max(0, taxDecide - taxPrepaid);
+  // 법인세 추가납부 or 환급
+  const taxFinalRaw = taxDecide - taxPrepaid;
+  const taxFinal = Math.abs(taxFinalRaw);
+  const isRefund = taxFinalRaw < 0;
+  // 카드 라벨 전환
+  const labelEl = document.getElementById('taxFinalLabel');
+  if (labelEl) labelEl.innerHTML = isRefund ? '법인세<br><span style="color:#16a34a;">환급세액</span>' : '법인세<br>추가납부세액';
+  const subLabelEl = document.getElementById('taxFinalSubLabel');
+  if (subLabelEl) subLabelEl.textContent = isRefund ? '환급분' : '추가납부분';
+  // 하이라이트 카드 색상
+  const cardEl = document.querySelector('.pay-card.highlight');
+  if (cardEl) {
+    cardEl.style.borderColor = isRefund ? '#16a34a' : '';
+    cardEl.style.background = isRefund ? '#f0fdf4' : '';
+  }
+  const amtEl = document.getElementById('taxFinal');
+  if (amtEl) amtEl.style.color = isRefund ? '#16a34a' : '';
   setAutoCard('taxFinal', taxFinal);
   setAuto('taxFinalTable', taxFinal);
 
@@ -566,7 +589,7 @@ function recalc() {
   setAuto('taxTotal', taxTotal);
 }
 
-// ③ 공제·감면 행 추�  / 삭제
+// ③ 공제·감면 행 추가 / 삭제
 function addDeductRow() {
   const tbody = document.getElementById('deductionRows');
   const tr = document.createElement('tr');
@@ -624,7 +647,7 @@ function delDeductRow(btn) {
         const data = doc.data();
         const opt = document.createElement('option');
         opt.value = doc.id;
-        opt.textContent = data.name || '(이름 없음)';
+        opt.textContent = data.name || ')이름 없음)';
         opt.dataset.brn = data.brn || '';
         opt.dataset.ceo = data.ceo || '';
         opt.dataset.name = data.name || '';
