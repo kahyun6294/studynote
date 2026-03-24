@@ -232,9 +232,30 @@
 
   /* 인쇄 */
   @media print {
-    body { background: #fff; padding: 0; }
-    .page { box-shadow: none; border-radius: 0; max-width: 100%; }
-    .no-print { display: none; }
+    @page { size: A4 portrait; margin: 8mm; }
+    html, body { background: #fff !important; padding: 0 !important; margin: 0 !important; font-size: 11px; }
+    .client-selector-wrap { display: none !important; }
+    .page { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; width: 100% !important; page-break-inside: avoid; }
+    .no-print { display: none !important; }
+    .header { padding: 14px 24px 12px !important; }
+    .doc-title { font-size: 16px !important; }
+    .doc-subtitle { font-size: 11px !important; }
+    .recipient-box { padding: 8px 14px !important; gap: 20px !important; }
+    .body { padding: 14px 24px !important; }
+    .section-title { margin-bottom: 6px !important; font-size: 11px !important; }
+    .calc-table { margin-bottom: 12px !important; font-size: 12px !important; }
+    .calc-table td { padding: 6px 4px !important; }
+    .pay-grid { gap: 8px !important; margin-bottom: 12px !important; }
+    .pay-card { padding: 10px 8px !important; }
+    .pay-card .card-label { font-size: 11px !important; margin-bottom: 4px !important; }
+    .pay-card .card-amount { font-size: 14px !important; }
+    .sub-table { font-size: 12px !important; margin-bottom: 12px !important; }
+    .sub-table th, .sub-table td { padding: 5px 6px !important; }
+    .deadline-banner { padding: 8px 14px !important; margin-bottom: 10px !important; }
+    .memo-box { padding: 8px 14px !important; }
+    .memo-content { min-height: 30px !important; font-size: 11px !important; }
+    .footer { padding: 10px 24px !important; font-size: 11px !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   }
 
   [contenteditable="true"]:focus {
@@ -282,10 +303,6 @@
         <label>대표자</label>
         <span id="corpCeo" contenteditable="true">홍 길 동</span>
       </div>
-      <div class="recipient-item">
-        <label>신고·납부기한</label>
-        <span contenteditable="true">2025. 03. 31.</span>
-      </div>
     </div>
   </div>
 
@@ -305,11 +322,11 @@
       </tr>
       <tr>
         <td class="indent">감면세액 합계</td>
-        <td id="deductTotal" class="auto-field-minus" style="text-align:right;font-weight:600;"></td>
+        <td id="deductTotal" class="num-field" contenteditable="true" data-type="amount-minus" data-placeholder="금액 입력" style="text-align:right;font-weight:600;"></td>
       </tr>
       <tr class="deduct-row">
         <td class="indent" style="padding-left:32px; font-size:13px; color:#94a3b8;">
-          <div class="deduct-label"><span>— 통합고용세액공제</span></div>
+          <div class="deduct-label"><span contenteditable="true">— 통합고용세액공제</span></div>
         </td>
         <td id="taxIntegrated" class="num-field" contenteditable="true" data-type="amount" data-placeholder="금액 입력" style="text-align:right;font-size:13px;color:#94a3b8;"></td>
       </tr>
@@ -376,7 +393,7 @@
         <tr>
           <td>지방소득세</td><td>법인분</td>
           <td id="taxLocalTable" class="auto-field" style="text-align:right;"></td>
-          <td contenteditable="true">2025. 04. 30.</td>
+          <td contenteditable="true">2026. 04. 30.<br><span style="font-size:11px;color:#e05c5c;font-weight:600;">(26년 4월 30일까지)</span></td>
         </tr>
         <tr>
           <td>농어촌특별세</td><td>감면분</td>
@@ -521,15 +538,8 @@ function recalc() {
   // ① 산출세액
   const taxCalc = getRaw('taxCalc');
 
-  // 감면 합계 = 통합고용 + deductionRows 의 모든 금액
-  const integrated = getRaw('taxIntegrated');
-  let deductSum = integrated;
-  document.querySelectorAll('#deductionRows .num-field').forEach(el => {
-    deductSum += getRawEl(el);
-  });
-
-  // 감면세액 합계 표시
-  setAutoMinus('deductTotal', deductSum);
+  // 감면세액 합계 (직접 입력)
+  const deductSum = getRaw('deductTotal');
 
   // ③ 결정세액 = 산출세액 - 감면합계
   const taxDecide = Math.max(0, taxCalc - deductSum);
@@ -556,7 +566,7 @@ function recalc() {
   setAuto('taxTotal', taxTotal);
 }
 
-// ③ 공제·감면 행 추가 / 삭제
+// ③ 공제·감면 행 추�  / 삭제
 function addDeductRow() {
   const tbody = document.getElementById('deductionRows');
   const tr = document.createElement('tr');
