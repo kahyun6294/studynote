@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>세금신고 안내문</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --navy:#1a2744; --gold:#b8962e; --gold-light:#d4af5a; --gray:#6b7280; --light-gray:#e8e4db; --bg:#f4f6f9; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Noto Sans KR',sans-serif; background:var(--bg); min-height:100vh; padding:20px; }
+
+  .toolbar { max-width:780px; margin:0 auto 16px; background:white; border-radius:10px; padding:14px 20px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+  .toolbar-label { font-size:11px; font-weight:700; color:var(--gold); letter-spacing:1.5px; }
+  .toolbar-select { padding:7px 12px; border:1.5px solid #e0e0e0; border-radius:6px; font-family:'Noto Sans KR',sans-serif; font-size:13px; color:var(--navy); background:white; outline:none; transition:border-color 0.2s; }
+  .toolbar-select:focus { border-color:var(--gold); }
+  .toolbar-btn { padding:7px 16px; border:none; border-radius:6px; font-family:'Noto Sans KR',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+  .btn-gold { background:var(--gold); color:white; }
+  .btn-gold:hover { background:#a07828; }
+  .toolbar-divider { width:1px; height:24px; background:#e0e0e0; }
+
+  .notice { max-width:780px; margin:0 auto; background:white; border-radius:12px; box-shadow:0 4px 24px rgba(0,0,0,0.10); overflow:hidden; }
+
+  .notice-header { background:var(--navy); padding:36px 50px 30px; position:relative; overflow:hidden; }
+  .notice-header::after { content:''; position:absolute; right:-30px; top:-30px; width:180px; height:180px; border-radius:50%; background:rgba(255,255,255,0.04); }
+  .notice-tag { display:inline-block; background:var(--gold); color:white; font-size:10px; font-weight:700; letter-spacing:2px; padding:4px 12px; border-radius:20px; margin-bottom:14px; }
+  .notice-title { font-family:'Noto Serif KR',serif; font-size:26px; font-weight:700; color:white; line-height:1.4; }
+  .notice-date { position:absolute; right:50px; top:50%; transform:translateY(-50%); text-align:right; }
+  .notice-date .date-label { font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:1.5px; margin-bottom:4px; }
+  .notice-date .date-value { font-size:14px; font-weight:600; color:var(--gold-light); }
+
+  .notice-body { padding:36px 50px; }
+
+  .recipient-box { border:1.5px solid var(--light-gray); border-radius:8px; padding:18px 22px; margin-bottom:28px; display:flex; align-items:center; gap:20px; background:#fafafa; }
+  .recipient-label { font-size:10px; font-weight:700; color:var(--gold); letter-spacing:2px; min-width:28px; }
+  .recipient-info { display:flex; gap:28px; flex-wrap:wrap; }
+  .recipient-item .r-label { font-size:10px; color:var(--gray); margin-bottom:3px; }
+  .recipient-item .r-value { font-size:15px; font-weight:600; color:var(--navy); min-width:80px; display:inline-block; }
+  .recipient-item .r-value[contenteditable="true"] { border-bottom:1.5px dashed var(--light-gray); outline:none; min-width:80px; display:inline-block; }
+  .recipient-item .r-value[contenteditable="true"]:focus { border-bottom-color:var(--gold); }
+
+  .greeting { font-size:14px; line-height:1.6; color:#444; margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--light-gray); }
+  .greeting strong { color:var(--navy); }
+
+  .info-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; margin-top:16px; }
+  .info-card { border:1.5px solid var(--light-gray); border-radius:8px; padding:12px 20px; }
+  .info-card.highlight { border-color:var(--gold); background:#fffdf5; }
+  .info-card .card-label { font-size:10px; font-weight:700; color:var(--gray); letter-spacing:1.5px; margin-bottom:6px; }
+  .info-card.highlight .card-label { color:var(--gold); }
+  .info-card .card-value { font-size:16px; font-weight:700; color:var(--navy); }
+  .info-card.highlight .card-value { color:var(--gold); font-family:'Noto Serif KR',serif; }
+  .info-card .card-value[contenteditable="true"] { outline:none; border-bottom:1.5px dashed var(--light-gray); display:inline-block; min-width:100px; }
+  .info-card .card-value[contenteditable="true"]:focus { border-bottom-color:var(--gold); }
+  .info-card .card-note { font-size:11px; color:var(--gray); margin-top:5px; }
+
+  .docs-section { margin-bottom:20px; }
+  .section-title { font-size:11px; font-weight:700; color:var(--navy); letter-spacing:2px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--light-gray); }
+  .docs-list { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .docs-list li { font-size:13.5px; color:#444; padding:9px 12px; background:#f8f8f8; border-radius:6px; }
+  .doc-name { font-weight:700; color:var(--navy); margin-bottom:2px; display:flex; align-items:center; gap:6px; }
+  .doc-name::before { content:'✓'; color:var(--gold); font-weight:700; font-size:12px; flex-shrink:0; }
+  .doc-name.warning { color:#c0392b; }
+  .doc-name.warning::before { content:'⚠'; color:#c0392b; }
+  .doc-desc { font-size:12.5px; color:#666; line-height:1.6; padding-left:16px; white-space:pre-line; }
+  .docs-list li[contenteditable="true"] { outline:none; }
+  .docs-list li[contenteditable="true"]:focus { background:#fffdf5; border:1px solid var(--gold); }
+  .add-doc-btn { margin-top:6px; background:none; border:1.5px dashed #ccc; border-radius:6px; padding:6px 14px; font-size:12px; color:#999; cursor:pointer; font-family:'Noto Sans KR',sans-serif; transition:all 0.15s; }
+  .add-doc-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+  .notice-memo { background:#f8f9fc; border-radius:8px; padding:16px 20px; font-size:12.5px; color:#666; line-height:1.8; margin-bottom:20px; }
+  .notice-memo[contenteditable="true"] { outline:none; }
+  .notice-memo[contenteditable="true"]:focus { background:#fffdf5; }
+
+  .office-footer { border-top:2px solid var(--navy); padding-top:20px; display:flex; justify-content:space-between; align-items:flex-end; }
+  .office-info .office-name { font-family:'Noto Serif KR',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+  .office-info .office-detail { font-size:12px; color:var(--gray); line-height:1.8; }
+  .office-info [contenteditable="true"] { outline:none; border-bottom:1px dashed transparent; transition:border-color 0.2s; }
+  .office-info [contenteditable="true"]:focus { border-bottom-color:var(--gold); }
+  .office-stamp { width:70px; height:70px; border:2.5px solid var(--navy); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--navy); letter-spacing:1px; opacity:0.3; }
+
+  /* 모달 */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; }
+  .modal-box { background:white; border-radius:12px; padding:28px 32px; width:300px; box-shadow:0 20px 60px rgba(0,0,0,0.3); font-family:'Noto Sans KR',sans-serif; }
+  .modal-title { font-size:16px; font-weight:700; color:var(--navy); margin-bottom:18px; font-family:'Noto Serif KR',serif; }
+  .vat-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .vat-btn { padding:14px 10px; background:#faf8f3; border:1.5px solid var(--light-gray); border-radius:8px; cursor:pointer; font-family:'Noto Sans KR',sans-serif; font-size:14px; font-weight:600; color:var(--navy); transition:all 0.15s; }
+  .vat-btn:hover { background:var(--navy); color:white; border-color:var(--navy); }
+
+  @media print {
+    @page { size:A4; margin:8mm 10mm; }
+    body { background:white; padding:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .toolbar { display:none; }
+    .notice { box-shadow:none; border-radius:0; }
+    * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    .add-doc-btn { display:none; }
+    [contenteditable] { border-bottom:none !important; }
+    .notice-header { padding:14px 30px 12px; }
+    .notice-title { font-size:18px; }
+    .notice-tag { margin-bottom:8px; }
+    .notice-body { padding:14px 30px; }
+    .recipient-box { padding:8px 14px; margin-bottom:10px; }
+    .recipient-item .r-label { font-size:9px; }
+    .recipient-item .r-value { font-size:13px; }
+    .info-cards { grid-template-columns:1fr 1fr; margin-bottom:10px; margin-top:10px; gap:6px; }
+    .info-card { padding:7px 12px; }
+    .info-card .card-label { font-size:9px; margin-bottom:3px; }
+    .info-card .card-value { font-size:12px; }
+    .info-card .card-note { font-size:10px; margin-top:3px; }
+    .greeting { font-size:11px; line-height:1.5; margin-bottom:10px; padding-bottom:10px; }
+    .section-title { font-size:10px; margin-bottom:6px; }
+    .docs-section { margin-bottom:8px; }
+    .docs-list { grid-template-columns:1fr 1fr; gap:4px; }
+    .docs-list li { padding:4px 8px; font-size:11px; }
+    .doc-name { font-size:11px; margin-bottom:1px; }
+    .doc-desc { font-size:9.5px; line-height:1.4; }
+    .notice-memo { padding:8px 12px; font-size:10px; line-height:1.6; margin-bottom:10px; }
+    .office-footer { padding-top:10px; }
+    .office-info .office-name { font-size:13px; margin-bottom:3px; }
+    .office-info .office-detail { font-size:10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <button class="toolbar-btn" onclick="openClientModal()" id="clientBtn" style="background:white;border:1.5px solid #e0e0e0;color:var(--navy);font-weight:500;min-width:150px;text-align:left;padding:7px 12px;">🏢 거래처 선택</button>
+  <div class="toolbar-divider"></div>
+  <span class="toolbar-label">귀속연도</span>
+  <select id="yearSelect" class="toolbar-select" onchange="reapplyNotice()" style="min-width:90px;"></select>
+  <div class="toolbar-divider"></div>
+  <span class="toolbar-label">신고종류</span>
+  <select id="noticeType" class="toolbar-select" onchange="onNoticeTypeChange()" style="min-width:130px;">
+    <option value="">선택</option>
+    <option value="vat">부가가치세</option>
+    <option value="corp">법인세</option>
+    <option value="income">종합소득세</option>
+  </select>
+  <div class="toolbar-divider" id="bizTypeDivider" style="display:none;"></div>
+  <span class="toolbar-label" id="bizTypeLabel" style="display:none;">업종</span>
+  <select id="bizTypeSelect" class="toolbar-select" onchange="reapplyNotice()" style="min-width:120px;display:none;">
+    <option value="general">일반</option>
+    <option value="clinic">병의원/약국(한의원)</option>
+  </select>
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn btn-gold" onclick="openPrintModal()">🖨 인쇄 / PDF</button>
+</div>
+
+<!-- 거래처 검색 모달 -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal-box" style="width:400px;">
+    <div class="modal-title">거래처 선택</div>
+    <input type="text" id="clientSearch" placeholder="상호명 또는 대표자명으로 검색..." oninput="filterClients()"
+      style="width:100%;padding:9px 14px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;margin-bottom:12px;transition:border-color 0.2s;"
+      onfocus="this.style.borderColor='#b8962e'" onblur="this.style.borderColor='#e0e0e0'">
+    <div id="clientList" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
+      <div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">불러오는 중...</div>
+    </div>
+    <button onclick="closeClientModal()" style="margin-top:14px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">닫기</button>
+  </div>
+</div>
+
+<!-- 개인 부가세 모달 (확정만) -->
+<div class="modal-overlay" id="vatIndividualModal">
+  <div class="modal-box" style="width:300px;">
+    <div class="modal-title">부가가치세 신고 기수 선택</div>
+    <div style="font-size:12px;color:#b8962e;margin-bottom:14px;background:#fffdf5;padding:8px 12px;border-radius:6px;">개인사업자는 확정신고만 해당됩니다</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div class="vat-btn-grid">
+        <button class="vat-btn" onclick="applyVat('1기 확정')">1기 확정</button>
+        <button class="vat-btn" onclick="applyVat('2기 확정')">2기 확정</button>
+      </div>
+    </div>
+    <button onclick="closeVatIndividualModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+  </div>
+</div>
+
+<!-- 종합소득세 성실신고 모달 -->
+<div class="modal-overlay" id="incomeModal">
+  <div class="modal-box" style="width:300px;">
+    <div class="modal-title">종합소득세 신고 구분</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="vat-btn" onclick="applyIncome('income')">
+        <div style="font-size:14px;font-weight:700;">일반 신고</div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">신고마감일 5월 31일</div>
+      </button>
+      <button class="vat-btn" onclick="applyIncome('income_sincere')">
+        <div style="font-size:14px;font-weight:700;">성실신고 대상자</div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">신고마감일 6월 30일</div>
+      </button>
+    </div>
+    <button onclick="closeIncomeModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+  </div>
+</div>
+
+<!-- 부가세 기수 모달 -->
+<div class="modal-overlay" id="vatModal">
+  <div class="modal-box" style="width:320px;">
+    <div class="modal-title">부가가치세 신고 기수 선택</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:4px;">1기</div>
+      <div class="vat-btn-grid">
+        <button class="vat-btn" onclick="applyVat('1기 예정')">1기 예정</button>
+        <button class="vat-btn" onclick="applyVat('1기 확정')">1기 확정</button>
+      </div>
+      <button class="vat-btn" style="width:100%;" onclick="applyVat('1기 예정+확정')">1기 예정+확정</button>
+      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:6px;">2기</div>
+      <div class="vat-btn-grid">
+        <button class="vat-btn" onclick="applyVat('2기 예정')">2기 예정</button>
+        <button class="vat-btn" onclick="applyVat('2기 확정')">2기 확정</button>
+      </div>
+      <button class="vat-btn" style="width:100%;" onclick="applyVat('2기 예정+확정')">2기 예정+확정</button>
+    </div>
+    <button onclick="closeVatModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+  </div>
+</div>
+
+<!-- 인쇄 모달 -->
+<div class="modal-overlay" id="printModal">
+  <div class="modal-box">
+    <div class="modal-title">출력 방식 선택</div>
+    <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">원하시는 출력 방식을 선택해주세요.</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <button onclick="doPrint()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#faf8f3;border:1.5px solid #e8e4db;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:left;" onmouseover="this.style.background='#1a2744';this.style.color='white'" onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c'">
+        <span style="font-size:22px;">🖨</span>
+        <div><div style="font-weight:700;font-size:14px;">인쇄하기</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">프린터로 직접 출력</div></div>
+      </button>
+      <button onclick="doSavePDF()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#faf8f3;border:1.5px solid #e8e4db;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:left;" onmouseover="this.style.background='#b8962e';this.style.color='white'" onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c'">
+        <span style="font-size:22px;">📄</span>
+        <div><div style="font-weight:700;font-size:14px;">PDF로 저장</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">PDF 파일로 저장</div></div>
+      </button>
+    </div>
+    <button onclick="closePrintModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+  </div>
+</div>
+
+<div class="notice">
+  <div class="notice-header">
+    <div class="notice-tag" id="noticeTag">세금신고 안내</div>
+    <div class="notice-title" id="noticeTitle">세금신고 안내문</div>
+    <div class="notice-date">
+      <div class="date-label">발송일</div>
+      <div class="date-value" id="issueDate"></div>
+    </div>
+  </div>
+  <div class="notice-body">
+    <div class="recipient-box">
+      <div class="recipient-label">수신</div>
+      <div class="recipient-info">
+        <div class="recipient-item">
+          <div class="r-label">상호명</div>
+          <div class="r-value" id="f_name" contenteditable="true">주식회사 ○○○</div>
+        </div>
+        <div class="recipient-item">
+          <div class="r-label">대표자</div>
+          <div class="r-value" id="f_ceo" contenteditable="true">홍 길 동</div>
+        </div>
+        <div class="recipient-item">
+          <div class="r-label">사업자번호</div>
+          <div class="r-value" id="f_brn" contenteditable="true">000-00-00000</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="greeting" id="greetingBlock">
+      안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>
+      <strong id="greeting_type">세금신고</strong> 기한이 도래하여 안내드립니다.<br>
+      아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="card-label">신고 구분</div>
+        <div class="card-value" id="card_type" contenteditable="true">-</div>
+      </div>
+      <div class="info-card">
+        <div class="card-label">신고 대상 기간</div>
+        <div class="card-value" id="card_period" contenteditable="true">-</div>
+      </div>
+      <div class="info-card highlight">
+        <div class="card-label">신고 마감일</div>
+        <div class="card-value" id="card_deadline" contenteditable="true">-</div>
+        <div class="card-note" id="card_deadline_note"></div>
+      </div>
+      <div class="info-card highlight">
+        <div class="card-label">서류 제출 기한</div>
+        <div class="card-value" id="card_submit" contenteditable="true">-</div>
+      </div>
+    </div>
+
+    <div class="docs-section">
+      <div class="section-title">필요 서류 <span style="font-size:11px;font-weight:400;color:var(--gray);letter-spacing:0;">※ 해당되는 서류만 제출해 주세요</span></div>
+      <ul class="docs-list" id="docsList">
+        <li contenteditable="true">신고 종류를 선택하면 자동으로 채워집니다</li>
+      </ul>
+      <button class="add-doc-btn" onclick="addDoc()">+ 서류 추가</button>
+    </div>
+
+    <div class="notice-memo" contenteditable="true">
+      ※ 서류 미제출 시 신고가 지연될 수 있으며, 이로 인한 가산세 등 불이익이 발생할 수 있습니다.<br>
+      ※ 문의사항은 아래 연락처로 연락 주시기 바랍니다.
+    </div>
+
+    <div class="office-footer">
+      <div class="office-info">
+        <div class="office-name">세무사 이헌 사무소</div>
+        <div class="office-detail">
+          사업자번호 : 621-11-47021<br>
+          TEL: 051-928-0250 &nbsp;|&nbsp; FAX: 051-980-2509<br>
+          주소: 부산광역시 해운대구 센텀동로 71(우동, 벽산e센텀클래스2차) 310호
+        </div>
+      </div>
+      <div class="office-stamp" style="display:none">직인</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const today = new Date();
+  const y = today.getFullYear();
+  document.getElementById('issueDate').textContent =
+    `${y}년 ${String(today.getMonth()+1).padStart(2,'0')}월 ${String(today.getDate()).padStart(2,'0')}일`;
+
+  (function() {
+    const sel = document.getElementById('yearSelect');
+    for (let yr = 2035; yr >= 2022; yr--) {
+      const opt = document.createElement('option');
+      opt.value = yr; opt.textContent = yr + '년';
+      if (yr === y - 1) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  })();
+
+  function getNextBizDay(yr, mo, dy) {
+    const base = new Date(yr, mo - 1, dy);
+    const actual = new Date(base);
+    const dow = actual.getDay();
+    if (dow === 6) actual.setDate(actual.getDate() + 2);
+    else if (dow === 0) actual.setDate(actual.getDate() + 1);
+    const fmt = d => `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+    const note = actual.getTime() !== base.getTime()
+      ? `(${base.getMonth()+1}월 ${base.getDate()}일이 주말이므로 다음 영업일)` : '';
+    return { str: fmt(actual), note };
+  }
+
+  const vatDocs = [
+    { name: '세금계산서 및 계산서', desc: '전자발행분은 제출하지 않아도 됩니다 (홈택스에서 조회 가능)\n종이발행분은 반드시 취합하여 제출 (원본 또는 사본)' },
+    { name: '신용카드 매입내역', desc: '홈택스 등록 법인카드 및 개인사업자 사업용카드 국내사용분 제출 불필요\n법인카드 외 개인명의 카드 사용분 중 사업 관련 내역은 영수증 및 엑셀 제출' },
+    { name: '법인계좌 거래내역', desc: '각 은행에서 엑셀 파일 다운로드 (간편조회 등록한 경우 제출 불필요)' },
+    { name: '기타 지출증빙', desc: '지출결의서, 간이영수증, 수입신고필증 (수출선적일 기재)' },
+    { name: '업종별 해당 서류 (반드시 확인 필요)', desc: '전자상거래업: 각 사이트 정산관리 자료, PG사 매출자료, 해외 오픈마켓 수출신고필증·송장·소포수령증\n구매대행업: 구매대행 계산자료 (매출·매입)\n수출업: 수출신고 자료, 해외 배송비 영수증\n음식점·휴게음식업: 매장 포스사 연락처, 배달대행 업체별 사이트 계정 정보\n영세율적용대상: 선적확인서, 외화입금증, 구매확인서, 인보이스 등\n부동산임대업: 부동산임대차계약서 (보증금 변동내역 포함)\n※ 기계구입 등 1천만원 이상 지출 시 세금계산서 외 구입계약서 및 송금내역 함께 첨부' },
+  ];
+
+  const vatDocsIndividual = [
+    { name: '세금계산서 및 계산서', desc: '전자발행분은 제출하지 않아도 됩니다 (홈택스에서 조회 가능)\n종이발행분은 반드시 취합하여 제출 (원본 또는 사본)' },
+    { name: '신용카드 매입내역', desc: '홈택스 미등록 카드 사용분 중 사업 관련 내역만 영수증 및 엑셀 제출' },
+    { name: '기타 지출증빙', desc: '지출결의서, 간이영수증, 수입신고필증 (수출선적일 기재)' },
+    { name: '업종별 해당 서류 (반드시 확인 필요)', desc: '전자상거래업: 각 사이트 정산관리 자료, PG사 매출자료, 해외 오픈마켓 수출신고필증·송장·소포수령증\n구매대행업: 구매대행 계산자료 (매출·매입)\n수출업: 수출신고 자료, 해외 배송비 영수증\n음식점·휴게음식업: 매장 포스사 연락처, 배달대행 업체별 사이트 계정 정보\n영세율적용대상: 선적확인서, 외화입금증, 구매확인서, 인보이스 등\n부동산임대업: 부동산임대차계약서 (보증금 변동내역 포함)\n※ 기계구입 등 1천만원 이상 지출 시 세금계산서 외 구입계약서 및 송금내역 함께 첨부' },
+  ];
+
+  const corpDocs = [
+    { name: '법인 등기부등본, 건축물대장, 토지대장 등', desc: '인터넷 등기소에서 발급 (말소사항 포함)' },
+    { name: '주주명부 및 주주변동내역서', desc: '변동사항이 있을 경우 주식양수도 계약서와 함께 반드시 전달' },
+    { name: '법인명의 통장내역 엑셀파일', desc: '신고대상기간 전체 / 정기예금·적금·부채통장·외화통장·중도해지통장 모두 포함\n각 은행 사이트에서 다운로드 (빠른계좌 등록 시 제외)' },
+    { name: '법인명의 통장내역 잔액증명원', desc: '12/31 기준' },
+    { name: '예금이자 원천징수영수증', desc: '거래처 은행 홈페이지에서 원천징수영수증 및 특별징수영수증 다운로드' },
+    { name: '임대차계약서 사본', desc: '변동이 있는 경우' },
+    { name: '원리금 및 이자상환내역, 부채증명원', desc: '차입금이 있을 경우 이자·원금·잔액 구분된 내역서, 12/31 기준 부채증명원' },
+    { name: '차량운행일지, 차량등록증', desc: '법인 명의 차량이 있는 경우 (경차나 9인승 승합차 등 제외)\n운행일지 작성 시 비용한도 없음 / 미작성 시 비용한도 있음\n※ 임직원전용보험 미가입 시 전액 비용 반영 어려울 수 있음' },
+    { name: '차량 리스계약서 및 상환스케줄표', desc: '계약서와 상환표' },
+    { name: '지방세 세목별과세증명서', desc: '위택스에서 발급' },
+    { name: '각종 보험 계약서 및 납입내역서', desc: '법인 명의로 가입된 보험 (화재보험, 차량보험 등) 계약서, 손비처리내역서' },
+    { name: '4대보험 고지/납부내역', desc: '신고대상기간 전체 / 국민건강보험 사회보험통합징수포털 조회' },
+    { name: '법인카드 해외 사용내역', desc: '신고대상기간 전체 / 엑셀파일로 다운' },
+    { name: '국가지원금/보조금 등', desc: '노동부 보조금, 손실보상금, 시설지원자금 등 관련 증빙 (협약서 및 집행내역)' },
+    { name: '기부금영수증', desc: '기부처에 요청' },
+    { name: '간이영수증, 경조사비, 지출결의서', desc: '간이영수증과 경조사비 (부고장/청첩장), 지출결의서' },
+    { name: '재고수불부대장', desc: '상품·제품 등 재고가 있는 경우 / 12/31 기준 재고만 파악해서 전달해도 됨' },
+    { name: '연구인력개발비(R&D)', desc: '기업부설연구소/연구전담부서 인증서, 인력현황, 연구원 인건비 내역' },
+    { name: '기타 서류', desc: '벤처기업인증서 등' },
+  ];
+
+  const incomeDocs = [
+    // 인적공제
+    { name: '주민등록등본 (작년과 같으면 제외)', desc: '' },
+    { name: '가족관계증명서 (작년과 같으면 제외)', desc: '' },
+    { name: '장애인카드(등록증) 사본', desc: '부양가족 중 장애인에 해당되는 경우 필요' },
+    { name: '', desc: '', empty: true },
+
+    // 수입 관련
+    { name: '정부지원금 등 수령내역', desc: '날짜, 금액 등 표시 (입금된 통장내역 전달)' },
+    { name: '판매장려금 등 수령내역', desc: '' },
+
+    // 금융/대출
+    { name: '은행 부채(대출)증명서 또는 금융거래확인서', desc: '12/31 기준 대출잔액 확인 (대출있을 경우만)' },
+    { name: '이자지급내역(납입증명서)', desc: '이자율 표시 필요 (대출있을 경우만)' },
+
+    // 보험/연금
+    { name: '퇴직연금 납입내역', desc: '퇴직연금 가입 사업장에 한하며 해당 금융기관을 통해 수취' },
+    { name: '4대보험 납입증명서', desc: '' },
+
+    // 차량
+    { name: '차량등록증, 차량 구입계약서', desc: '차량에 따라 운행일지 필요할 수 있으므로 추가 서류 요청할 수 있음' },
+    { name: '리스, 렌트차량 계약서 및 상환스케줄표', desc: '리스, 렌트가 있을 경우만' },
+
+    // 비용 관련
+    { name: '화재보험, 사업관련 기타 보험료 납입내역', desc: '생명보험 등 개인적인 보험은 해당 없음' },
+    { name: '홈택스 미등록 신용카드내역', desc: '반드시 엑셀파일로 전달 (PDF, 인쇄본으로 수취될 경우 반영 불가)' },
+    { name: '통신, 인터넷, 전기, 상하수도 등 공과금 내역', desc: '세금계산서 수취분은 제외' },
+    { name: '기부금영수증', desc: '본인 또는 기본공제대상자 명의로 받은 기부금 영수증' },
+    { name: '임대차계약서', desc: '보증금 금액 및 월세 변동이 있을 경우 반드시 첨부' },
+    { name: '청첩장, 부고장 등', desc: '' },
+    { name: '기타 간이영수증 등', desc: '' },
+    { name: '', desc: '', empty: true },
+
+    // 재무상태
+    { name: '외상매출금 거래처별 잔액', desc: '12/31 기준' },
+    { name: '외상매입금 거래처별 잔액', desc: '12/31 기준' },
+    { name: '재고자산 금액 및 리스트', desc: '12/31 기준 (파악이 어려우실 경우 대략적인 금액)' },
+    { name: '사업용계좌 잔액', desc: '12/31 기준' },
+  ];
+
+  const incomeDocsClinic = [
+    { name: '요양급여비용 연간지급내역 통보서 (귀속연도 전체 청구분)', desc: '국민건강보험공단 홈페이지 접속 후 출력' },
+    { name: '의료급여비용 연간지급내역 통보서 (귀속연도 전체 청구분)', desc: '국민건강보험공단 홈페이지 접속 후 출력' },
+    { name: '각 제약회사별 판매장려금 지급명세서', desc: '' },
+  ];
+
+  const incomeDocsSincere = [
+    { name: '의료비 내역', desc: '연말정산 간소화서비스 조회' },
+    { name: '교육비 내역', desc: '연말정산 간소화서비스 조회' },
+    { name: '사업용계좌 통장 엑셀파일', desc: '' },
+  ];
+
+  const noticeData = {
+    'vat_1기 예정': {
+      tag:'부가가치세 1기 예정신고', title:'부가가치세 1기 예정신고 안내',
+      greet:'부가가치세 1기 예정신고', cardType:'부가가치세 1기 예정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 예정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 01월 01일 ~ ${yr}년 03월 31일`,
+      deadline: yr => getNextBizDay(yr, 4, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'vat_1기 확정': {
+      tag:'부가가치세 1기 확정신고', title:'부가가치세 1기 확정신고 안내',
+      greet:'부가가치세 1기 확정신고', cardType:'부가가치세 1기 확정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 04월 01일 ~ ${yr}년 06월 30일`,
+      deadline: yr => getNextBizDay(yr, 7, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'vat_1기 예정+확정': {
+      tag:'부가가치세 1기 예정+확정신고', title:'부가가치세 1기 예정+확정신고 안내',
+      greet:'부가가치세 1기 예정+확정신고', cardType:'부가가치세 1기 예정+확정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 예정+확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 01월 01일 ~ ${yr}년 06월 30일`,
+      deadline: yr => getNextBizDay(yr, 7, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'vat_2기 예정': {
+      tag:'부가가치세 2기 예정신고', title:'부가가치세 2기 예정신고 안내',
+      greet:'부가가치세 2기 예정신고', cardType:'부가가치세 2기 예정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 예정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 07월 01일 ~ ${yr}년 09월 30일`,
+      deadline: yr => getNextBizDay(yr, 10, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'vat_2기 확정': {
+      tag:'부가가치세 2기 확정신고', title:'부가가치세 2기 확정신고 안내',
+      greet:'부가가치세 2기 확정신고', cardType:'부가가치세 2기 확정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 10월 01일 ~ ${yr}년 12월 31일`,
+      deadline: yr => getNextBizDay(yr+1, 1, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'vat_2기 예정+확정': {
+      tag:'부가가치세 2기 예정+확정신고', title:'부가가치세 2기 예정+확정신고 안내',
+      greet:'부가가치세 2기 예정+확정신고', cardType:'부가가치세 2기 예정+확정신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 예정+확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
+      period: yr => `${yr}년 07월 01일 ~ ${yr}년 12월 31일`,
+      deadline: yr => getNextBizDay(yr+1, 1, 25),
+      submit: () => '직접 입력',
+      docs: vatDocs
+    },
+    'corp': {
+      tag:'법인세 신고', title:'법인세 신고 안내',
+      greet:'법인세 신고', cardType:'법인세 신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 3월은 <strong>법인세 신고</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 법인결산에 관한 구비서류 협조를 요청드립니다. 아래 안내에 참고하시어 해당 항목에 관하여 준비하여 주시면 신속한 결산에 많은 도움이 될 것입니다.`,
+      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      deadline: yr => getNextBizDay(yr+1, 3, 31),
+      submit: () => '직접 입력',
+      docs: corpDocs
+    },
+    'income': {
+      tag:'종합소득세 신고', title:'종합소득세 신고 안내',
+      greet:'종합소득세 신고', cardType:'종합소득세 신고',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 5월은 <strong>종합소득세 신고</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 개인결산에 관한 구비서류 안내드리오니 아래 서류 참고하시어 담당자에게 보내주시기 바랍니다.`,
+      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      deadline: yr => getNextBizDay(yr+1, 5, 31),
+      submit: () => '직접 입력',
+      docs: incomeDocs
+    },
+    'income_sincere': {
+      tag:'종합소득세 신고 (성실신고)', title:'종합소득세 신고 안내',
+      greet:'종합소득세 신고', cardType:'종합소득세 신고 (성실신고)',
+      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 2월은 <strong>종합소득세 신고 (성실신고)</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 개인결산에 관한 구비서류 안내드리오니 아래 서류 참고하시어 담당자에게 보내주시기 바랍니다.`,
+      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      deadline: yr => getNextBizDay(yr+1, 6, 30),
+      submit: () => '직접 입력',
+      docs: incomeDocs
+    }
+  };
+
+  window.currentBizType = '법인';
+  window.currentKey = null;
+
+  function closeClientModal() {
+    document.getElementById('clientModal').style.display = 'none';
+  }
+  window.closeClientModal = closeClientModal;
+
+  function reapplyNotice() {
+    if (window.currentKey) applyNotice(window.currentKey);
+  }
+
+  function onNoticeTypeChange() {
+    const type = document.getElementById('noticeType').value;
+    if (type === 'vat') {
+      const bizType = window.currentBizType || '법인';
+      if (bizType === '개인') {
+        document.getElementById('vatIndividualModal').style.display = 'flex';
+      } else {
+        document.getElementById('vatModal').style.display = 'flex';
+      }
+    } else if (type === 'income') {
+      document.getElementById('incomeModal').style.display = 'flex';
+    } else if (type) {
+      applyNotice(type);
+    }
+  }
+
+  function applyVat(period) {
+    closeVatModal();
+    closeVatIndividualModal();
+    document.getElementById('noticeType').value = 'vat';
+    applyNotice('vat_' + period);
+  }
+
+  function applyNotice(key) {
+    const yr = parseInt(document.getElementById('yearSelect').value);
+    const data = noticeData[key];
+    if (!data) return;
+    currentKey = key;
+    window.currentKey = key;
+    document.getElementById('noticeTag').textContent = data.tag;
+    document.getElementById('noticeTitle').textContent = data.title;
+    document.getElementById('greetingBlock').innerHTML = data.body(yr);
+    document.getElementById('card_type').textContent = data.cardType;
+    document.getElementById('card_period').textContent = data.period(yr);
+    const dl = data.deadline(yr);
+    document.getElementById('card_deadline').textContent = dl.str;
+    document.getElementById('card_deadline_note').textContent = dl.note;
+    document.getElementById('card_submit').textContent = data.submit(yr);
+
+    // 업종 선택기 표시 여부
+    const isIncome = key === 'income' || key === 'income_sincere';
+    document.getElementById('bizTypeDivider').style.display = isIncome ? '' : 'none';
+    document.getElementById('bizTypeLabel').style.display = isIncome ? '' : 'none';
+    document.getElementById('bizTypeSelect').style.display = isIncome ? '' : 'none';
+
+    // 서류 목록 구성
+    let docs;
+    if (key.startsWith('vat_') && currentBizType === '개인') {
+      docs = vatDocsIndividual;
+    } else if (isIncome) {
+      docs = [...incomeDocs];
+      const bizType = document.getElementById('bizTypeSelect').value;
+      if (bizType === 'clinic') docs = [...docs, ...incomeDocsClinic];
+      if (key === 'income_sincere') docs = [...docs, ...incomeDocsSincere];
+    } else {
+      docs = data.docs;
+    }
+
+    document.getElementById('docsList').innerHTML = docs.map(d => {
+      if (!d || d.empty) return `<li style="background:transparent;border:none;"></li>`;
+      if (typeof d === 'string') {
+        return `<li><div class="doc-name">${d}</div></li>`;
+      }
+      const isWarning = d.name.includes('반드시 확인 필요');
+      return `<li><div class="doc-name${isWarning ? ' warning' : ''}">${d.name}</div>${d.desc ? `<div class="doc-desc">${d.desc}</div>` : ''}</li>`;
+    }).join('');
+  }
+
+  function addDoc() {
+    const list = document.getElementById('docsList');
+    const li = document.createElement('li');
+    li.contentEditable = 'true'; li.textContent = '서류명 입력';
+    list.appendChild(li); li.focus();
+    const r = document.createRange();
+    r.selectNodeContents(li);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+  }
+
+  function applyIncome(key) {
+    closeIncomeModal();
+    document.getElementById('noticeType').value = 'income';
+    applyNotice(key);
+  }
+  function closeIncomeModal() {
+    document.getElementById('incomeModal').style.display = 'none';
+  }
+  function closeVatModal() {
+    document.getElementById('vatModal').style.display = 'none';
+  }
+  function closeVatIndividualModal() {
+    document.getElementById('vatIndividualModal').style.display = 'none';
+  }
+  function openPrintModal() { document.getElementById('printModal').style.display = 'flex'; }
+  function closePrintModal() { document.getElementById('printModal').style.display = 'none'; }
+  function doPrint() { closePrintModal(); setTimeout(() => window.print(), 200); }
+  function doSavePDF() {
+    closePrintModal();
+    const name = document.getElementById('f_name').textContent.trim() || '고객사';
+    const type = document.getElementById('noticeTag').textContent.trim() || '세금신고';
+    document.title = `${name}_${type}_안내문`;
+    setTimeout(() => { window.print(); document.title = '세금신고 안내문'; }, 200);
+  }
+
+  // 서류제출기한 클릭 시 '직접 입력' 자동 제거
+  document.getElementById('card_submit').addEventListener('focus', function() {
+    if (this.textContent.trim() === '직접 입력') {
+      this.textContent = '';
+    }
+  });
+
+  // 서류제출기한 날짜 자동 변환
+  // 입력 예: 26.05.10 → 2026년 5월 10일
+  document.getElementById('card_submit').addEventListener('blur', function() {
+    const raw = this.textContent.trim();
+    // 직접 입력 기본값이면 패스
+    if (!raw || raw === '직접 입력') return;
+    // 이미 변환된 경우 패스
+    if (/년/.test(raw)) return;
+    // YY.MM.DD 또는 YYYY.MM.DD 형식 파싱
+    const m = raw.match(/^(\d{2,4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
+    if (m) {
+      let yr = parseInt(m[1]);
+      if (yr < 100) yr += 2000;
+      const mo = parseInt(m[2]);
+      const dy = parseInt(m[3]);
+      this.textContent = `${yr}텄 ${mo}월 ${dy}일`;
+    }
+  });
+
+  document.getElementById('incomeModal').addEventListener('click', e => { if(e.target===document.getElementById('incomeModal')) closeIncomeModal(); });
+  document.getElementById('printModal').addEventListener('click', e => { if(e.target===document.getElementById('printModal')) closePrintModal(); });
+  document.getElementById('vatModal').addEventListener('click', e => { if(e.target===document.getElementById('vatModal')) closeVatModal(); });
+  document.getElementById('vatIndividualModal').addEventListener('click', e => { if(e.target===document.getElementById('vatIndividualModal')) closeVatIndividualModal(); });
+  document.getElementById('clientModal').addEventListener('click', e => { if(e.target===document.getElementById('clientModal')) document.getElementById('clientModal').style.display='none'; });
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
+    authDomain: "tax-aaee5.firebaseapp.com",
+    projectId: "tax-aaee5",
+    storageBucket: "tax-aaee5.firebasestorage.app",
+    messagingSenderId: "11651546985",
+    appId: "1:11651546985:web:7843ffed4adf2eb59e47f8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  let allClients = [];
+
+  async function loadClients() {
+    try {
+      const snapshot = await getDocs(collection(db, 'clients'));
+      allClients = snapshot.docs.map(d => ({ ...d.data(), _docId: d.id }));
+    } catch(e) { console.error('거래처 불러오기 실패:', e); }
+  }
+
+  function renderClientList(list) {
+    const el = document.getElementById('clientList');
+    if (!list || list.length === 0) {
+      el.innerHTML = '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">검색 결과가 없습니다.</div>';
+      return;
+    }
+    el.innerHTML = list.map(c => `
+      <div onclick="window.selectClient(${c.id})"
+        style="display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#faf8f3;border:1px solid #e8e4db;border-radius:6px;cursor:pointer;transition:all 0.15s;"
+        onmouseover="this.style.background='#1a2744';this.style.color='white';this.style.borderColor='#1a2744'"
+        onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c';this.style.borderColor='#e8e4db'">
+        <div>
+          <div style="font-weight:600;font-size:14px;">${c.name}</div>
+          <div style="font-size:11px;opacity:0.6;margin-top:2px;">${c.ceo ? c.ceo + ' · ' : ''}${c.brn || ''}</div>
+        </div>
+        <span style="font-size:12px;opacity:0.4;">선택 →</span>
+      </div>
+    `).join('');
+  }
+
+  window.openClientModal = async function() {
+    document.getElementById('clientModal').style.display = 'flex';
+    document.getElementById('clientSearch').value = '';
+    document.getElementById('clientList').innerHTML =
+      '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">불러오는 중...</div>';
+    if (allClients.length === 0) await loadClients();
+    renderClientList(allClients);
+    setTimeout(() => document.getElementById('clientSearch').focus(), 100);
+  };
+
+  window.filterClients = function() {
+    const q = document.getElementById('clientSearch').value.trim().toLowerCase();
+    const filtered = q ? allClients.filter(c =>
+      c.name.toLowerCase().includes(q) || (c.ceo && c.ceo.toLowerCase().includes(q))
+    ) : allClients;
+    renderClientList(filtered);
+  };
+
+  window.selectClient = function(id) {
+    const c = allClients.find(x => x.id === id);
+    if (!c) return;
+    document.getElementById('f_name').textContent = c.name;
+    document.getElementById('f_ceo').textContent = c.ceo || '';
+    document.getElementById('f_brn').textContent = c.brn || '';
+    document.getElementById('clientBtn').textContent = '🏢 ' + c.name;
+
+    // 수신란 잠금
+    ['f_name','f_ceo','f_brn'].forEach(id => {
+      const el = document.getElementById(id);
+      el.removeAttribute('contenteditable');
+      el.style.borderBottom = 'none';
+      el.style.cursor = 'default';
+    });
+
+    // 신고구분 잠금
+    const cardType = document.getElementById('card_type');
+    cardType.removeAttribute('contenteditable');
+    cardType.style.borderBottom = 'none';
+    cardType.style.cursor = 'default';
+
+    const bizType = c.bizType || detectBizType(c.name, c.brn);
+    window.currentBizType = bizType;
+
+    const noticeType = document.getElementById('noticeType');
+    noticeType.innerHTML = '<option value="">선택</option>';
+    if (bizType === '법인') {
+      noticeType.innerHTML += `
+        <option value="vat">부가가치세</option>
+        <option value="corp">법인세</option>`;
+    } else {
+      noticeType.innerHTML += `
+        <option value="vat">부가가치세</option>
+        <option value="income">종합소득세</option>`;
+    }
+    noticeType.value = '';
+    document.getElementById('clientModal').style.display = 'none';
+  };
+
+  function detectBizType(name, brn) {
+    const digits = (brn || '').replace(/[^0-9]/g, '');
+    if (digits.length >= 4 && digits[3] === '8') return '법인';
+    return '개인';
+  }
+
+  document.getElementById('clientModal').addEventListener('click', function(e) {
+    if (e.target === this) document.getElementById('clientModal').style.display = 'none';
+  });
+
+  loadClients();
+</script>
+</body>
+</html>
