@@ -18,6 +18,8 @@
     .controls select { padding: 6px 10px; border: 1px solid #d0ccc4; border-radius: 6px; font-size: 13px; background: white; cursor: pointer; font-family: inherit; }
     .controls select:focus { outline: none; border-color: #1a2744; }
     .status-msg { font-size: 12px; color: #888; }
+    .ctrl-sep { width: 1px; height: 20px; background: #e0dbd0; margin: 0 4px; }
+    .client-badge { display: inline-block; background: #eef0f7; color: #1a2744; border-radius: 20px; padding: 1px 8px; font-size: 11px; font-weight: 600; margin-left: 4px; }
 
     .btn { padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; transition: opacity 0.15s; }
     .btn:hover { opacity: 0.82; }
@@ -115,6 +117,11 @@
     <option value="2fin">2기 확정 (7~12월)</option>
   </select>
   <button class="btn btn-secondary btn-sm" onclick="loadData()">불러오기</button>
+  <span class="ctrl-sep"></span>
+  <label>거래처 필터</label>
+  <select id="clientSel" onchange="filterByClient()">
+    <option value="">전체</option>
+  </select>
   <span id="statusMsg" class="status-msg"></span>
 </div>
 
@@ -240,6 +247,8 @@
 
   <!-- 숨겨진 파일 입력 -->
   <input type="file" id="xlFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleXlFile(event)">
+  <!-- 거래처 자동완성 datalist -->
+  <datalist id="clientList"></datalist>
 
 </div>
 
@@ -404,11 +413,24 @@
     document.getElementById('statusMsg').textContent =
       `✓ ${_xlRows.length}건 가져오기 완료`;
   };
+
+  // ─── 거래처 필터 ────────────────────────────────────────────────────────
+  window.filterByClient = function() {
+    const val = document.getElementById('clientSel').value.trim().toLowerCase();
+    ['S','P'].forEach(function(t) {
+      document.getElementById('body'+t).querySelectorAll('tr').forEach(function(tr) {
+        const inputs = tr.querySelectorAll('input');
+        if (!inputs.length) { tr.style.display = ''; return; }
+        const name = (inputs[1] ? inputs[1].value : '').toLowerCase();
+        tr.style.display = (!val || name.includes(val)) ? '' : 'none';
+      });
+    });
+  };
 </script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const app = initializeApp({
     apiKey: "AIzaSyDheVi1xl9wxbrgV-TiAmME0E2KpfdZwbA",
@@ -486,8 +508,10 @@
       this.style.boxShadow = 'none';
     });
 
-    // 상호
+    // 상호 (거래처 자동완성)
     const nameEl = inp(d.bizName, '상호명');
+    nameEl.setAttribute('list', 'clientList');
+    nameEl.autocomplete = 'off';
 
     // 사업자번호
     const brnEl = inp(d.brn, '000-00-00000');
@@ -495,8 +519,15 @@
       let v = this.value.replace(/[^0-9]/g, '').slice(0, 10);
       if (v.length > 5) v = v.slice(0, 3) + '-' + v.slice(3, 5) + '-' + v.slice(5);
       else if (v.length > 3) v = v.slice(0, 3) + '-' + v.slice(3);
-      const pos = this.selectionStart;
       this.value = v;
+    });
+
+    // 거래처 선택 시 사업자번호 자동 입력
+    nameEl.addEventListener('change', function() {
+      const cl = (window._clients || []).find(c => c.name === this.value);
+      if (cl && cl.brn && !brnEl.value) {
+        brnEl.value = cl.brn;
+      }
     });
 
     // 공급가액
@@ -572,6 +603,45 @@
       if (r.date || r.bizName || r.supplyAmt) rows.push(r);
     });
     return rows;
+  }
+
+  // ─── 거래처 로드 (Firestore clients 컬렉션) ───────────────────────────
+  async function loadClients() {
+    try {
+      const snap = await getDocs(collection(db, 'clients'));
+      const clients = [];
+      snap.forEach(d => {
+        const data = d.data();
+        // 다양한 필드명 대응
+        const name = data.name || data.bizName || data.companyName || data.상호 || d.id;
+        const brn  = data.brn  || data.businessNumber || data.registrationNumber || data.사업자번호 || '';
+        if (name) clients.push({ id: d.id, name, brn });
+      });
+      clients.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+      // 거래처 필터 드롭다운 채우기
+      const sel = document.getElementById('clientSel');
+      while (sel.options.length > 1) sel.remove(1);
+      clients.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c.name;
+        o.textContent = c.name;
+        sel.appendChild(o);
+      });
+
+      // datalist 채우기 (상호 자동완성)
+      const dl = document.getElementById('clientList');
+      dl.innerHTML = '';
+      clients.forEach(c => {
+        const o = document.createElement('option');
+        o.value = c.name;
+        dl.appendChild(o);
+      });
+
+      window._clients = clients;
+    } catch(e) {
+      console.warn('거래처 불러오기 실패:', e.message);
+    }
   }
 
   // ─── 불러오기 ────────────────────────────────────────────────────────
@@ -673,7 +743,8 @@
     }
   });
 
-  // 페이지 로드 시 자동으로 현재 분기 불러오기
+  // 페이지 로드 시 거래처 목록 + 현재 분기 데이터 불러오기
+  loadClients();
   window.loadData();
 </script>
 
