@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>세금신고 안내문</title>
+<title>ì¸ê¸ì ê³  ìë´ë¬¸</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --navy:#1a2744; --gold:#b8962e; --gold-light:#d4af5a; --gray:#6b7280; --light-gray:#e8e4db; --bg:#f4f6f9; }
@@ -59,9 +59,9 @@
   .docs-list { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .docs-list li { font-size:13.5px; color:#444; padding:9px 12px; background:#f8f8f8; border-radius:6px; }
   .doc-name { font-weight:700; color:var(--navy); margin-bottom:2px; display:flex; align-items:center; gap:6px; }
-  .doc-name::before { content:'✓'; color:var(--gold); font-weight:700; font-size:12px; flex-shrink:0; }
+  .doc-name::before { content:'â'; color:var(--gold); font-weight:700; font-size:12px; flex-shrink:0; }
   .doc-name.warning { color:#c0392b; }
-  .doc-name.warning::before { content:'⚠'; color:#c0392b; }
+  .doc-name.warning::before { content:'â '; color:#c0392b; }
   .doc-desc { font-size:12.5px; color:#666; line-height:1.6; padding-left:16px; white-space:pre-line; }
   .docs-list li[contenteditable="true"] { outline:none; }
   .docs-list li[contenteditable="true"]:focus { background:#fffdf5; border:1px solid var(--gold); }
@@ -79,7 +79,7 @@
   .office-info [contenteditable="true"]:focus { border-bottom-color:var(--gold); }
   .office-stamp { width:70px; height:70px; border:2.5px solid var(--navy); border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--navy); letter-spacing:1px; opacity:0.3; }
 
-  /* 모달 */
+  /* ëª¨ë¬ */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center; }
   .modal-box { background:white; border-radius:12px; padding:28px 32px; width:300px; box-shadow:0 20px 60px rgba(0,0,0,0.3); font-family:'Noto Sans KR',sans-serif; }
   .modal-title { font-size:16px; font-weight:700; color:var(--navy); margin-bottom:18px; font-family:'Noto Serif KR',serif; }
@@ -124,193 +124,217 @@
 <body>
 
 <div class="toolbar">
-  <button class="toolbar-btn" onclick="openClientModal()" id="clientBtn" style="background:white;border:1.5px solid #e0e0e0;color:var(--navy);font-weight:500;min-width:150px;text-align:left;padding:7px 12px;">🏢 거래처 선택</button>
+  <button class="toolbar-btn" onclick="openClientModal()" id="clientBtn" style="background:white;border:1.5px solid #e0e0e0;color:var(--navy);font-weight:500;min-width:150px;text-align:left;padding:7px 12px;">ð¢ ê±°ëì² ì í</button>
   <div class="toolbar-divider"></div>
-  <span class="toolbar-label">귀속연도</span>
+  <span class="toolbar-label">ê·ìì°ë</span>
   <select id="yearSelect" class="toolbar-select" onchange="reapplyNotice()" style="min-width:90px;"></select>
   <div class="toolbar-divider"></div>
-  <span class="toolbar-label">신고종류</span>
+  <span class="toolbar-label">ì ê³ ì¢ë¥</span>
   <select id="noticeType" class="toolbar-select" onchange="onNoticeTypeChange()" style="min-width:130px;">
-    <option value="">선택</option>
-    <option value="vat">부가가치세</option>
-    <option value="corp">법인세</option>
-    <option value="income">종합소득세</option>
+    <option value="">ì í</option>
+    <option value="vat">ë¶ê°ê°ì¹ì¸</option>
+    <option value="corp">ë²ì¸ì¸</option>
+    <option value="income">ì¢í©ìëì¸</option>
   </select>
   <div class="toolbar-divider" id="bizTypeDivider" style="display:none;"></div>
-  <span class="toolbar-label" id="bizTypeLabel" style="display:none;">업종</span>
+  <span class="toolbar-label" id="bizTypeLabel" style="display:none;">ìì¢</span>
   <select id="bizTypeSelect" class="toolbar-select" onchange="reapplyNotice()" style="min-width:120px;display:none;">
-    <option value="general">일반</option>
-    <option value="clinic">병의원/약국(한의원)</option>
+    <option value="general">ì¼ë°</option>
+    <option value="clinic">ë³ìì/ì½êµ­(íìì)</option>
   </select>
   <div class="toolbar-divider"></div>
-  <button class="toolbar-btn btn-gold" onclick="openPrintModal()">🖨 인쇄 / PDF</button>
+  <button class="toolbar-btn btn-gold" onclick="openPrintModal()">ð¨ ì¸ì / PDF</button>
+  <div class="toolbar-divider"></div>
+  <button class="toolbar-btn" onclick="openDocsEditModal()" style="background:white;border:1.5px solid #e0e0e0;color:var(--navy);">âï¸ ìë¥ í¸ì§</button>
+  <button class="toolbar-btn" onclick="resetDocs()" id="resetBtn" style="display:none;background:white;border:1.5px solid #e0e0e0;color:#c0392b;">âº ì´ê¸°í</button>
 </div>
 
-<!-- 거래처 검색 모달 -->
+<!-- ìë¥ í¸ì§ ëª¨ë¬ -->
+<div class="modal-overlay" id="docsEditModal">
+  <div class="modal-box" style="width:520px;max-height:80vh;display:flex;flex-direction:column;">
+    <div class="modal-title">íì ìë¥ í¸ì§</div>
+    <div style="font-size:12px;color:#b8962e;background:#fffdf5;padding:8px 12px;border-radius:6px;margin-bottom:14px;">
+      ì ê³ ì¢ë¥ë¥¼ ë¨¼ì  ì íí í í¸ì§íì¸ì. ë³ê²½ì¬í­ì ìë ì ì¥ë©ëë¤.
+    </div>
+    <div id="docsEditList" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button onclick="addEditDoc()" style="flex:1;padding:9px;background:var(--gold);border:none;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;color:white;">+ í­ëª© ì¶ê°</button>
+      <button onclick="saveDocsEdit()" style="flex:1;padding:9px;background:var(--navy);border:none;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;color:white;">ì ì¥</button>
+      <button onclick="closeDocsEditModal()" style="flex:1;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ë«ê¸°</button>
+    </div>
+  </div>
+</div>
+
+<!-- ê±°ëì² ê²ì ëª¨ë¬ -->
 <div class="modal-overlay" id="clientModal">
   <div class="modal-box" style="width:400px;">
-    <div class="modal-title">거래처 선택</div>
-    <input type="text" id="clientSearch" placeholder="상호명 또는 대표자명으로 검색..." oninput="filterClients()"
+    <div class="modal-title">ê±°ëì² ì í</div>
+    <input type="text" id="clientSearch" placeholder="ìí¸ëª ëë ëíìëªì¼ë¡ ê²ì..." oninput="filterClients()"
       style="width:100%;padding:9px 14px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;margin-bottom:12px;transition:border-color 0.2s;"
       onfocus="this.style.borderColor='#b8962e'" onblur="this.style.borderColor='#e0e0e0'">
     <div id="clientList" style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;">
-      <div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">불러오는 중...</div>
+      <div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">ë¶ë¬ì¤ë ì¤...</div>
     </div>
-    <button onclick="closeClientModal()" style="margin-top:14px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">닫기</button>
+    <button onclick="closeClientModal()" style="margin-top:14px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ë«ê¸°</button>
   </div>
 </div>
 
-<!-- 개인 부가세 모달 (확정만) -->
+<!-- ê°ì¸ ë¶ê°ì¸ ëª¨ë¬ (íì ë§) -->
 <div class="modal-overlay" id="vatIndividualModal">
   <div class="modal-box" style="width:300px;">
-    <div class="modal-title">부가가치세 신고 기수 선택</div>
-    <div style="font-size:12px;color:#b8962e;margin-bottom:14px;background:#fffdf5;padding:8px 12px;border-radius:6px;">개인사업자는 확정신고만 해당됩니다</div>
+    <div class="modal-title">ë¶ê°ê°ì¹ì¸ ì ê³  ê¸°ì ì í</div>
+    <div style="font-size:12px;color:#b8962e;margin-bottom:14px;background:#fffdf5;padding:8px 12px;border-radius:6px;">ê°ì¸ì¬ììë íì ì ê³ ë§ í´ë¹ë©ëë¤</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <div class="vat-btn-grid">
-        <button class="vat-btn" onclick="applyVat('1기 확정')">1기 확정</button>
-        <button class="vat-btn" onclick="applyVat('2기 확정')">2기 확정</button>
+        <button class="vat-btn" onclick="applyVat('1ê¸° íì ')">1ê¸° íì </button>
+        <button class="vat-btn" onclick="applyVat('2ê¸° íì ')">2ê¸° íì </button>
       </div>
     </div>
-    <button onclick="closeVatIndividualModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+    <button onclick="closeVatIndividualModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ì·¨ì</button>
   </div>
 </div>
 
-<!-- 종합소득세 성실신고 모달 -->
+<!-- ì¢í©ìëì¸ ì±ì¤ì ê³  ëª¨ë¬ -->
 <div class="modal-overlay" id="incomeModal">
   <div class="modal-box" style="width:300px;">
-    <div class="modal-title">종합소득세 신고 구분</div>
+    <div class="modal-title">ì¢í©ìëì¸ ì ê³  êµ¬ë¶</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button class="vat-btn" onclick="applyIncome('income')">
-        <div style="font-size:14px;font-weight:700;">일반 신고</div>
-        <div style="font-size:11px;color:#888;margin-top:3px;">신고마감일 5월 31일</div>
+        <div style="font-size:14px;font-weight:700;">ì¼ë° ì ê³ </div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">ì ê³ ë§ê°ì¼ 5ì 31ì¼</div>
       </button>
       <button class="vat-btn" onclick="applyIncome('income_sincere')">
-        <div style="font-size:14px;font-weight:700;">성실신고 대상자</div>
-        <div style="font-size:11px;color:#888;margin-top:3px;">신고마감일 6월 30일</div>
+        <div style="font-size:14px;font-weight:700;">ì±ì¤ì ê³  ëìì</div>
+        <div style="font-size:11px;color:#888;margin-top:3px;">ì ê³ ë§ê°ì¼ 6ì 30ì¼</div>
       </button>
     </div>
-    <button onclick="closeIncomeModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+    <button onclick="closeIncomeModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ì·¨ì</button>
   </div>
 </div>
 
-<!-- 부가세 기수 모달 -->
+<!-- ë¶ê°ì¸ ê¸°ì ëª¨ë¬ -->
 <div class="modal-overlay" id="vatModal">
   <div class="modal-box" style="width:320px;">
-    <div class="modal-title">부가가치세 신고 기수 선택</div>
+    <div class="modal-title">ë¶ê°ê°ì¹ì¸ ì ê³  ê¸°ì ì í</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:4px;">1기</div>
+      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:4px;">1ê¸°</div>
       <div class="vat-btn-grid">
-        <button class="vat-btn" onclick="applyVat('1기 예정')">1기 예정</button>
-        <button class="vat-btn" onclick="applyVat('1기 확정')">1기 확정</button>
+        <button class="vat-btn" onclick="applyVat('1ê¸° ìì ')">1ê¸° ìì </button>
+        <button class="vat-btn" onclick="applyVat('1ê¸° íì ')">1ê¸° íì </button>
       </div>
-      <button class="vat-btn" style="width:100%;" onclick="applyVat('1기 예정+확정')">1기 예정+확정</button>
-      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:6px;">2기</div>
+      <button class="vat-btn" style="width:100%;" onclick="applyVat('1ê¸° ìì +íì ')">1ê¸° ìì +íì </button>
+      <div style="font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;margin-top:6px;">2ê¸°</div>
       <div class="vat-btn-grid">
-        <button class="vat-btn" onclick="applyVat('2기 예정')">2기 예정</button>
-        <button class="vat-btn" onclick="applyVat('2기 확정')">2기 확정</button>
+        <button class="vat-btn" onclick="applyVat('2ê¸° ìì ')">2ê¸° ìì </button>
+        <button class="vat-btn" onclick="applyVat('2ê¸° íì ')">2ê¸° íì </button>
       </div>
-      <button class="vat-btn" style="width:100%;" onclick="applyVat('2기 예정+확정')">2기 예정+확정</button>
+      <button class="vat-btn" style="width:100%;" onclick="applyVat('2ê¸° ìì +íì ')">2ê¸° ìì +íì </button>
     </div>
-    <button onclick="closeVatModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+    <button onclick="closeVatModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ì·¨ì</button>
   </div>
 </div>
 
-<!-- 인쇄 모달 -->
+<!-- ì¸ì ëª¨ë¬ -->
 <div class="modal-overlay" id="printModal">
   <div class="modal-box">
-    <div class="modal-title">출력 방식 선택</div>
-    <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">원하시는 출력 방식을 선택해주세요.</div>
+    <div class="modal-title">ì¶ë ¥ ë°©ì ì í</div>
+    <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">ìíìë ì¶ë ¥ ë°©ìì ì íí´ì£¼ì¸ì.</div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       <button onclick="doPrint()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#faf8f3;border:1.5px solid #e8e4db;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:left;" onmouseover="this.style.background='#1a2744';this.style.color='white'" onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c'">
-        <span style="font-size:22px;">🖨</span>
-        <div><div style="font-weight:700;font-size:14px;">인쇄하기</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">프린터로 직접 출력</div></div>
+        <span style="font-size:22px;">ð¨</span>
+        <div><div style="font-weight:700;font-size:14px;">ì¸ìíê¸°</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">íë¦°í°ë¡ ì§ì  ì¶ë ¥</div></div>
       </button>
       <button onclick="doSavePDF()" style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:#faf8f3;border:1.5px solid #e8e4db;border-radius:8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;text-align:left;" onmouseover="this.style.background='#b8962e';this.style.color='white'" onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c'">
-        <span style="font-size:22px;">📄</span>
-        <div><div style="font-weight:700;font-size:14px;">PDF로 저장</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">PDF 파일로 저장</div></div>
+        <span style="font-size:22px;">ð</span>
+        <div><div style="font-weight:700;font-size:14px;">PDFë¡ ì ì¥</div><div style="font-size:12px;opacity:0.6;margin-top:2px;">PDF íì¼ë¡ ì ì¥</div></div>
       </button>
     </div>
-    <button onclick="closePrintModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">취소</button>
+    <button onclick="closePrintModal()" style="margin-top:16px;width:100%;padding:9px;background:none;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:#999;">ì·¨ì</button>
   </div>
 </div>
 
 <div class="notice">
   <div class="notice-header">
-    <div class="notice-tag" id="noticeTag">세금신고 안내</div>
-    <div class="notice-title" id="noticeTitle">세금신고 안내문</div>
+    <div class="notice-tag" id="noticeTag">ì¸ê¸ì ê³  ìë´</div>
+    <div class="notice-title" id="noticeTitle">ì¸ê¸ì ê³  ìë´ë¬¸</div>
     <div class="notice-date">
-      <div class="date-label">발송일</div>
+      <div class="date-label">ë°ì¡ì¼</div>
       <div class="date-value" id="issueDate"></div>
     </div>
   </div>
   <div class="notice-body">
     <div class="recipient-box">
-      <div class="recipient-label">수신</div>
+      <div class="recipient-label">ìì </div>
       <div class="recipient-info">
         <div class="recipient-item">
-          <div class="r-label">상호명</div>
-          <div class="r-value" id="f_name" contenteditable="true">주식회사 ○○○</div>
+          <div class="r-label">ìí¸ëª</div>
+          <div class="r-value" id="f_name" contenteditable="true">ì£¼ìíì¬ âââ</div>
         </div>
         <div class="recipient-item">
-          <div class="r-label">대표자</div>
-          <div class="r-value" id="f_ceo" contenteditable="true">홍 길 동</div>
+          <div class="r-label">ëíì</div>
+          <div class="r-value" id="f_ceo" contenteditable="true">í ê¸¸ ë</div>
         </div>
         <div class="recipient-item">
-          <div class="r-label">사업자번호</div>
+          <div class="r-label">ì¬ììë²í¸</div>
           <div class="r-value" id="f_brn" contenteditable="true">000-00-00000</div>
         </div>
       </div>
     </div>
 
     <div class="greeting" id="greetingBlock">
-      안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>
-      <strong id="greeting_type">세금신고</strong> 기한이 도래하여 안내드립니다.<br>
-      아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.
+      ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>
+      <strong id="greeting_type">ì¸ê¸ì ê³ </strong> ê¸°íì´ ëëíì¬ ìë´ëë¦½ëë¤.<br>
+      ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.
     </div>
 
     <div class="info-cards">
       <div class="info-card">
-        <div class="card-label">신고 구분</div>
+        <div class="card-label">ì ê³  êµ¬ë¶</div>
         <div class="card-value" id="card_type" contenteditable="true">-</div>
       </div>
       <div class="info-card">
-        <div class="card-label">신고 대상 기간</div>
+        <div class="card-label">ì ê³  ëì ê¸°ê°</div>
         <div class="card-value" id="card_period" contenteditable="true">-</div>
       </div>
       <div class="info-card highlight">
-        <div class="card-label">신고 마감일</div>
+        <div class="card-label">ì ê³  ë§ê°ì¼</div>
         <div class="card-value" id="card_deadline" contenteditable="true">-</div>
         <div class="card-note" id="card_deadline_note"></div>
       </div>
       <div class="info-card highlight">
-        <div class="card-label">서류 제출 기한</div>
+        <div class="card-label">ìë¥ ì ì¶ ê¸°í</div>
         <div class="card-value" id="card_submit" contenteditable="true">-</div>
       </div>
     </div>
 
     <div class="docs-section">
-      <div class="section-title">필요 서류 <span style="font-size:11px;font-weight:400;color:var(--gray);letter-spacing:0;">※ 해당되는 서류만 제출해 주세요</span></div>
+      <div class="section-title">íì ìë¥ <span style="font-size:11px;font-weight:400;color:var(--gray);letter-spacing:0;">â» í´ë¹ëë ìë¥ë§ ì ì¶í´ ì£¼ì¸ì</span></div>
       <ul class="docs-list" id="docsList">
-        <li contenteditable="true">신고 종류를 선택하면 자동으로 채워집니다</li>
+        <li contenteditable="true">ì ê³  ì¢ë¥ë¥¼ ì ííë©´ ìëì¼ë¡ ì±ìì§ëë¤</li>
       </ul>
-      <button class="add-doc-btn" onclick="addDoc()">+ 서류 추가</button>
+      <button class="add-doc-btn" onclick="addDoc()">+ ìë¥ ì¶ê°</button>
     </div>
 
     <div class="notice-memo" contenteditable="true">
-      ※ 서류 미제출 시 신고가 지연될 수 있으며, 이로 인한 가산세 등 불이익이 발생할 수 있습니다.<br>
-      ※ 문의사항은 아래 연락처로 연락 주시기 바랍니다.
+      â» ìë¥ ë¯¸ì ì¶ ì ì ê³ ê° ì§ì°ë  ì ìì¼ë©°, ì´ë¡ ì¸í ê°ì°ì¸ ë± ë¶ì´ìµì´ ë°ìí  ì ììµëë¤.<br>
+      â» ë¬¸ìì¬í­ì ìë ì°ë½ì²ë¡ ì°ë½ ì£¼ìê¸° ë°ëëë¤.
+    </div>
+
+    <div style="margin-top:10px; font-size:12px; color:#444; text-align:right; padding-right:4px;">
+      ë´ë¹ììê² ë³´ë´ì£¼ìê¸° ë°ëëë¤.<br>
+      ð§ <a href="mailto:kahyun6294@gmail.com" style="color:#1a56db; text-decoration:none;">kahyun6294@gmail.com</a>
     </div>
 
     <div class="office-footer">
       <div class="office-info">
-        <div class="office-name">세무사 이헌 사무소</div>
+        <div class="office-name">ì¸ë¬´ì¬ ì´í ì¬ë¬´ì</div>
         <div class="office-detail">
-          사업자번호 : 621-11-47021<br>
+          ì¬ììë²í¸ : 621-11-47021<br>
           TEL: 051-928-0250 &nbsp;|&nbsp; FAX: 051-980-2509<br>
-          주소: 부산광역시 해운대구 센텀동로 71(우동, 벽산e센텀클래스2차) 310호
+          ì£¼ì: ë¶ì°ê´ì­ì í´ì´ëêµ¬ ì¼íëë¡ 71(ì°ë, ë²½ì°eì¼íí´ëì¤2ì°¨) 310í¸
         </div>
       </div>
-      <div class="office-stamp" style="display:none">직인</div>
+      <div class="office-stamp" style="display:none">ì§ì¸</div>
     </div>
   </div>
 </div>
@@ -319,13 +343,13 @@
   const today = new Date();
   const y = today.getFullYear();
   document.getElementById('issueDate').textContent =
-    `${y}년 ${String(today.getMonth()+1).padStart(2,'0')}월 ${String(today.getDate()).padStart(2,'0')}일`;
+    `${y}í ${String(today.getMonth()+1).padStart(2,'0')}ì ${String(today.getDate()).padStart(2,'0')}ì¼`;
 
   (function() {
     const sel = document.getElementById('yearSelect');
     for (let yr = 2035; yr >= 2022; yr--) {
       const opt = document.createElement('option');
-      opt.value = yr; opt.textContent = yr + '년';
+      opt.value = yr; opt.textContent = yr + 'ë';
       if (yr === y - 1) opt.selected = true;
       sel.appendChild(opt);
     }
@@ -337,186 +361,186 @@
     const dow = actual.getDay();
     if (dow === 6) actual.setDate(actual.getDate() + 2);
     else if (dow === 0) actual.setDate(actual.getDate() + 1);
-    const fmt = d => `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+    const fmt = d => `${d.getFullYear()}ë ${d.getMonth()+1}ì ${d.getDate()}ì¼`;
     const note = actual.getTime() !== base.getTime()
-      ? `(${base.getMonth()+1}월 ${base.getDate()}일이 주말이므로 다음 영업일)` : '';
+      ? `(${base.getMonth()+1}ì ${base.getDate()}ì¼ì´ ì£¼ë§ì´ë¯ë¡ ë¤ì ììì¼)` : '';
     return { str: fmt(actual), note };
   }
 
   const vatDocs = [
-    { name: '세금계산서 및 계산서', desc: '전자발행분은 제출하지 않아도 됩니다 (홈택스에서 조회 가능)\n종이발행분은 반드시 취합하여 제출 (원본 또는 사본)' },
-    { name: '신용카드 매입내역', desc: '홈택스 등록 법인카드 및 개인사업자 사업용카드 국내사용분 제출 불필요\n법인카드 외 개인명의 카드 사용분 중 사업 관련 내역은 영수증 및 엑셀 제출' },
-    { name: '법인계좌 거래내역', desc: '각 은행에서 엑셀 파일 다운로드 (간편조회 등록한 경우 제출 불필요)' },
-    { name: '기타 지출증빙', desc: '지출결의서, 간이영수증, 수입신고필증 (수출선적일 기재)' },
-    { name: '업종별 해당 서류 (반드시 확인 필요)', desc: '전자상거래업: 각 사이트 정산관리 자료, PG사 매출자료, 해외 오픈마켓 수출신고필증·송장·소포수령증\n구매대행업: 구매대행 계산자료 (매출·매입)\n수출업: 수출신고 자료, 해외 배송비 영수증\n음식점·휴게음식업: 매장 포스사 연락처, 배달대행 업체별 사이트 계정 정보\n영세율적용대상: 선적확인서, 외화입금증, 구매확인서, 인보이스 등\n부동산임대업: 부동산임대차계약서 (보증금 변동내역 포함)\n※ 기계구입 등 1천만원 이상 지출 시 세금계산서 외 구입계약서 및 송금내역 함께 첨부' },
+    { name: 'ì¸ê¸ê³ì°ì ë° ê³ì°ì', desc: 'ì ìë°íë¶ì ì ì¶íì§ ììë ë©ëë¤ (ííì¤ìì ì¡°í ê°ë¥)\nì¢ì´ë°íë¶ì ë°ëì ì·¨í©íì¬ ì ì¶ (ìë³¸ ëë ì¬ë³¸)' },
+    { name: 'ì ì©ì¹´ë ë§¤ìë´ì­', desc: 'ííì¤ ë±ë¡ ë²ì¸ì¹´ë ë° ê°ì¸ì¬ìì ì¬ìì©ì¹´ë êµ­ë´ì¬ì©ë¶ ì ì¶ ë¶íì\në²ì¸ì¹´ë ì¸ ê°ì¸ëªì ì¹´ë ì¬ì©ë¶ ì¤ ì¬ì ê´ë ¨ ë´ì­ì ììì¦ ë° ìì ì ì¶' },
+    { name: 'ë²ì¸ê³ì¢ ê±°ëë´ì­', desc: 'ê° ìíìì ìì íì¼ ë¤ì´ë¡ë (ê°í¸ì¡°í ë±ë¡í ê²½ì° ì ì¶ ë¶íì)' },
+    { name: 'ê¸°í ì§ì¶ì¦ë¹', desc: 'ì§ì¶ê²°ìì, ê°ì´ììì¦, ììì ê³ íì¦ (ìì¶ì ì ì¼ ê¸°ì¬)' },
+    { name: 'ìì¢ë³ í´ë¹ ìë¥ (ë°ëì íì¸ íì)', desc: 'ì ììê±°ëì: ê° ì¬ì´í¸ ì ì°ê´ë¦¬ ìë£, PGì¬ ë§¤ì¶ìë£, í´ì¸ ì¤íë§ì¼ ìì¶ì ê³ íì¦Â·ì¡ì¥Â·ìí¬ìë ¹ì¦\nêµ¬ë§¤ëíì: êµ¬ë§¤ëí ê³ì°ìë£ (ë§¤ì¶Â·ë§¤ì)\nìì¶ì: ìì¶ì ê³  ìë£, í´ì¸ ë°°ì¡ë¹ ììì¦\nììì Â·í´ê²ììì: ë§¤ì¥ í¬ì¤ì¬ ì°ë½ì², ë°°ë¬ëí ìì²´ë³ ì¬ì´í¸ ê³ì  ì ë³´\nìì¸ì¨ì ì©ëì: ì ì íì¸ì, ì¸íìê¸ì¦, êµ¬ë§¤íì¸ì, ì¸ë³´ì´ì¤ ë±\në¶ëì°ìëì: ë¶ëì°ìëì°¨ê³ì½ì (ë³´ì¦ê¸ ë³ëë´ì­ í¬í¨)\nâ» ê¸°ê³êµ¬ì ë± 1ì²ë§ì ì´ì ì§ì¶ ì ì¸ê¸ê³ì°ì ì¸ êµ¬ìê³ì½ì ë° ì¡ê¸ë´ì­ í¨ê» ì²¨ë¶' },
   ];
 
   const vatDocsIndividual = [
-    { name: '세금계산서 및 계산서', desc: '전자발행분은 제출하지 않아도 됩니다 (홈택스에서 조회 가능)\n종이발행분은 반드시 취합하여 제출 (원본 또는 사본)' },
-    { name: '신용카드 매입내역', desc: '홈택스 미등록 카드 사용분 중 사업 관련 내역만 영수증 및 엑셀 제출' },
-    { name: '기타 지출증빙', desc: '지출결의서, 간이영수증, 수입신고필증 (수출선적일 기재)' },
-    { name: '업종별 해당 서류 (반드시 확인 필요)', desc: '전자상거래업: 각 사이트 정산관리 자료, PG사 매출자료, 해외 오픈마켓 수출신고필증·송장·소포수령증\n구매대행업: 구매대행 계산자료 (매출·매입)\n수출업: 수출신고 자료, 해외 배송비 영수증\n음식점·휴게음식업: 매장 포스사 연락처, 배달대행 업체별 사이트 계정 정보\n영세율적용대상: 선적확인서, 외화입금증, 구매확인서, 인보이스 등\n부동산임대업: 부동산임대차계약서 (보증금 변동내역 포함)\n※ 기계구입 등 1천만원 이상 지출 시 세금계산서 외 구입계약서 및 송금내역 함께 첨부' },
+    { name: 'ì¸ê¸ê³ì°ì ë° ê³ì°ì', desc: 'ì ìë°íë¶ì ì ì¶íì§ ììë ë©ëë¤ (ííì¤ìì ì¡°í ê°ë¥)\nì¢ì´ë°íë¶ì ë°ëì ì·¨í©íì¬ ì ì¶ (ìë³¸ ëë ì¬ë³¸)' },
+    { name: 'ì ì©ì¹´ë ë§¤ìë´ì­', desc: 'ííì¤ ë¯¸ë±ë¡ ì¹´ë ì¬ì©ë¶ ì¤ ì¬ì ê´ë ¨ ë´ì­ë§ ììì¦ ë° ìì ì ì¶' },
+    { name: 'ê¸°í ì§ì¶ì¦ë¹', desc: 'ì§ì¶ê²°ìì, ê°ì´ììì¦, ììì ê³ íì¦ (ìì¶ì ì ì¼ ê¸°ì¬)' },
+    { name: 'ìì¢ë³ í´ë¹ ìë¥ (ë°ëì íì¸ íì)', desc: 'ì ììê±°ëì: ê° ì¬ì´í¸ ì ì°ê´ë¦¬ ìë£, PGì¬ ë§¤ì¶ìë£, í´ì¸ ì¤íë§ì¼ ìì¶ì ê³ íì¦Â·ì¡ì¥Â·ìí¬ìë ¹ì¦\nêµ¬ë§¤ëíì: êµ¬ë§¤ëí ê³ì°ìë£ (ë§¤ì¶Â·ë§¤ì)\nìì¶ì: ìì¶ì ê³  ìë£, í´ì¸ ë°°ì¡ë¹ ììì¦\nììì Â·í´ê²ììì: ë§¤ì¥ í¬ì¤ì¬ ì°ë½ì², ë°°ë¬ëí ìì²´ë³ ì¬ì´í¸ ê³ì  ì ë³´\nìì¸ì¨ì ì©ëì: ì ì íì¸ì, ì¸íìê¸ì¦, êµ¬ë§¤íì¸ì, ì¸ë³´ì´ì¤ ë±\në¶ëì°ìëì: ë¶ëì°ìëì°¨ê³ì½ì (ë³´ì¦ê¸ ë³ëë´ì­ í¬í¨)\nâ» ê¸°ê³êµ¬ì ë± 1ì²ë§ì ì´ì ì§ì¶ ì ì¸ê¸ê³ì°ì ì¸ êµ¬ìê³ì½ì ë° ì¡ê¸ë´ì­ í¨ê» ì²¨ë¶' },
   ];
 
   const corpDocs = [
-    { name: '법인 등기부등본, 건축물대장, 토지대장 등', desc: '인터넷 등기소에서 발급 (말소사항 포함)' },
-    { name: '주주명부 및 주주변동내역서', desc: '변동사항이 있을 경우 주식양수도 계약서와 함께 반드시 전달' },
-    { name: '법인명의 통장내역 엑셀파일', desc: '신고대상기간 전체 / 정기예금·적금·부채통장·외화통장·중도해지통장 모두 포함\n각 은행 사이트에서 다운로드 (빠른계좌 등록 시 제외)' },
-    { name: '법인명의 통장내역 잔액증명원', desc: '12/31 기준' },
-    { name: '예금이자 원천징수영수증', desc: '거래처 은행 홈페이지에서 원천징수영수증 및 특별징수영수증 다운로드' },
-    { name: '임대차계약서 사본', desc: '변동이 있는 경우' },
-    { name: '원리금 및 이자상환내역, 부채증명원', desc: '차입금이 있을 경우 이자·원금·잔액 구분된 내역서, 12/31 기준 부채증명원' },
-    { name: '차량운행일지, 차량등록증', desc: '법인 명의 차량이 있는 경우 (경차나 9인승 승합차 등 제외)\n운행일지 작성 시 비용한도 없음 / 미작성 시 비용한도 있음\n※ 임직원전용보험 미가입 시 전액 비용 반영 어려울 수 있음' },
-    { name: '차량 리스계약서 및 상환스케줄표', desc: '계약서와 상환표' },
-    { name: '지방세 세목별과세증명서', desc: '위택스에서 발급' },
-    { name: '각종 보험 계약서 및 납입내역서', desc: '법인 명의로 가입된 보험 (화재보험, 차량보험 등) 계약서, 손비처리내역서' },
-    { name: '4대보험 고지/납부내역', desc: '신고대상기간 전체 / 국민건강보험 사회보험통합징수포털 조회' },
-    { name: '법인카드 해외 사용내역', desc: '신고대상기간 전체 / 엑셀파일로 다운' },
-    { name: '국가지원금/보조금 등', desc: '노동부 보조금, 손실보상금, 시설지원자금 등 관련 증빙 (협약서 및 집행내역)' },
-    { name: '기부금영수증', desc: '기부처에 요청' },
-    { name: '간이영수증, 경조사비, 지출결의서', desc: '간이영수증과 경조사비 (부고장/청첩장), 지출결의서' },
-    { name: '재고수불부대장', desc: '상품·제품 등 재고가 있는 경우 / 12/31 기준 재고만 파악해서 전달해도 됨' },
-    { name: '연구인력개발비(R&D)', desc: '기업부설연구소/연구전담부서 인증서, 인력현황, 연구원 인건비 내역' },
-    { name: '기타 서류', desc: '벤처기업인증서 등' },
+    { name: 'ë²ì¸ ë±ê¸°ë¶ë±ë³¸, ê±´ì¶ë¬¼ëì¥, í ì§ëì¥ ë±', desc: 'ì¸í°ë· ë±ê¸°ììì ë°ê¸ (ë§ìì¬í­ í¬í¨)' },
+    { name: 'ì£¼ì£¼ëªë¶ ë° ì£¼ì£¼ë³ëë´ì­ì', desc: 'ë³ëì¬í­ì´ ìì ê²½ì° ì£¼ìììë ê³ì½ìì í¨ê» ë°ëì ì ë¬' },
+    { name: 'k²ì¸ëªì íµì¥ë´ì­ ììíì¼', desc: 'ì ê³ ëìê¸°ê° ì ì²´ / ì ê¸°ìê¸Â·ì ê¸Â·ë¶ì±íµì¥Â·ì¸ííµì¥Â·ì¤ëí´ì§íµì¥ ëª¨ë í¬í¨\nê° ìí ì¬ì´í¸ìì ë¤ì´ë¡ë (ë¹ ë¥¸ê³ì¢ ë±ë¡ ì ì ì¸)' },
+    { name: 'ë²ì¸ëªì íµì¥ë´ì­ ìì¡ì¦ëªì', desc: '12/31 ê¸°ì¤' },
+    { name: 'ìê¸ì´ì ìì²ì§ìììì¦', desc: 'ê±°ëì² ìí ííì´ì§ìì ìì²ì§ìììì¦ ë° í¹ë³ì§ìììì¦ ë¤ì´ë¡ë' },
+    { name: 'ìëì°¨ê³ì½ì ì¬ë³¸', desc: 'ë³ëì´ ìë ê²½ì°' },
+    { name: 'ìë¦¬ê¸ ë° ì´ììíë´ì­, ë¶ì±ì¦ëªì', desc: 'ì°¨ìê¸ì´ ìì ê²½ì° ì´ìÂ·ìê¸Â·ìì¡ êµ¬ë¶ë ë´ì­ì, 12/31 ê¸°ì¤ ë¶ì±ì¦ëªì' },
+    { name: 'ì°¨ëì´íì¼ì§, ì°¨ëë±ë¡ì¦', desc: 'ë²ì¸ ëªì ì°¨ëì´ ìë ê²½ì° (ê²½ì°¨ë 9ì¸ì¹ ì¹í©ì°¨ ë± ì ì¸)\nì´íì¼ì§ ìì± ì ë¹ì©íë ìì / ë¯¸ìì± ì ë¹ì©íë ìì\nâ» ìì§ìì ì©ë³´í ë¯¸ê°ì ì ì ì¡ ë¹ì© ë°ì ì´ë ¤ì¸ ì ìì' },
+    { name: 'ì°¨ë ë¦¬ì¤ê³ì½ì ë° ìíì¤ì¼ì¤í', desc: 'ê³ì½ìì ìíí' },
+    { name: 'ì§ë°©ì¸ ì¸ëª©ë³ê³¼ì¸ì¦ëªì', desc: 'ìíì¤ìì ë°ê¸' },
+    { name: 'ê°ì¢ ë³´í ê³ì½ì ë° ë©ìë´ì­ì', desc: 'ë²ì¸ ëªìë¡ ê°ìë ë³´í (íì¬ë³´í, ì°¨ëë³´í ë±) ê³ì½ì, ìë¹ì²ë¦¬ë´ì­ì' },
+    { name: '4ëë³´í ê³ ì§/ë©ë¶ë´ì­', desc: 'ì ê³ ëìê¸°ê° ì ì²´ / êµ­ë¯¼ê±´ê°ë³´í ì¬íë³´ííµí©ì§ìí¬í¸ ì¡°í' },
+    { name: 'ë²ì¸ì¹´ë í´ì¸ ì¬ì©ë´ì­', desc: 'ì ê³ ëìê¸°ê° ì ì²´ / ììíì¼ë¡ ë¤ì´' },
+    { name: 'êµ­ê°ì§ìê¸/ë³´ì¡°ê¸ ë±', desc: 'ë¸ëë¶ ë³´ì¡°ê¸, ìì¤ë³´ìê¸, ìì¤ì§ììê¸ ë± ê´ë ¨ ì¦ë¹ (íì½ì ë° ì§íë´ì­)' },
+    { name: 'ê¸°ë¶ê¸ììì¦', desc: 'ê¸°ë¶ì²ì ìì²­' },
+    { name: 'ê°ì´ììì¦, ê²½ì¡°ì¬ë¹, ì§ì¶ê²°ìì', desc: 'ê°ì´ììì¦ê³¼ ê²½ì¡°ì¬ë¹ (ë¶ê³ ì¥/ì²­ì²©ì¥), ì§ì¶ê²°ìì' },
+    { name: 'ì¬ê³ ìë¶ë¶ëì¥', desc: 'ìíÂ·ì í ë± ì¬ê³ ê° ìë ê²½ì° / 12/31 ê¸°ì¤ ì¬ê³ ë§ íìí´ì ì ë¬í´ë ë¨' },
+    { name: 'ì°êµ¬ì¸ë ¥ê°ë°ë¹(R&D)', desc: 'ê¸°ìë¶ì¤ì°êµ¬ì/ì°êµ¬ì ë´ë¶ì ì¸ì¦ì, ì¸ë ¥íí©, ì°êµ¬ì ì¸ê±´ë¹ ë´ì­' },
+    { name: 'ê¸°í ìë¥', desc: 'ë²¤ì²ê¸°ìì¸ì¦ì ë±' },
   ];
 
   const incomeDocs = [
-    // 인적공제
-    { name: '주민등록등본 (작년과 같으면 제외)', desc: '' },
-    { name: '가족관계증명서 (작년과 같으면 제외)', desc: '' },
-    { name: '장애인카드(등록증) 사본', desc: '부양가족 중 장애인에 해당되는 경우 필요' },
+    // ì¸ì ê³µì 
+    { name: 'ì£¼ë¯¼ë±ë¡ë±ë³¸ (ìëê³¼ ê°ì¼ë©´ ì ì¸)', desc: '' },
+    { name: 'ê°ì¡±ê´ê³ì¦ëªì (ìëê³¼ ê°ì¼ë©´ ì ì¸)', desc: '' },
+    { name: 'ì¥ì ì¸ì¹´ë(ë±ë¡ì¦) ì¬ë³¸', desc: 'ë¶ìê°ì¡± ì¤ ì¥ì ì¸ì í´ë¹ëë ê²½ì° íì' },
     { name: '', desc: '', empty: true },
 
-    // 수입 관련
-    { name: '정부지원금 등 수령내역', desc: '날짜, 금액 등 표시 (입금된 통장내역 전달)' },
-    { name: '판매장려금 등 수령내역', desc: '' },
+    // ìì ê´ë ¨
+    { name: 'ì ë¶ì§ìê¸ ë± ìë ¹ë´ì­', desc: 'ë ì§, ê¸ì¡ ë± íì (ìê¸ë íµì¥ë´ì­ ì ë¬)' },
+    { name: 'íë§¤ì¥ë ¤ê¸ ë± ìë ¹ë´ì­', desc: '' },
 
-    // 금융/대출
-    { name: '은행 부채(대출)증명서 또는 금융거래확인서', desc: '12/31 기준 대출잔액 확인 (대출있을 경우만)' },
-    { name: '이자지급내역(납입증명서)', desc: '이자율 표시 필요 (대출있을 경우만)' },
+    // ê¸ìµ/ëì¶
+    { name: 'ìí ë¶ì±(ëì¶)ì¦ëªì ëë ê¸ìµê±°ëíì¸ì', desc: '12/31 ê¸°ì¤ ëì¶ìì¡ íì¸ (ëì¶ìì ê²½ì°ë§)' },
+    { name: 'ì´ìì§ê¸ë´ì­(ë©ìì¦ëªì)', desc: 'ì´ìì¨ íì íì (ëì¶ìì ê²½ì°ë§)' },
 
-    // 보험/연금
-    { name: '퇴직연금 납입내역', desc: '퇴직연금 가입 사업장에 한하며 해당 금융기관을 통해 수취' },
-    { name: '4대보험 납입증명서', desc: '' },
+    // ë³´í/ì°ê¸
+    { name: 'í´ì§ì°ê¸ ë©ìë´ì­', desc: 'í´ì§ì°ê¸ ê°ì ì¬ìì¥ì ííë©° í´ë¹ ê¸ìµê¸°ê´ì íµí´ ìì·¨' },
+    { name: '4ëë³´í ë©ìì¦ëªì', desc: '' },
 
-    // 차량
-    { name: '차량등록증, 차량 구입계약서', desc: '차량에 따라 운행일지 필요할 수 있으므로 추가 서류 요청할 수 있음' },
-    { name: '리스, 렌트차량 계약서 및 상환스케줄표', desc: '리스, 렌트가 있을 경우만' },
+    // ì°¨ë
+    { name: 'ì°¨ëë±ë¡ì¦, ì°¨ë êµ¬ìê³ì½ì', desc: 'ì°¨ëì ë°ë¼ ì´íì¼ì§ íìí  ì ìì¼ë¯ë¡ ì¶ê° ìë¥ ìì²­í  ì ìì' },
+    { name: 'ë¦¬ì¤, ë í¸ì°¨ë ê³ì½ì ë° ìíì¤ì¼ì¤í', desc: 'ë¦¬ì¤, ë í¸ê° ìì ê²½ì°ë§' },
 
-    // 비용 관련
-    { name: '화재보험, 사업관련 기타 보험료 납입내역', desc: '생명보험 등 개인적인 보험은 해당 없음' },
-    { name: '홈택스 미등록 신용카드내역', desc: '반드시 엑셀파일로 전달 (PDF, 인쇄본으로 수취될 경우 반영 불가)' },
-    { name: '통신, 인터넷, 전기, 상하수도 등 공과금 내역', desc: '세금계산서 수취분은 제외' },
-    { name: '기부금영수증', desc: '본인 또는 기본공제대상자 명의로 받은 기부금 영수증' },
-    { name: '임대차계약서', desc: '보증금 금액 및 월세 변동이 있을 경우 반드시 첨부' },
-    { name: '청첩장, 부고장 등', desc: '' },
-    { name: '기타 간이영수증 등', desc: '' },
+    // ë¹ì© ê´ë ¨
+    { name: 'íì¬ë³´í, ì¬ìê´ë ¨ ê¸°í ë³´íë£ ë©ìë´ì­', desc: 'ìëªë³´í ë± ê°ì¸ì ì¸ ë³´íì í´ë¹ ìì' },
+    { name: 'ííì¤ ë¯¸ë±ë¡ ì ì©ì¹´ëë´ì­', desc: 'ë°ëì ììíì¼ë¡ ì ë¬ (PDF, ì¸ìë³¸ì¼ë¡ ìì·¨ë  ê²½ì° ë°ì ë¶ê°)' },
+    { name: 'íµì , ì¸í°ë·, ì ê¸°, ìíìë ë± ê³µê³¼ê¸ ë´ì­', desc: 'ì¸ê¸ê³ì°ì ìì·¨ë¶ì ì ì¸' },
+    { name: 'ê¸°ë¶ê¸ììì¦', desc: 'ë³¸ì¸ ëë ê¸°ë³¸ê³µì ëìì ëªìë¡ ë°ì ê¸°ë¶ê¸ ììì¦' },
+    { name: 'ìëì°¨ê³ì½ì', desc: 'ë³´ì¦ê¸ ê¸ì¡ ë° ìì¸ ë³ëì´ ìì ê²½ì° ë°ëì ì²¨ë¶' },
+    { name: 'ì²­ì²©ì¥, ë¶ê³ ì¥ ë±', desc: '' },
+    { name: 'ê¸°í ê°ì´ììì¦ ë±', desc: '' },
     { name: '', desc: '', empty: true },
 
-    // 재무상태
-    { name: '외상매출금 거래처별 잔액', desc: '12/31 기준' },
-    { name: '외상매입금 거래처별 잔액', desc: '12/31 기준' },
-    { name: '재고자산 금액 및 리스트', desc: '12/31 기준 (파악이 어려우실 경우 대략적인 금액)' },
-    { name: '사업용계좌 잔액', desc: '12/31 기준' },
+    // ì¬ë¬´ìí
+    { name: 'ì¸ìë§¤ì¶ê¸ ê±°ëì²ë³ ìì¡', desc: '12/31 ê¸°ì¤' },
+    { name: 'ì¸ìë§¤ìê¸ ê±°ëì²ë³ ìì¡', desc: '12/31 ê¸°ì¤' },
+    { name: 'ì¬ê³ ìì° ê¸ì¡ ë° ë¦¬ì¤í¸', desc: '12/31 ê¸°ì¤ (íìì´ ì´ë ¤ì°ì¤ ê²½ì° ëëµì ì¸ ê¸ì¡)' },
+    { name: 'ì¬ìì©ê³ì¢ ìì¡', desc: '12/31 ê¸°ì¤' },
   ];
 
   const incomeDocsClinic = [
-    { name: '요양급여비용 연간지급내역 통보서 (귀속연도 전체 청구분)', desc: '국민건강보험공단 홈페이지 접속 후 출력' },
-    { name: '의료급여비용 연간지급내역 통보서 (귀속연도 전체 청구분)', desc: '국민건강보험공단 홈페이지 접속 후 출력' },
-    { name: '각 제약회사별 판매장려금 지급명세서', desc: '' },
+    { name: 'ììê¸ì¬ë¹ì© ì°ê°ì§ê¸ë´ì­ íµë³´ì (ê·ìì°ë ì ì²´ ì²­êµ¬ë¶)', desc: 'êµ­ë¯¼ê±´ê°ë³´íê³µë¨ ííì´ì§ ì ì í ì¶ë ¥' },
+    { name: 'ìë£ê¸ì¬ë¹ì© ì°ê°ì§ê¸ë´ì­ íµë³´ì (ê·ìì°ë ì ì²´ ì²­êµ¬ë¶)', desc: 'êµ­ë¯¼ê±´ê°ë³´íê³µë¨ ííì´ì§ ì ì í ì¶ë ¥' },
+    { name: 'ê° ì ì½íì¬ë³ íë§¤ì¥ë ¤ê¸ ì§ê¸ëªì¸ì', desc: '' },
   ];
 
   const incomeDocsSincere = [
-    { name: '의료비 내역', desc: '연말정산 간소화서비스 조회' },
-    { name: '교육비 내역', desc: '연말정산 간소화서비스 조회' },
-    { name: '사업용계좌 통장 엑셀파일', desc: '' },
+    { name: 'ìë£ë¹ ë´ì­', desc: 'ì°ë§ì ì° ê°ìíìë¹ì¤ ì¡°í' },
+    { name: 'êµì¡ë¹ ë´ì­', desc: 'ì°ë§ì ì° ê°ìíìë¹ì¤ ì¡°í' },
+    { name: 'ì¬ìì©ê³ì¢ íµì¥ ììíì¼', desc: '' },
   ];
 
   const noticeData = {
-    'vat_1기 예정': {
-      tag:'부가가치세 1기 예정신고', title:'부가가치세 1기 예정신고 안내',
-      greet:'부가가치세 1기 예정신고', cardType:'부가가치세 1기 예정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 예정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 01월 01일 ~ ${yr}년 03월 31일`,
+    'vat_1ê¸° ìì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 1ê¸° ìì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 01ì 01ì¼ ~ ${yr}ë 03ì 31ì¼`,
       deadline: yr => getNextBizDay(yr, 4, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
-    'vat_1기 확정': {
-      tag:'부가가치세 1기 확정신고', title:'부가가치세 1기 확정신고 안내',
-      greet:'부가가치세 1기 확정신고', cardType:'부가가치세 1기 확정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 04월 01일 ~ ${yr}년 06월 30일`,
+    'vat_1ê¸° íì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 1ê¸° íì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 1ê¸° íì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 1ê¸° íì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 1ê¸° íì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 1ê¸° íì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 04ì 01ì¼ ~ ${yr}ë 06ì 30ì¼`,
       deadline: yr => getNextBizDay(yr, 7, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
-    'vat_1기 예정+확정': {
-      tag:'부가가치세 1기 예정+확정신고', title:'부가가치세 1기 예정+확정신고 안내',
-      greet:'부가가치세 1기 예정+확정신고', cardType:'부가가치세 1기 예정+확정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 1기 예정+확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 01월 01일 ~ ${yr}년 06월 30일`,
+    'vat_1ê¸° ìì +íì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì +íì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì +íì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì +íì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 1ê¸° ìì +íì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 1ê¸° ìì +íì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 01ì 01ì¼ ~ ${yr}ë 06ì 30ì¼`,
       deadline: yr => getNextBizDay(yr, 7, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
-    'vat_2기 예정': {
-      tag:'부가가치세 2기 예정신고', title:'부가가치세 2기 예정신고 안내',
-      greet:'부가가치세 2기 예정신고', cardType:'부가가치세 2기 예정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 예정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 07월 01일 ~ ${yr}년 09월 30일`,
+    'vat_2ê¸° ìì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 2ê¸° ìì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 07ì 01ì¼ ~ ${yr}ë 09ì 30ì¼`,
       deadline: yr => getNextBizDay(yr, 10, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
-    'vat_2기 확정': {
-      tag:'부가가치세 2기 확정신고', title:'부가가치세 2기 확정신고 안내',
-      greet:'부가가치세 2기 확정신고', cardType:'부가가치세 2기 확정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 10월 01일 ~ ${yr}년 12월 31일`,
+    'vat_2ê¸° íì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 2ê¸° íì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 2ê¸° íì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 2ê¸° íì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 2ê¸° íì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 2ê¸° íì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 10ì 01ì¼ ~ ${yr}ë 12ì 31ì¼`,
       deadline: yr => getNextBizDay(yr+1, 1, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
-    'vat_2기 예정+확정': {
-      tag:'부가가치세 2기 예정+확정신고', title:'부가가치세 2기 예정+확정신고 안내',
-      greet:'부가가치세 2기 예정+확정신고', cardType:'부가가치세 2기 예정+확정신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr}년 <strong>부가가치세 2기 예정+확정신고</strong> 기한이 도래하였습니다.<br>아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.`,
-      period: yr => `${yr}년 07월 01일 ~ ${yr}년 12월 31일`,
+    'vat_2ê¸° ìì +íì ': {
+      tag:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì +íì ì ê³ ', title:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì +íì ì ê³  ìë´',
+      greet:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì +íì ì ê³ ', cardType:'ë¶ê°ê°ì¹ì¸ 2ê¸° ìì +íì ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr}ë <strong>ë¶ê°ê°ì¹ì¸ 2ê¸° ìì +íì ì ê³ </strong> ê¸°íì´ ëëíììµëë¤.<br>ìë ë´ì©ì íì¸íìì´ ê¸°í ë´ ì ê³ ê° ì´ë£¨ì´ì§ ì ìëë¡ <strong>íì ìë¥ë¥¼ ê¸°í ë´ì ì ì¶</strong>í´ ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 07ì 01ì¼ ~ ${yr}ë 12ì 31ì¼`,
       deadline: yr => getNextBizDay(yr+1, 1, 25),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: vatDocs
     },
     'corp': {
-      tag:'법인세 신고', title:'법인세 신고 안내',
-      greet:'법인세 신고', cardType:'법인세 신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 3월은 <strong>법인세 신고</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 법인결산에 관한 구비서류 협조를 요청드립니다. 아래 안내에 참고하시어 해당 항목에 관하여 준비하여 주시면 신속한 결산에 많은 도움이 될 것입니다.`,
-      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      tag:'ë²ì¸ì¸ ì ê³ ', title:'ë²ì¸ì¸ ì ê³  ìë´',
+      greet:'ë²ì¸ì¸ ì ê³ ', cardType:'ë²ì¸ì¸ ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr+1}ë 3ìì <strong>ë²ì¸ì¸ ì ê³ </strong> ë° ë©ë¶ì ë¬ìëë¤.<br>ë°ë¼ì ${yr}ë ë²ì¸ê²°ì°ì ê´í êµ¬ë¹ìë¥ íì¡°ë¥¼ ìì²­ëë¦½ëë¤. ìë ìë´ì ì°¸ê³ íìì´ í´ë¹ í­ëª©ì ê´íì¬ ì¤ë¹íì¬ ì£¼ìë©´ ì ìí ê²°ì°ì ë§ì ëìì´ ë  ê²ìëë¤.`,
+      period: yr => `${yr}ë 01ì 01ì¼ ~ ${yr}ë 12ì 31ì¼`,
       deadline: yr => getNextBizDay(yr+1, 3, 31),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: corpDocs
     },
     'income': {
-      tag:'종합소득세 신고', title:'종합소득세 신고 안내',
-      greet:'종합소득세 신고', cardType:'종합소득세 신고',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 5월은 <strong>종합소득세 신고</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 개인결산에 관한 구비서류 안내드리오니 아래 서류 참고하시어 담당자에게 보내주시기 바랍니다.`,
-      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      tag:'ì¢í©ìëì¸ ì ê³ ', title:'ì¢í©ìëì¸ ì ê³  ìë´',
+      greet:'ì¢í©ìëì¸ ì ê³ ', cardType:'ì¢í©ìëì¸ ì ê³ ',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr+1}ë 5ìì <strong>ì¢í©ìëì¸ ì ê³ </strong> ë° ë©ë¶ì ë¬ìëë¤.<br>ë°ë¼ì ${yr}ë ê°ì¸ê²°ì°ì ê´í êµ¬ë¹ìë¥ ìë´ëë¦¬ì¤ë ìë ìë¥ ì°¸ê³ íìì´ ë´ë¹ììê² ë³´ë´ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 01ì 01ì¼ ~ ${yr}ë 12ì 31ì¼`,
       deadline: yr => getNextBizDay(yr+1, 5, 31),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: incomeDocs
     },
     'income_sincere': {
-      tag:'종합소득세 신고 (성실신고)', title:'종합소득세 신고 안내',
-      greet:'종합소득세 신고', cardType:'종합소득세 신고 (성실신고)',
-      body: yr => `안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>${yr+1}년 2월은 <strong>종합소득세 신고 (성실신고)</strong> 및 납부의 달입니다.<br>따라서 ${yr}년 개인결산에 관한 구비서류 안내드리오니 아래 서류 참고하시어 담당자에게 보내주시기 바랍니다.`,
-      period: yr => `${yr}년 01월 01일 ~ ${yr}년 12월 31일`,
+      tag:'ì¢í©ìëì¸ ì ê³  (ì±ì¤ì ê³ )', title:'ì¢í©ìëì¸ ì ê³  ìë´',
+      greet:'ì¢í©ìëì¸ ì ê³ ', cardType:'ì¢í©ìëì¸ ì ê³  (ì±ì¤ì ê³ )',
+      body: yr => `ìëíì­ëê¹. ê·ì¬ì ë¬´ê¶í ë°ì ì ê¸°ìí©ëë¤.<br>${yr+1}ë 6ìì <strong>ì¢í©ìëì¸ ì ê³  (ì±ì¤ì ê³ )</strong> ë° ë©ë¶ì ë¬ìëë¤.<br>ë°ë¼ì ${yr}ë ê°ì¸ê²°ì°ì ê´í êµ¬ë¹ìë¥ ìë´ëë¦¬ì¤ë ìë ìë¥ ì°¸ê³ íìì´ ë´ë¹ììê² ë³´ë´ì£¼ìê¸° ë°ëëë¤.`,
+      period: yr => `${yr}ë 01ì 01ì¼ ~ ${yr}ë 12ì 31ì¼`,
       deadline: yr => getNextBizDay(yr+1, 6, 30),
-      submit: () => '직접 입력',
+      submit: () => 'ì§ì  ìë ¥',
       docs: incomeDocs
     }
   };
 
-  window.currentBizType = '법인';
+  window.currentBizType = 'ë²ì¸';
   window.currentKey = null;
 
   function closeClientModal() {
@@ -531,8 +555,8 @@
   function onNoticeTypeChange() {
     const type = document.getElementById('noticeType').value;
     if (type === 'vat') {
-      const bizType = window.currentBizType || '법인';
-      if (bizType === '개인') {
+      const bizType = window.currentBizType || 'ë²ì¸';
+      if (bizType === 'ê°ì¸') {
         document.getElementById('vatIndividualModal').style.display = 'flex';
       } else {
         document.getElementById('vatModal').style.display = 'flex';
@@ -567,15 +591,15 @@
     document.getElementById('card_deadline_note').textContent = dl.note;
     document.getElementById('card_submit').textContent = data.submit(yr);
 
-    // 업종 선택기 표시 여부
+    // ìì¢ ì íê¸° íì ì¬ë¶
     const isIncome = key === 'income' || key === 'income_sincere';
     document.getElementById('bizTypeDivider').style.display = isIncome ? '' : 'none';
     document.getElementById('bizTypeLabel').style.display = isIncome ? '' : 'none';
     document.getElementById('bizTypeSelect').style.display = isIncome ? '' : 'none';
 
-    // 서류 목록 구성
+    // ìë¥ ëª©ë¡ êµ¬ì±
     let docs;
-    if (key.startsWith('vat_') && currentBizType === '개인') {
+    if (key.startsWith('vat_') && currentBizType === 'ê°ì¸') {
       docs = vatDocsIndividual;
     } else if (isIncome) {
       docs = [...incomeDocs];
@@ -586,20 +610,21 @@
       docs = data.docs;
     }
 
-    document.getElementById('docsList').innerHTML = docs.map(d => {
-      if (!d || d.empty) return `<li style="background:transparent;border:none;"></li>`;
-      if (typeof d === 'string') {
-        return `<li><div class="doc-name">${d}</div></li>`;
-      }
-      const isWarning = d.name.includes('반드시 확인 필요');
-      return `<li><div class="doc-name${isWarning ? ' warning' : ''}">${d.name}</div>${d.desc ? `<div class="doc-desc">${d.desc}</div>` : ''}</li>`;
-    }).join('');
+    // localStorageì ì ì¥ë í¸ì§ë³¸ ìì¼ë©´ ì°ì  ì¬ì©
+    const saved = loadDocsList(key);
+    if (saved) {
+      renderDocsList(saved);
+      document.getElementById('resetBtn').style.display = '';
+    } else {
+      renderDocsList(docs);
+      document.getElementById('resetBtn').style.display = 'none';
+    }
   }
 
   function addDoc() {
     const list = document.getElementById('docsList');
     const li = document.createElement('li');
-    li.contentEditable = 'true'; li.textContent = '서류명 입력';
+    li.contentEditable = 'true'; li.textContent = 'ìë¥ëª ìë ¥';
     list.appendChild(li); li.focus();
     const r = document.createRange();
     r.selectNodeContents(li);
@@ -626,35 +651,145 @@
   function doPrint() { closePrintModal(); setTimeout(() => window.print(), 200); }
   function doSavePDF() {
     closePrintModal();
-    const name = document.getElementById('f_name').textContent.trim() || '고객사';
-    const type = document.getElementById('noticeTag').textContent.trim() || '세금신고';
-    document.title = `${name}_${type}_안내문`;
-    setTimeout(() => { window.print(); document.title = '세금신고 안내문'; }, 200);
+    const name = document.getElementById('f_name').textContent.trim() || 'ê³ ê°ì¬';
+    const type = document.getElementById('noticeTag').textContent.trim() || 'ì¸ê¸ì ê³ ';
+    document.title = `${name}_${type}_ìë´ë¬¸`;
+    setTimeout(() => { window.print(); document.title = 'ì¸ê¸ì ê³  ìë´ë¬¸'; }, 200);
   }
 
-  // 서류제출기한 클릭 시 '직접 입력' 자동 제거
+  // ââ ìë¥ í¸ì§ / localStorage ì ì¥ ââââââââââââââââââââââââââââââââââ
+
+  function docStorageKey(key) { return `taxDocs_${key}`; }
+
+  function saveDocsList(key) {
+    if (!key) return;
+    const items = [];
+    document.querySelectorAll('#docsList > li').forEach(li => {
+      if (li.style.background === 'transparent') { items.push({ empty: true }); return; }
+      const nameEl = li.querySelector('.doc-name');
+      const descEl = li.querySelector('.doc-desc');
+      items.push({
+        name: nameEl ? nameEl.innerText : li.innerText,
+        desc: descEl ? descEl.innerText : '',
+        warning: nameEl ? nameEl.classList.contains('warning') : false
+      });
+    });
+    localStorage.setItem(docStorageKey(key), JSON.stringify(items));
+    document.getElementById('resetBtn').style.display = '';
+  }
+
+  function loadDocsList(key) {
+    const saved = localStorage.getItem(docStorageKey(key));
+    return saved ? JSON.parse(saved) : null;
+  }
+
+  function renderDocsList(docs) {
+    document.getElementById('docsList').innerHTML = docs.map(d => {
+      if (!d || d.empty) return `<li style="background:transparent;border:none;"></li>`;
+      const isWarning = d.warning || (d.name && d.name.includes('ë°ëì íì¸ íì'));
+      return `<li contenteditable="true"><div class="doc-name${isWarning ? ' warning' : ''}" contenteditable="true">${d.name}</div>${d.desc ? `<div class="doc-desc" contenteditable="true">${d.desc}</div>` : ''}</li>`;
+    }).join('');
+  }
+
+  // ìë¥ ëª©ë¡ ë³ê²½ ì ìë ì ì¥
+  document.getElementById('docsList').addEventListener('input', () => {
+    if (window.currentKey) saveDocsList(window.currentKey);
+  });
+
+  // ìë¥ í¸ì§ ëª¨ë¬
+  window.openDocsEditModal = function() {
+    if (!window.currentKey) {
+      alert('ë¨¼ì  ì ê³ ì¢ë¥ë¥¼ ì íí´ ì£¼ì¸ì.');
+      return;
+    }
+    const editList = document.getElementById('docsEditList');
+    editList.innerHTML = '';
+    document.querySelectorAll('#docsList > li').forEach((li, i) => {
+      if (li.style.background === 'transparent') return;
+      const nameEl = li.querySelector('.doc-name');
+      const descEl = li.querySelector('.doc-desc');
+      const name = nameEl ? nameEl.innerText : li.innerText;
+      const desc = descEl ? descEl.innerText : '';
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:6px;align-items:flex-start;background:#fafafa;border:1px solid #e8e4db;border-radius:6px;padding:8px 10px;';
+      row.innerHTML = `
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+          <input type="text" value="${name.replace(/"/g,'&quot;')}" placeholder="ìë¥ëª" style="width:100%;padding:5px 8px;border:1px solid #ddd;border-radius:4px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;">
+          <textarea placeholder="ì¤ëª (ìì¼ë©´ ë¹ìëì¸ì)" style="width:100%;padding:5px 8px;border:1px solid #ddd;border-radius:4px;font-family:'Noto Sans KR',sans-serif;font-size:12px;resize:vertical;min-height:48px;">${desc}</textarea>
+        </div>
+        <button onclick="this.closest('div[style]').remove()" style="background:#fee2e2;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;color:#ef4444;font-size:14px;flex-shrink:0;">â</button>`;
+      editList.appendChild(row);
+    });
+    document.getElementById('docsEditModal').style.display = 'flex';
+  };
+
+  window.addEditDoc = function() {
+    const editList = document.getElementById('docsEditList');
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;align-items:flex-start;background:#fafafa;border:1px solid #e8e4db;border-radius:6px;padding:8px 10px;';
+    row.innerHTML = `
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+        <input type="text" value="" placeholder="ìë¥ëª" style="width:100%;padding:5px 8px;border:1px solid #ddd;border-radius:4px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;">
+        <textarea placeholder="ì¤ëª (ìì¼ë©´ ë¹ìëì¸ì)" style="width:100%;padding:5px 8px;border:1px solid #ddd;border-radius:4px;font-family:'Noto Sans KR',sans-serif;font-size:12px;resize:vertical;min-height:48px;"></textarea>
+      </div>
+      <button onclick="this.closest('div[style]').remove()" style="background:#fee2e2;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;color:#ef4444;font-size:14px;flex-shrink:0;">â</button>`;
+    editList.appendChild(row);
+    row.querySelector('input').focus();
+  };
+
+  window.saveDocsEdit = function() {
+    const items = [];
+    document.querySelectorAll('#docsEditList > div').forEach(row => {
+      const name = row.querySelector('input').value.trim();
+      const desc = row.querySelector('textarea').value.trim();
+      if (name) items.push({ name, desc, warning: name.includes('ë°ëì íì¸ íì') });
+    });
+    renderDocsList(items);
+    saveDocsList(window.currentKey);
+    document.getElementById('docsEditModal').style.display = 'none';
+  };
+
+  window.closeDocsEditModal = function() {
+    document.getElementById('docsEditModal').style.display = 'none';
+  };
+
+  window.resetDocs = function() {
+    if (!window.currentKey) return;
+    if (!confirm('ê¸°ë³¸ ìë¥ ëª©ë¡ì¼ë¡ ì´ê¸°íí ê¹ì?')) return;
+    localStorage.removeItem(docStorageKey(window.currentKey));
+    applyNotice(window.currentKey);
+    document.getElementById('resetBtn').style.display = 'none';
+  };
+
+  document.getElementById('docsEditModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('docsEditModal')) closeDocsEditModal();
+  });
+
+  // ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+
+  // ìë¥ì ì¶ê¸°í í´ë¦­ ì 'ì§ì  ìë ¥' ìë ì ê±°
   document.getElementById('card_submit').addEventListener('focus', function() {
-    if (this.textContent.trim() === '직접 입력') {
+    if (this.textContent.trim() === 'ì§ì  ìë ¥') {
       this.textContent = '';
     }
   });
 
-  // 서류제출기한 날짜 자동 변환
-  // 입력 예: 26.05.10 → 2026년 5월 10일
+  // ìë¥ì ì¶ê¸°í ë ì§ ìë ë³í
+  // ìë ¥ ì: 26.05.10 â 2026ë 5ì 10ì¼
   document.getElementById('card_submit').addEventListener('blur', function() {
     const raw = this.textContent.trim();
-    // 직접 입력 기본값이면 패스
-    if (!raw || raw === '직접 입력') return;
-    // 이미 변환된 경우 패스
-    if (/년/.test(raw)) return;
-    // YY.MM.DD 또는 YYYY.MM.DD 형식 파싱
+    // ì§ì  ìë ¥ ê¸°ë³¸ê°ì´ë©´ í¨ì¤
+    if (!raw || raw === 'ì§ì  ìë ¥') return;
+    // ì´ë¯¸ ë³íë ê²½ì° í¨ì¤
+    if (/ë/.test(raw)) return;
+    // YY.MM.DD ëë YYYY.MM.DD íì íì±
     const m = raw.match(/^(\d{2,4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
     if (m) {
       let yr = parseInt(m[1]);
       if (yr < 100) yr += 2000;
       const mo = parseInt(m[2]);
       const dy = parseInt(m[3]);
-      this.textContent = `${yr}텄 ${mo}월 ${dy}일`;
+      this.textContent = `${yr}ë ${mo}ì ${dy}ì¼`;
     }
   });
 
@@ -686,13 +821,13 @@
     try {
       const snapshot = await getDocs(collection(db, 'clients'));
       allClients = snapshot.docs.map(d => ({ ...d.data(), _docId: d.id }));
-    } catch(e) { console.error('거래처 불러오기 실패:', e); }
+    } catch(e) { console.error('ê±°ëì² ë¶ë¬ì¤ê¸° ì¤í¨:', e); }
   }
 
   function renderClientList(list) {
     const el = document.getElementById('clientList');
     if (!list || list.length === 0) {
-      el.innerHTML = '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">검색 결과가 없습니다.</div>';
+      el.innerHTML = '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">ê²ì ê²°ê³¼ê° ììµëë¤.</div>';
       return;
     }
     el.innerHTML = list.map(c => `
@@ -702,9 +837,9 @@
         onmouseout="this.style.background='#faf8f3';this.style.color='#1c1c1c';this.style.borderColor='#e8e4db'">
         <div>
           <div style="font-weight:600;font-size:14px;">${c.name}</div>
-          <div style="font-size:11px;opacity:0.6;margin-top:2px;">${c.ceo ? c.ceo + ' · ' : ''}${c.brn || ''}</div>
+          <div style="font-size:11px;opacity:0.6;margin-top:2px;">${c.ceo ? c.ceo + ' Â· ' : ''}${c.brn || ''}</div>
         </div>
-        <span style="font-size:12px;opacity:0.4;">선택 →</span>
+        <span style="font-size:12px;opacity:0.4;">ì í â</span>
       </div>
     `).join('');
   }
@@ -713,7 +848,7 @@
     document.getElementById('clientModal').style.display = 'flex';
     document.getElementById('clientSearch').value = '';
     document.getElementById('clientList').innerHTML =
-      '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">불러오는 중...</div>';
+      '<div style="text-align:center;color:#aaa;font-size:13px;padding:20px;">ë¶ë¬ì¤ë ì¤...</div>';
     if (allClients.length === 0) await loadClients();
     renderClientList(allClients);
     setTimeout(() => document.getElementById('clientSearch').focus(), 100);
@@ -733,9 +868,9 @@
     document.getElementById('f_name').textContent = c.name;
     document.getElementById('f_ceo').textContent = c.ceo || '';
     document.getElementById('f_brn').textContent = c.brn || '';
-    document.getElementById('clientBtn').textContent = '🏢 ' + c.name;
+    document.getElementById('clientBtn').textContent = 'ð¢ ' + c.name;
 
-    // 수신란 잠금
+    // ìì ë ì ê¸
     ['f_name','f_ceo','f_brn'].forEach(id => {
       const el = document.getElementById(id);
       el.removeAttribute('contenteditable');
@@ -743,7 +878,7 @@
       el.style.cursor = 'default';
     });
 
-    // 신고구분 잠금
+    // ì ê³ êµ¬ë¶ ì ê¸
     const cardType = document.getElementById('card_type');
     cardType.removeAttribute('contenteditable');
     cardType.style.borderBottom = 'none';
@@ -753,15 +888,15 @@
     window.currentBizType = bizType;
 
     const noticeType = document.getElementById('noticeType');
-    noticeType.innerHTML = '<option value="">선택</option>';
-    if (bizType === '법인') {
+    noticeType.innerHTML = '<option value="">ì í</option>';
+    if (bizType === 'ë²ì¸') {
       noticeType.innerHTML += `
-        <option value="vat">부가가치세</option>
-        <option value="corp">법인세</option>`;
+        <option value="vat">ë¶ê°ê°ì¹ì¸</option>
+        <option value="corp">ë²ì¸ì¸</option>`;
     } else {
       noticeType.innerHTML += `
-        <option value="vat">부가가치세</option>
-        <option value="income">종합소득세</option>`;
+        <option value="vat">ë¶ê°ê°ì¹ì¸</option>
+        <option value="income">ì¢í©ìëì¸</option>`;
     }
     noticeType.value = '';
     document.getElementById('clientModal').style.display = 'none';
@@ -769,8 +904,8 @@
 
   function detectBizType(name, brn) {
     const digits = (brn || '').replace(/[^0-9]/g, '');
-    if (digits.length >= 4 && digits[3] === '8') return '법인';
-    return '개인';
+    if (digits.length >= 4 && digits[3] === '8') return 'ë²ì¸';
+    return 'ê°ì¸';
   }
 
   document.getElementById('clientModal').addEventListener('click', function(e) {
