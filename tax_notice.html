@@ -284,7 +284,8 @@
     <div class="greeting" id="greetingBlock">
       안녕하십니까. 귀사의 무궁한 발전을 기원합니다.<br>
       <strong id="greeting_type">세금신고</strong> 기한이 도래하여 안내드립니다.<br>
-      아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.
+      아래 내용을 확인하시어 기한 내 신고가 이루어질 수 있도록 <strong>필요 서류를 기한 내에 제출</strong>해 주시기 바랍니다.<br>
+      📧 <a href="mailto:kahyun6294@gmail.com" style="color:#b8962e; text-decoration:none;">kahyun6294@gmail.com</a>
     </div>
 
     <div class="info-cards">
@@ -320,11 +321,6 @@
       ※ 문의사항은 아래 연락처로 연락 주시기 바랍니다.
     </div>
 
-    <div style="margin-top:10px; font-size:12px; color:#444; text-align:right; padding-right:4px;">
-      담당자에게 보내주시기 바랍니다.<br>
-      📧 <a href="mailto:kahyun6294@gmail.com" style="color:#1a56db; text-decoration:none;">kahyun6294@gmail.com</a>
-    </div>
-
     <div class="office-footer">
       <div class="office-info">
         <div class="office-name">세무사 이헌 사무소</div>
@@ -343,7 +339,7 @@
   const today = new Date();
   const y = today.getFullYear();
   document.getElementById('issueDate').textContent =
-    `${y}텄 ${String(today.getMonth()+1).padStart(2,'0')}월 ${String(today.getDate()).padStart(2,'0')}일`;
+    `${y}년 ${String(today.getMonth()+1).padStart(2,'0')}월 ${String(today.getDate()).padStart(2,'0')}일`;
 
   (function() {
     const sel = document.getElementById('yearSelect');
@@ -388,7 +384,7 @@
     { name: '법인명의 통장내역 엑셀파일', desc: '신고대상기간 전체 / 정기예금·적금·부채통장·외화통장·중도해지통장 모두 포함\n각 은행 사이트에서 다운로드 (빠른계좌 등록 시 제외)' },
     { name: '법인명의 통장내역 잔액증명원', desc: '12/31 기준' },
     { name: '예금이자 원천징수영수증', desc: '거래처 은행 홈페이지에서 원천징수영수증 및 특별징수영수증 다운로드' },
-    { name: '임대차계약서 사본', desc: '변동이 있는 경우' },
+    { name: '임대차계약서 사본', desc: '변동이 있는 경욳' },
     { name: '원리금 및 이자상환내역, 부채증명원', desc: '차입금이 있을 경우 이자·원금·잔액 구분된 내역서, 12/31 기준 부채증명원' },
     { name: '차량운행일지, 차량등록증', desc: '법인 명의 차량이 있는 경우 (경차나 9인승 승합차 등 제외)\n운행일지 작성 시 비용한도 없음 / 미작성 시 비용한도 있음\n※ 임직원전용보험 미가입 시 전액 비용 반영 어려울 수 있음' },
     { name: '차량 리스계약서 및 상환스케줄표', desc: '계약서와 상환표' },
@@ -397,7 +393,7 @@
     { name: '4대보험 고지/납부내역', desc: '신고대상기간 전체 / 국민건강보험 사회보험통합징수포털 조회' },
     { name: '법인카드 해외 사용내역', desc: '신고대상기간 전체 / 엑셀파일로 다운' },
     { name: '국가지원금/보조금 등', desc: '노동부 보조금, 손실보상금, 시설지원자금 등 관련 증빙 (협약서 및 집행내역)' },
-    { name: '기부금영수증', desc: '기부처에 요청' },
+    { name: '기ﶀ금영수증', desc: '기부처에 요청' },
     { name: '간이영수증, 경조사비, 지출결의서', desc: '간이영수증과 경조사비 (부고장/청첩장), 지출결의서' },
     { name: '재고수불부대장', desc: '상품·제품 등 재고가 있는 경우 / 12/31 기준 재고만 파악해서 전달해도 됨' },
     { name: '연구인력개발비(R&D)', desc: '기업부설연구소/연구전담부서 인증서, 인력현황, 연구원 인건비 내역' },
@@ -624,7 +620,7 @@
   function addDoc() {
     const list = document.getElementById('docsList');
     const li = document.createElement('li');
-    li.contentEditable = 'true'; li.textContent = '서류명 입력';
+    li.contentEditable = 'true'; li.textContent = '서류명 입�%';
     list.appendChild(li); li.focus();
     const r = document.createRange();
     r.selectNodeContents(li);
@@ -789,7 +785,7 @@
       if (yr < 100) yr += 2000;
       const mo = parseInt(m[2]);
       const dy = parseInt(m[3]);
-      this.textContent = `${yr}년 ${mo}월 ${dy}일`;
+      this.textContent = `${yr}텄 ${mo}월 ${dy}일`;
     }
   });
 
