@@ -7,355 +7,271 @@
     <style>
         :root {
             --primary-color: #2b4c7e;
-            --secondary-color: #f4f7fa;
+            --table-th-bg: #f4f7fa;
             --border-color: #cfd8dc;
             --text-color: #2c3e50;
         }
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
+            font-family: 'Malgun Gothic', Dotum, sans-serif;
+            line-height: 1.5;
             color: var(--text-color);
-            background-color: #fafafa;
+            background-color: #f5f5f5;
             margin: 0;
-            padding: 20px;
+            padding: 30px 10px;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+        .pdf-page {
+            max-width: 840px;
+            margin: 0 auto bg;
             background: #ffffff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-        h2 {
-            color: var(--primary-color);
-            border-left: 4px solid var(--primary-color);
-            padding-left: 10px;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background: #fff;
-        }
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            text-align: center;
-        }
-        th {
-            background-color: var(--secondary-color);
-            color: #34495e;
-            font-weight: 600;
-        }
-        input[type="text"], input[type="number"], select {
-            width: 90%;
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            text-align: right;
+            padding: 50px 40px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             box-sizing: border-box;
         }
-        input[type="text"].left, select {
+        .header-tag {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        /* 기본 정보 테이블 */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 35px;
+        }
+        .info-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            font-size: 13px;
+        }
+        .info-table td.label {
+            background-color: var(--table-th-bg);
+            font-weight: bold;
+            color: #34495e;
+            width: 20%;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 15px;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 8px;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        /* 메인 데이터 테이블 */
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            font-size: 13px;
+        }
+        table.data-table th {
+            background-color: var(--table-th-bg);
+            color: #34495e;
+            font-weight: bold;
+        }
+        table.data-table td.category {
+            background-color: #fafbfc;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* 인풋 스타일 */
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        input[type="number"] {
+            text-align: right;
+        }
+        input.left {
             text-align: left;
         }
-        .btn-container {
-            margin-bottom: 20px;
+        input[readonly] {
+            background-color: #edf2f7;
+            border-color: var(--border-color);
+            color: #4a5568;
+        }
+
+        /* 버튼 컨테이너 */
+        .btn-space {
+            margin-bottom: 8px;
         }
         button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            background-color: #fff;
+            border: 1px solid #cbd5e0;
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 3px;
             cursor: pointer;
-            font-weight: bold;
-            margin-right: 5px;
-            transition: background 0.2s;
+            color: #4a5568;
         }
         button:hover {
-            background-color: #1a3050;
+            background-color: #f7fafc;
         }
         button.delete-btn {
-            background-color: #e74c3c;
-            padding: 5px 10px;
-            font-size: 0.85rem;
+            color: #e53e3e;
+            border-color: #fed7d7;
+            background-color: #fff5f5;
         }
         button.delete-btn:hover {
-            background-color: #c0392b;
+            background-color: #fed7d7;
         }
-        .summary-box {
-            background-color: #edf2f7;
-            padding: 15px;
-            border-radius: 6px;
+
+        /* 세액계산 흐름 레이아웃 (좌측 기호 열) */
+        .sign-col {
+            width: 5%;
             font-weight: bold;
-            text-align: right;
-            margin-top: -10px;
-            margin-bottom: 20px;
-            font-size: 1.05rem;
+            font-size: 14px;
+            color: #7f8c8d;
+            background-color: #fafbfc;
+            text-align: center;
         }
-        .read-only {
-            background-color: #e9ecef;
-            cursor: not-allowed;
+
+        /* 메모 및 하단 서명란 */
+        .memo-box {
+            width: 100%;
+            height: 80px;
+            resize: none;
+            padding: 10px;
+            font-size: 13px;
         }
-        .notice-list {
-            padding-left: 20px;
-            margin: 0;
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
         }
-        .notice-list li {
-            margin-bottom: 8px;
+        .footer-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            font-size: 13px;
+        }
+        .footer-table td.label {
+            background-color: var(--table-th-bg);
+            font-weight: bold;
+            text-align: center;
+            width: 20%;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>종합소득세 신고 요약</h1>
+<div class="pdf-page">
+    <div class="header-tag">INCOME TAX</div>
+    <h1>종합소득세 신고 요약 서식</h1>
+    <div class="subtitle">귀속연도 종합소득세 신고 내역 요약 및 제출 서류 안내</div>
 
-    <!-- 1. 사업장별 수입금액 -->
-    <h2>1. 사업장별 수입금액</h2>
-    <div class="btn-container">
-        <button type="button" onclick="addBizRow()">사업장 추가</button>
+    <table class="info-table">
+        <tr>
+            <td class="label">귀속연도</td>
+            <td><input type="number" value="2025" style="text-align: left;"></td>
+            <td class="label">신고 기한</td>
+            <td><input type="text" class="left" value="2026년 5월 31일"></td>
+        </tr>
+        <tr>
+            <td class="label">상호/성명</td>
+            <td><input type="text" class="left" value="홍길동/(주)예시상사"></td>
+            <td class="label">사업자 / 주민번호</td>
+            <td><input type="text" class="left" value="123-45-67890"></td>
+        </tr>
+    </table>
+
+    <h2>1 사업장별 수입금액 (사업소득)</h2>
+    <div class="btn-space">
+        <button type="button" onclick="addBizRow()">+ 사업장 추가</button>
     </div>
-    <table id="bizTable">
+    <table class="data-table" id="bizTable">
         <thead>
             <tr>
-                <th>업종코드</th>
-                <th>상호(사업장명)</th>
-                <th>수입금액(간편장부 등)</th>
-                <th>관리</th>
+                <th style="width: 35%;">사업장명/상호</th>
+                <th style="width: 20%;">업종코드</th>
+                <th style="width: 30%;">수입금액(원)</th>
+                <th style="width: 15%;">관리</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><input type="text" class="left" placeholder="예: 701101"></td>
-                <td><input type="text" class="left" placeholder="예: 주식회사 OO"></td>
+                <td><input type="text" class="left" placeholder="사업장명/상호 입력"></td>
+                <td><input type="text" class="left" placeholder="업종코드 입력"></td>
                 <td><input type="number" class="biz-income" value="0" oninput="updateBizTotal()"></td>
-                <td>-</td>
+                <td style="text-align: center; color: #a0aec0;">-</td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr style="background-color: #fafbfc; font-weight: bold;">
+                <td colspan="2" style="text-align: center;">사업소득 수입금액 합계</td>
+                <td><input type="number" id="totalBizIncome" value="0" readonly></td>
+                <td></td>
+            </tr>
+        </tfoot>
     </table>
-    <div class="summary-box">
-        사업장 수입금액 합계: <span id="totalBizIncome">0</span> 원
-    </div>
 
-    <!-- 2. 타소득 추가 -->
-    <h2>2. 타소득 추가</h2>
-    <table>
+    <h2>2 타소득 합산 (합산과세 대상)</h2>
+    <table class="data-table" id="otherIncomeTable">
         <thead>
             <tr>
-                <th style="width: 30%;">소득 종류</th>
-                <th>합산 여부 및 내용 (금액 등)</th>
+                <th style="width: 25%;">소득 종류</th>
+                <th style="width: 35%;">내용</th>
+                <th style="width: 25%;">금액(원)</th>
+                <th style="width: 15%;">비고</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>근로소득</td>
-                <td><input type="text" class="left" placeholder="근로소득 원천징수영수증 기준 총급여 등 기재"></td>
+                <td class="category">이자소득</td>
+                <td><input type="text" class="left" value="금융기관 이자 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="text" class="left" placeholder="금융기관명 등"></td>
             </tr>
             <tr>
-                <td>기타소득</td>
-                <td><input type="text" class="left" placeholder="강연료, 원고료 등 기타소득금액 기재"></td>
+                <td class="category">배당소득</td>
+                <td><input type="text" class="left" value="주식배당 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td>연금소득 / 3.3% 사업소득</td>
-                <td><input type="text" class="left" placeholder="공적/사적연금 또는 프리랜서 소득 기재"></td>
+                <td class="category">근로소득</td>
+                <td><input type="text" class="left" value="급여 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="text" class="left" placeholder="회사명 등"></td>
             </tr>
             <tr>
-                <td>금융소득 (이자·배당)</td>
-                <td><input type="text" class="left" placeholder="2,000만원 초과 시 종합과세 대상금액 기재"></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- 3. 필요경비/소득공제 항목 -->
-    <h2>3. 필요경비/소득공제 항목</h2>
-    <table id="deductionTable">
-        <thead>
-            <tr>
-                <th style="width: 30%;">공제 항목 구분</th>
-                <th>내용 및 작성 (금액/대상 여부 등)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>인적공제 (부양가족 등)</td>
-                <td><input type="text" class="left" placeholder="본인 외 부양가족 명수 및 특이사항 기재"></td>
+                <td class="category">연금소득</td>
+                <td><input type="text" class="left" value="국민연금·사적연금 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td>연금보험료공제 / 특별소득공제</td>
-                <td><input type="text" class="left" placeholder="국민연금, 건강보험료 등 참고사항"></td>
-            </tr>
-            <tr>
-                <td>조세특례제한법상 소득공제</td>
-                <td><input type="text" class="left" placeholder="노란우산공제(소기업·소상공인 공제부금) 등"></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- 4. 세액계산요약 -->
-    <h2>4. 세액계산요약</h2>
-    <table>
-        <tbody>
-            <tr>
-                <th style="width: 35%;">① 종합소득금액 (사업 + 타소득)</th>
-                <td><input type="number" id="calcTotalProfit" value="0" oninput="updateTaxCalculations()"></td>
-            </tr>
-            <tr>
-                <th>② 소득공제 합계</th>
-                <td><input type="number" id="calcDeduction" value="0" oninput="updateTaxCalculations()"></td>
-            </tr>
-            <tr>
-                <th>③ 과세표준 (① - ②)</th>
-                <td><input type="number" id="calcTaxBase" class="read-only" value="0" readonly></td>
-            </tr>
-            <tr>
-                <th>④ 세율 선택</th>
-                <td>
-                    <select id="taxRateSelect" onchange="updateTaxCalculations()">
-                        <option value="0.06">6% (1,400만원 이하)</option>
-                        <option value="0.15">15% (5,000만원 이하)</option>
-                        <option value="0.24">24% (8,800만원 이하)</option>
-                        <option value="0.35">35% (1억 5,000만원 이하)</option>
-                        <option value="0.38">38% (3억원 이하)</option>
-                        <option value="0.40">40% (5억원 이하)</option>
-                        <option value="0.42">42% (10억원 이하)</option>
-                        <option value="0.45">45% (10억원 초과)</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <th>⑤ 산출세액 (③ × ④)</th>
-                <td><input type="number" id="calcCalculatedTax" class="read-only" value="0" readonly></td>
-            </tr>
-            <tr>
-                <th>⑥ 세액공제 합계</th>
-                <td><input type="number" id="calcTaxCredit" value="0" oninput="updateTaxCalculations()"></td>
-            </tr>
-            <tr style="background-color: #dff0d8; font-weight: bold;">
-                <th>⑦ 납부(환급)할 세액 (⑤ - ⑥)</th>
-                <td><input type="number" id="calcFinalTax" class="read-only" style="font-weight: bold; color: #155724;" value="0" readonly></td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- 5. 체크리스트 -->
-    <h2>5. 필수 제출 서류 및 체크리스트</h2>
-    <table id="checklistTable">
-        <thead>
-            <tr>
-                <th style="width: 10%;">확인</th>
-                <th>체크리스트 항목</th>
-                <th style="width: 25%;">비고 / 진행상황</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input type="checkbox" style="width:auto;" onchange="updateProgress()"></td>
-                <td class="text-left">원천징수영수증 수집 완료 (근로/기타/연금 등 타소득 발생 시)</td>
-                <td><input type="text" class="left" placeholder="확인 필요"></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" style="width:auto;" onchange="updateProgress()"></td>
-                <td class="text-left">사업장별 수입금액 증빙(부가가치세 신고서 등) 대조 완료</td>
-                <td><input type="text" class="left" placeholder="확인 필요"></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" style="width:auto;" onchange="updateProgress()"></td>
-                <td class="text-left">가족관계증명서 및 주민등록등본 확인 (인적공제 변동사항 검토)</td>
-                <td><input type="text" class="left" placeholder="확인 필요"></td>
-            </tr>
-            <tr>
-                <td><input type="checkbox" style="width:auto;" onchange="updateProgress()"></td>
-                <td class="text-left">소득공제/세액공제 증빙자료 수집 (노란우산, 연금저축 등)</td>
-                <td><input type="text" class="left" placeholder="확인 필요"></td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="summary-box" style="background-color: #e2e8f0;">
-        검토 진행률: <span id="progressPercent">0</span>% 완료
-    </div>
-
-    <!-- 하단 안내문구 -->
-    <h2>※ 안내사항</h2>
-    <ul class="notice-list">
-        <li>본 화면은 종합소득세 신고 전 검토 및 데이터 정리용 요약 서식입니다.</li>
-        <li>지방소득세(종합소득세의 10%)는 포함되지 않은 금액이므로 실제 고지/환급액과는 차이가 있을 수 있습니다.</li>
-    </ul>
-</div>
-
-<script>
-    // 1. 사업장별 수입금액 관련 스크립트
-    function addBizRow() {
-        const tbody = document.querySelector('#bizTable tbody');
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><input type="text" class="left" placeholder="예: 701101"></td>
-            <td><input type="text" class="left" placeholder="예: 주식회사 OO"></td>
-            <td><input type="number" class="biz-income" value="0" oninput="updateBizTotal()"></td>
-            <td><button type="button" class="delete-btn" onclick="deleteBizRow(this)">삭제</button></td>
-        `;
-        tbody.appendChild(tr);
-    }
-
-    function deleteBizRow(btn) {
-        const tr = btn.closest('tr');
-        tr.remove();
-        updateBizTotal();
-    }
-
-    function updateBizTotal() {
-        const incomeInputs = document.querySelectorAll('.biz-income');
-        let total = 0;
-        incomeInputs.forEach(input => {
-            total += parseFloat(input.value) || 0;
-        });
-        document.getElementById('totalBizIncome').innerText = total.toLocaleString();
-    }
-
-    // 4. 세액계산 요약 로직
-    function updateTaxCalculations() {
-        const totalProfit = parseFloat(document.getElementById('calcTotalProfit').value) || 0;
-        const deduction = parseFloat(document.getElementById('calcDeduction').value) || 0;
-
-        // ③ 과세표준 = ① 종합소득금액 - ② 소득공제 합계
-        let taxBase = totalProfit - deduction;
-        if (taxBase < 0) taxBase = 0;
-        document.getElementById('calcTaxBase').value = taxBase;
-
-        // ④ 세율 선택 값 가져오기
-        const rate = parseFloat(document.getElementById('taxRateSelect').value) || 0;
-
-        // ⑤ 산출세액 = ③ 과세표준 × ④ 세율
-        let calculatedTax = Math.floor(taxBase * rate);
-        document.getElementById('calcCalculatedTax').value = calculatedTax;
-
-        // ⑥ 세액공제 합계
-        const taxCredit = parseFloat(document.getElementById('calcTaxCredit').value) || 0;
-
-        // ⑦ 납부할 세액 = ⑤ 산출세액 - ⑥ 세액공제 합계
-        const finalTax = calculatedTax - taxCredit;
-        document.getElementById('calcFinalTax').value = finalTax;
-    }
-
-    // 5. 체크리스트 진행률 로직
-    function updateProgress() {
-        const checkboxes = document.querySelectorAll('#checklistTable input[type="checkbox"]');
-        const checkedCount = document.querySelectorAll('#checklistTable input[type="checkbox"]:checked').length;
-        const percent = checkboxes.length ? Math.round((checkedCount / checkboxes.length) * 100) : 0;
-        document.getElementById('progressPercent').innerText = percent;
-    }
-</script>
-
-</body>
-</html>
+                <td class="category">기타소득</td>
+                <td><input type="text" class="left" value="강의료·원고료 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="
+                        
