@@ -99,10 +99,6 @@
   .memo-header { background: var(--bg2); padding: 8px 14px; font-size: 11px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
   .memo-textarea { width: 100%; min-height: 80px; padding: 12px 14px; border: none; font-family: inherit; font-size: 12.5px; color: var(--text); resize: vertical; outline: none; background: #fff; line-height: 1.6; }
   .memo-textarea::placeholder { color: #bbb; }
-  .send-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; padding-top: 18px; border-top: 2px solid var(--navy); font-size: 12px; }
-  .send-info { display: flex; flex-direction: column; gap: 4px; }
-  .send-label { font-size: 11px; color: var(--muted); }
-  .send-val { font-weight: 600; color: var(--navy); }
   @media print {
     body { background: #fff; }
     .toolbar, .add-row-wrap, .del-row-btn { display: none !important; }
@@ -390,13 +386,8 @@
     </div>
   </div>
 
-
-
+</div>
 <script>
-  const today = new Date();
-  document.getElementById('f_date').value =
-    today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
-
   function fmt(n) {
     if (isNaN(n) || n === 0) return '';
     return Math.abs(Math.round(n)).toLocaleString('ko-KR');
@@ -562,7 +553,6 @@
     localTaxManuallyEdited = false;
     addBizRow(); addBizRow();
     document.querySelectorAll('input:not([readonly])').forEach(el => {
-      if (el.id === 'f_date') return;
       if (el.id === 'taxYear') { el.value = '2025'; return; }
       el.value = '';
     });
