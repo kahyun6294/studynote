@@ -608,7 +608,7 @@
         </div>
         <div class="tax-row">
           <div class="tax-operator">－</div>
-          <div class="tax-label">세액공제 합계 <small>의료비·교육비·기부금·자녀 등 자동 반영</small></div>
+          <div class="tax-label">세액공제 합계 </div>
           <div class="tax-amount"><input class="amount-input" id="tc_taxcredit" placeholder="0" oninput="handleInput(this);calcTax()"></div>
         </div>
         <div class="tax-row">
@@ -624,121 +624,7 @@
       </div>
     </div>
   </div>
-
-  <!-- ⑤ 제출 서류 체크리스트 -->
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">5</div>
-      <span class="section-title">제출 서류 체크리스트</span>
-    </div>
-    <div class="section-body">
-      <div class="checklist">
-        <div class="check-group">
-          <div class="check-group-title">📄 기본 서류 (필수)</div>
-          <div class="check-items">
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">신분증 사본</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">근로소득 원천징수영수증
-                <span class="check-item-sub">근로소득자 해당 시</span>
-              </span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">사업소득 장부 또는 추계신고서</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">사업용 통장 거래내역
-                <span class="check-item-sub">최근 1년치</span>
-              </span>
-            </label>
-          </div>
-        </div>
-        <div class="check-group">
-          <div class="check-group-title">💰 소득 관련</div>
-          <div class="check-items">
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">금융소득 지급명세서
-                <span class="check-item-sub">이자·배당소득 2천만 초과 시</span>
-              </span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">임대소득 계약서 및 수입 내역</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">기타소득 지급명세서
-                <span class="check-item-sub">강의료·원고료 등</span>
-              </span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">프리랜서 세금계산서·계약서</span>
-            </label>
-          </div>
-        </div>
-        <div class="check-group">
-          <div class="check-group-title">🏥 공제 증빙</div>
-          <div class="check-items">
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">부양가족 가족관계증명서</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">의료비 영수증·카드 내역</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">교육비 납입증명서</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">기부금 영수증</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">국민연금·건강보험료 납부확인서</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">노란우산공제 납입증명서</span>
-            </label>
-          </div>
-        </div>
-        <div class="check-group">
-          <div class="check-group-title">🏢 사업자 해당 시</div>
-          <div class="check-items">
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">사업자등록증 사본</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">부가가치세 신고서 (과세기간분)</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">매입·매출 세금계산서 합계표</span>
-            </label>
-            <label class="check-item">
-              <input type="checkbox" onchange="toggleCheck(this)">
-              <span class="check-item-text">중간예납세액 납부영수증
-                <span class="check-item-sub check-warn">* 해당 시 반드시 제출</span>
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+ 
   <!-- 메모 -->
   <div class="section">
     <div class="memo-box">
