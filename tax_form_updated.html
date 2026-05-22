@@ -551,6 +551,12 @@
           </div>
           <div class="tax-amount"><input class="amount-input" id="tc_localtax" placeholder="0" oninput="handleInput(this);calcFinalTotal()" style="color:#6d28d9;font-weight:600;"></div>
         </div>
+        <div class="tax-row" style="background:#1a1a3e !important;border-radius:0 0 6px 6px;">
+          <div class="tax-operator" style="color:#a78bfa;font-size:18px;">＝</div>
+          <div class="tax-label" style="color:#fff !important;font-weight:700;">
+            소득세 + 지방소득세 합계
+            <small style="color:#a78bfa;">농특세 포함 최종 납부세액</small>
+          </div>
           <div class="tax-amount"><input class="amount-input" id="tc_grandtotal" placeholder="0" readonly style="cursor:default;color:#c4b5fd !important;font-weight:700;font-size:15px;"></div>
         </div>
       </div>
@@ -564,6 +570,23 @@
       <textarea class="memo-textarea" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
     </div>
   </div>
+
+  <!-- 발송 푸터 -->
+  <div class="send-footer">
+    <div class="send-info">
+      <span class="send-label">담당 세무사</span>
+      <span class="send-val">이헌</span>
+    </div>
+    <div class="send-info" style="text-align:center">
+      <span class="send-label">작성일</span>
+      <input class="field-input send-val" id="f_date" style="font-size:13px;border-bottom-width:1px;text-align:center">
+    </div>
+    <div class="firm-name-box">
+      <span class="firm-name-label">TAX OFFICE</span>
+      <span class="firm-name-text">세무사 이헌 사무소</span>
+    </div>
+  </div>
+</div>
 
 <script>
   const today = new Date();
