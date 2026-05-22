@@ -24,11 +24,7 @@
   .btn-del { background: #dc262622; color: #fca5a5; border: 1px solid #dc262644; }
   .btn-del:hover { background: #dc262633; }
   .toolbar-sep { width: 1px; height: 24px; background: #ffffff33; flex-shrink: 0; }
-  .client-select {
-    background: #ffffff15; color: #fff; border: 1px solid #ffffff33;
-    border-radius: 6px; padding: 6px 10px; font-family: inherit; font-size: 12px;
-    cursor: pointer; outline: none; max-width: 160px;
-  }
+  .client-select { background: #ffffff15; color: #fff; border: 1px solid #ffffff33; border-radius: 6px; padding: 6px 10px; font-family: inherit; font-size: 12px; cursor: pointer; outline: none; max-width: 160px; }
   .client-select option { background: var(--navy); color: #fff; }
   .page-wrap { max-width: 820px; margin: 68px auto 40px; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,.15); padding: 40px 44px 48px; }
   .doc-header { border-bottom: 3px solid var(--navy); padding-bottom: 18px; margin-bottom: 24px; }
@@ -57,12 +53,12 @@
   .biz-table .td-del { width: 38px; text-align: center; padding: 6px 4px; }
   .biz-table tfoot td { background: #f0ede5; font-weight: 700; padding: 8px 10px; border-top: 2px solid var(--border); }
   .income-table { width: 100%; border-collapse: collapse; }
-  .income-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  .income-table td { padding: 0; border-bottom: 1px solid var(--border); }
+  .income-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  .income-table th.th-r { text-align: right; }
+  .income-table td { padding: 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
   .income-table tr:last-child td { border-bottom: none; }
   .income-table tr:hover td { background: var(--bg); }
-  .income-table .td-label { padding: 9px 12px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .income-table .td-amount { text-align: right; padding-right: 4px; }
+  .income-table .td-label { padding: 9px 10px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
   .row-total td { background: #f0ede5 !important; font-weight: 700; }
   .amount-input { text-align: right; border: none; background: transparent; font-family: inherit; font-size: 13px; color: var(--text); padding: 9px 10px 9px 4px; width: 100%; outline: none; }
   .amount-input:focus { background: #fffbf0; }
@@ -81,6 +77,7 @@
   .add-row-wrap { padding: 8px 12px; border-top: 1px solid var(--border); background: var(--bg); }
   .deduct-table { width: 100%; border-collapse: collapse; }
   .deduct-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+  .deduct-table th.th-r { text-align: right; }
   .deduct-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   .deduct-table tr:last-child td { border-bottom: none; }
   .deduct-table tr:hover td { background: var(--bg); }
@@ -173,7 +170,7 @@
         <thead>
           <tr>
             <th style="width:38px;text-align:center"></th>
-            <th style="width:25%">사업장명</th>
+            <th style="width:22%">사업장명</th>
             <th style="width:15%;text-align:center">사업자등록번호</th>
             <th style="width:20%;text-align:right">수입금액 (원)</th>
             <th style="width:20%;text-align:right">필요경비 (원)</th>
@@ -206,40 +203,47 @@
       <table class="income-table">
         <thead>
           <tr>
-            <th style="width:44%">소득 종류</th>
-            <th style="width:32%;text-align:right">금액 (원)</th>
-            <th style="width:24%;text-align:right">비고</th>
+            <th style="width:32%">소득 종류</th>
+            <th class="th-r" style="width:22%">수입금액 (원)</th>
+            <th class="th-r" style="width:22%">소득금액 (원)</th>
+            <th class="th-r" style="width:24%">비고</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span> 금융기관이자 등</div></td>
-            <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
+            <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span></div></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="금융기관명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span> 주식배당 등</div></td>
-            <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
+            <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span></div></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span> 급여 등</div></td>
-            <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
+            <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span></div></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="회사명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-teal">연금소득</span> 국민연금·사적연금 등</div></td>
-            <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
+            <td><div class="td-label"><span class="type-badge badge-teal">연금소득</span></div></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-gray">기타소득</span> 강의료·원고료 등</div></td>
-            <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
+            <td><div class="td-label"><span class="type-badge badge-gray">기타소득</span></div></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr class="row-total">
             <td><div class="td-label" style="font-weight:700;color:var(--navy)">타소득 합계</div></td>
-            <td class="td-amount"><input class="amount-input" id="totalOtherIncome" placeholder="0" readonly style="cursor:default"></td>
+            <td><input class="amount-input" id="totalOtherRevenue" placeholder="0" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
+            <td><input class="amount-input" id="totalOtherIncome" placeholder="0" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
             <td></td>
           </tr>
         </tbody>
@@ -258,8 +262,8 @@
         <thead>
           <tr>
             <th style="width:45%">공제 항목</th>
-            <th style="width:28%;text-align:right">공제 금액 (원)</th>
-            <th style="width:27%;text-align:right">비고</th>
+            <th class="th-r" style="width:28%">공제 금액 (원)</th>
+            <th class="th-r" style="width:27%">비고</th>
           </tr>
         </thead>
         <tbody>
@@ -284,6 +288,18 @@
             <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
           </tr>
+
+          <!-- 특별소득공제 - 추가형 -->
+          <tr class="deduct-section-row"><td colspan="3">▸ 특별소득공제 <span style="font-size:11px;font-weight:400;">(근로소득자)</span></td></tr>
+          <tr>
+            <td colspan="3" style="padding:0;">
+              <div id="specialDeductRows"></div>
+              <div style="padding:7px 12px;background:var(--bg);border-top:1px solid var(--border);">
+                <button class="add-row-btn" onclick="addSpecialDeductRow()" style="font-size:11px;padding:3px 10px;">＋ 특별공제 항목 추가</button>
+              </div>
+            </td>
+          </tr>
+
           <tr class="deduct-section-row"><td colspan="3">▸ 세액공제항목</td></tr>
           <tr>
             <td>퇴직연금세액공제</td>
@@ -320,12 +336,12 @@
         </div>
         <div class="tax-row tax-row-result">
           <div class="tax-operator">=</div>
-          <div class="tax-label">소득금액 <small style="color:var(--muted)">사업소득금액 + 타소득 자동 반영</small></div>
+          <div class="tax-label">소득금액 <small style="color:var(--muted)">사업소득금액 + 타소득금액 자동 반영</small></div>
           <div class="tax-amount"><input class="amount-input" id="tc_netincome" placeholder="0" readonly style="cursor:default"></div>
         </div>
         <div class="tax-row">
           <div class="tax-operator">－</div>
-          <div class="tax-label">소득공제 합계 <small>인적공제, 연금보험료, 노란우산 등 자동 반영</small></div>
+          <div class="tax-label">소득공제 합계 <small>인적공제, 연금보험료, 특별공제 등 자동 반영</small></div>
           <div class="tax-amount"><input class="amount-input" id="tc_deduct" placeholder="0" oninput="handleInput(this);calcTax()"></div>
         </div>
         <div class="tax-row tax-row-result">
@@ -407,13 +423,8 @@
 
 <script>
   const STORE_KEY = 'incometax_clients';
-
-  function getStore() {
-    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { return {}; }
-  }
-  function setStore(obj) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch(e) {}
-  }
+  function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { return {}; } }
+  function setStore(obj) { try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch(e) {} }
 
   function refreshSelect(selectKey) {
     const store = getStore();
@@ -421,13 +432,11 @@
     sel.innerHTML = '<option value="">— 저장된 고객 —</option>';
     Object.keys(store).sort().forEach(k => {
       const opt = document.createElement('option');
-      opt.value = k;
-      opt.textContent = k;
+      opt.value = k; opt.textContent = k;
       if (k === selectKey) opt.selected = true;
       sel.appendChild(opt);
     });
   }
-
   function saveClient() {
     const name = document.getElementById('f_name').value.trim();
     if (!name) { alert('성명을 먼저 입력해주세요!'); return; }
@@ -437,13 +446,11 @@
     refreshSelect(name);
     alert('💾 [' + name + '] 저장 완료!');
   }
-
   function loadClient(name) {
     if (!name) return;
     const store = getStore();
     if (store[name]) applyData(store[name]);
   }
-
   function deleteClient() {
     const name = document.getElementById('clientSelect').value;
     if (!name) { alert('삭제할 고객을 먼저 선택해주세요.'); return; }
@@ -454,82 +461,8 @@
     refreshSelect('');
   }
 
-  // ── 데이터 수집/적용 ──────────────────────────
-
-  function collectData() {
-    const bizRows = [];
-    document.getElementById('bizRows').querySelectorAll('tr').forEach(tr => {
-      bizRows.push({
-        name:    tr.querySelector('.amount-input.left')?.value || '',
-        code:    tr.querySelector('.amount-input.center')?.value || '',
-        income:  tr.querySelector('[data-biz-income]')?.value || '',
-        expense: tr.querySelector('[data-biz-expense]')?.value || '',
-      });
-    });
-    const otherIncome = [], otherNote = [];
-    document.querySelectorAll('[data-other-income]').forEach(el => otherIncome.push(el.value));
-    document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input').forEach(el => otherNote.push(el.value));
-    const deduct = [], deductNote = [];
-    document.querySelectorAll('[data-deduct]').forEach(el => deduct.push(el.value));
-    document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input').forEach(el => deductNote.push(el.value));
-    const taxdeductNote = [];
-    document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input').forEach(el => taxdeductNote.push(el.value));
-    const creditDetails = [];
-    document.getElementById('creditDetailRows').querySelectorAll('div[id^="credit_r"]').forEach(div => {
-      const inputs = div.querySelectorAll('input');
-      creditDetails.push({ label: inputs[0]?.value || '', amount: inputs[1]?.value || '' });
-    });
-    return {
-      taxYear: document.getElementById('taxYear').value,
-      f_name: document.getElementById('f_name').value,
-      f_deadline: document.getElementById('f_deadline').value,
-      bizRows, otherIncome, otherNote, deduct, deductNote,
-      tc_agritax: document.getElementById('tc_agritax').value,
-      tc_prepaid: document.getElementById('tc_prepaid').value,
-      tc_localtax: document.getElementById('tc_localtax').value,
-      localTaxManuallyEdited,
-      creditDetails,
-      memo: document.getElementById('memo').value,
-    };
-  }
-
-  function applyData(d) {
-    document.getElementById('taxYear').value    = d.taxYear || '2025';
-    document.getElementById('f_name').value     = d.f_name || '';
-    document.getElementById('f_deadline').value = d.f_deadline || '';
-    document.getElementById('bizRows').innerHTML = '';
-    bizSeq = 0;
-    (d.bizRows || []).forEach(row => addBizRow(row));
-    const otherInputs = document.querySelectorAll('[data-other-income]');
-    (d.otherIncome || []).forEach((v, i) => { if (otherInputs[i]) otherInputs[i].value = v; });
-    const otherNotes = document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input');
-    (d.otherNote || []).forEach((v, i) => { if (otherNotes[i]) otherNotes[i].value = v; });
-    const deductInputs = document.querySelectorAll('[data-deduct]');
-    (d.deduct || []).forEach((v, i) => { if (deductInputs[i]) deductInputs[i].value = v; });
-    const deductNotes = document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input');
-    (d.deductNote || []).forEach((v, i) => { if (deductNotes[i]) deductNotes[i].value = v; });
-    document.getElementById('creditDetailRows').innerHTML = '';
-    creditSeq = 0;
-    (d.creditDetails || []).forEach(row => addCreditDetailRow(row));
-    document.getElementById('tc_agritax').value  = d.tc_agritax  || '';
-    document.getElementById('tc_prepaid').value  = d.tc_prepaid  || '';
-    localTaxManuallyEdited = d.localTaxManuallyEdited || false;
-    document.getElementById('tc_localtax').value = d.tc_localtax || '';
-    document.getElementById('memo').value = d.memo || '';
-    calcTotal();
-    syncDeduct();
-    syncTaxDeduct();
-  }
-
-  // ── 계산 로직 ──────────────────────────────────
-
-  function fmt(n) {
-    if (isNaN(n) || n === 0) return '';
-    return Math.abs(Math.round(n)).toLocaleString('ko-KR');
-  }
-  function parse(el) {
-    return parseFloat((el.value || '0').replace(/,/g, '')) || 0;
-  }
+  function fmt(n) { if (isNaN(n) || n === 0) return ''; return Math.abs(Math.round(n)).toLocaleString('ko-KR'); }
+  function parse(el) { return parseFloat((el.value || '0').replace(/,/g, '')) || 0; }
   function handleInput(el) {
     const raw = el.value.replace(/[^0-9]/g, '');
     if (!raw) { el.value = ''; return; }
@@ -553,11 +486,7 @@
     tbody.appendChild(tr);
     if (data && data.income) calcBizRow(tr.querySelector('[data-biz-income]'));
   }
-  function removeBizRow(id) {
-    const el = document.getElementById(id);
-    if (el) el.remove();
-    calcTotal();
-  }
+  function removeBizRow(id) { const el = document.getElementById(id); if (el) el.remove(); calcTotal(); }
   addBizRow(); addBizRow();
 
   function calcBizRow(el) {
@@ -567,6 +496,7 @@
     const net = Math.max(0, income - expense);
     tr.querySelector('[data-biz-net]').value = net ? net.toLocaleString('ko-KR') : '';
   }
+
   function calcTotal() {
     let bizIncome = 0, bizExpense = 0, bizNet = 0;
     document.querySelectorAll('[data-biz-income]').forEach(el => { bizIncome += parse(el); });
@@ -575,14 +505,17 @@
     document.getElementById('totalBizIncome').value  = bizIncome  ? fmt(bizIncome)  : '';
     document.getElementById('totalBizExpense').value = bizExpense ? fmt(bizExpense) : '';
     document.getElementById('totalBizNet').value     = bizNet     ? fmt(bizNet)     : '';
-    let otherTotal = 0;
-    document.querySelectorAll('[data-other-income]').forEach(el => { otherTotal += parse(el); });
-    document.getElementById('totalOtherIncome').value = otherTotal ? fmt(otherTotal) : '';
-    document.getElementById('tc_income').value    = (bizIncome + otherTotal) ? fmt(bizIncome + otherTotal) : '';
+    let otherRevenue = 0, otherIncome = 0;
+    document.querySelectorAll('[data-other-revenue]').forEach(el => { otherRevenue += parse(el); });
+    document.querySelectorAll('[data-other-income]').forEach(el => { otherIncome += parse(el); });
+    document.getElementById('totalOtherRevenue').value = otherRevenue ? fmt(otherRevenue) : '';
+    document.getElementById('totalOtherIncome').value  = otherIncome  ? fmt(otherIncome)  : '';
+    document.getElementById('tc_income').value    = (bizIncome + otherRevenue) ? fmt(bizIncome + otherRevenue) : '';
     document.getElementById('tc_expense').value   = bizExpense ? fmt(bizExpense) : '';
-    document.getElementById('tc_netincome').value = (bizNet + otherTotal) ? fmt(bizNet + otherTotal) : '';
+    document.getElementById('tc_netincome').value = (bizNet + otherIncome) ? fmt(bizNet + otherIncome) : '';
     calcTax();
   }
+
   function syncDeduct() {
     let sum = 0;
     document.querySelectorAll('[data-deduct]').forEach(e => { sum += parse(e); });
@@ -594,6 +527,23 @@
     document.querySelectorAll('[data-taxdeduct]').forEach(e => { sum += parse(e); });
     document.getElementById('tc_taxcredit').value = sum ? fmt(sum) : '';
     calcTax();
+  }
+
+  // 특별소득공제 추가형
+  let specialDeductSeq = 0;
+  function addSpecialDeductRow(data) {
+    specialDeductSeq++;
+    const rowId = 'sd_r' + specialDeductSeq;
+    const wrap = document.getElementById('specialDeductRows');
+    const div = document.createElement('div');
+    div.id = rowId;
+    div.style.cssText = 'display:grid;grid-template-columns:1fr 180px 160px 32px;align-items:center;border-bottom:1px solid var(--border);';
+    div.innerHTML =
+      '<input style="border:none;border-right:1px solid var(--border);background:transparent;font-family:inherit;font-size:13px;padding:9px 12px;outline:none;width:100%;" placeholder="항목명 (예: 보험료, 신용카드 등)" value="' + (data&&data.label||'') + '">' +
+      '<input class="amount-input" data-deduct placeholder="0" value="' + (data&&data.amount||'') + '" oninput="handleInput(this);syncDeduct()" style="border-right:1px solid var(--border);padding-right:10px;">' +
+      '<input style="border:none;border-right:1px solid var(--border);background:transparent;font-family:inherit;font-size:12px;color:var(--muted);padding:9px 10px;outline:none;width:100%;text-align:left;" placeholder="비고" value="' + (data&&data.note||'') + '">' +
+      '<div style="display:flex;align-items:center;justify-content:center;"><button class="del-row-btn" onclick="document.getElementById(\'' + rowId + '\').remove();syncDeduct()" style="width:18px;height:18px;font-size:11px;">×</button></div>';
+    wrap.appendChild(div);
   }
 
   const TAX_BRACKETS = [
@@ -615,20 +565,20 @@
   document.getElementById('tc_localtax').addEventListener('focus', () => { localTaxManuallyEdited = true; });
 
   function calcTax() {
-    const income  = parse(document.getElementById('tc_income'));
-    const expense = parse(document.getElementById('tc_expense'));
-    const deduct  = parse(document.getElementById('tc_deduct'));
-    const credit  = parse(document.getElementById('tc_taxcredit'));
-    const prepaid = parse(document.getElementById('tc_prepaid'));
-    const agritax = parse(document.getElementById('tc_agritax'));
-    const netIncome  = Math.max(0, income - expense);
+    const netIncome = parse(document.getElementById('tc_netincome'));
+    const deduct    = parse(document.getElementById('tc_deduct'));
+    const credit    = parse(document.getElementById('tc_taxcredit'));
+    const prepaid   = parse(document.getElementById('tc_prepaid'));
+    const agritax   = parse(document.getElementById('tc_agritax'));
     const taxBase    = Math.max(0, netIncome - deduct);
     const bracket    = getBracket(taxBase);
     const calcTaxAmt = taxBase > 0 ? Math.max(0, Math.round(taxBase * bracket.rate) - bracket.progressive) : 0;
     const finalAmt   = calcTaxAmt - credit - prepaid;
     const finalWithAgri = finalAmt + agritax;
+
     document.getElementById('tc_taxbase').value  = taxBase    ? fmt(taxBase)    : '';
     document.getElementById('tc_calctax').value  = calcTaxAmt ? fmt(calcTaxAmt) : '';
+
     if (taxBase > 0) {
       document.getElementById('tc_ratePct').textContent        = Math.round(bracket.rate * 100) + '%';
       document.getElementById('tc_progressiveAmt').textContent = fmt(bracket.progressive) + '원';
@@ -636,6 +586,7 @@
       document.getElementById('tc_ratePct').textContent        = '—';
       document.getElementById('tc_progressiveAmt').textContent = '—';
     }
+
     const finalEl = document.getElementById('tc_final');
     const finalLabel = document.getElementById('finalLabel');
     if (finalAmt < 0) {
@@ -647,9 +598,11 @@
       finalLabel.textContent = '결정세액 (납부)';
       finalEl.style.color = 'var(--gold)';
     }
+
     const fwaEl = document.getElementById('tc_finalWithAgri');
     fwaEl.value = finalWithAgri ? fmt(Math.abs(finalWithAgri)) : '';
     fwaEl.style.color = finalWithAgri < 0 ? '#22c55e' : '#15803d';
+
     if (!localTaxManuallyEdited) {
       const autoLocal = finalAmt > 0 ? Math.round(finalAmt * 0.1) : 0;
       document.getElementById('tc_localtax').value = autoLocal ? fmt(autoLocal) : '';
@@ -671,11 +624,90 @@
     wrap.appendChild(div);
   }
 
+  function collectData() {
+    const bizRows = [];
+    document.getElementById('bizRows').querySelectorAll('tr').forEach(tr => {
+      bizRows.push({
+        name:    tr.querySelector('.amount-input.left')?.value || '',
+        code:    tr.querySelector('.amount-input.center')?.value || '',
+        income:  tr.querySelector('[data-biz-income]')?.value || '',
+        expense: tr.querySelector('[data-biz-expense]')?.value || '',
+      });
+    });
+    const otherRevenue = [], otherIncome = [], otherNote = [];
+    document.querySelectorAll('[data-other-revenue]').forEach(el => otherRevenue.push(el.value));
+    document.querySelectorAll('[data-other-income]').forEach(el => otherIncome.push(el.value));
+    document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input').forEach(el => otherNote.push(el.value));
+    const deduct = [], deductNote = [];
+    document.querySelectorAll('[data-deduct]').forEach(el => deduct.push(el.value));
+    document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input').forEach(el => deductNote.push(el.value));
+    const specialDeducts = [];
+    document.getElementById('specialDeductRows').querySelectorAll('div[id^="sd_r"]').forEach(div => {
+      const inputs = div.querySelectorAll('input');
+      specialDeducts.push({ label: inputs[0]?.value||'', amount: inputs[1]?.value||'', note: inputs[2]?.value||'' });
+    });
+    const creditDetails = [];
+    document.getElementById('creditDetailRows').querySelectorAll('div[id^="credit_r"]').forEach(div => {
+      const inputs = div.querySelectorAll('input');
+      creditDetails.push({ label: inputs[0]?.value||'', amount: inputs[1]?.value||'' });
+    });
+    return {
+      taxYear: document.getElementById('taxYear').value,
+      f_name: document.getElementById('f_name').value,
+      f_deadline: document.getElementById('f_deadline').value,
+      bizRows, otherRevenue, otherIncome, otherNote, deduct, deductNote,
+      specialDeducts, creditDetails,
+      tc_agritax: document.getElementById('tc_agritax').value,
+      tc_prepaid: document.getElementById('tc_prepaid').value,
+      tc_localtax: document.getElementById('tc_localtax').value,
+      localTaxManuallyEdited,
+      memo: document.getElementById('memo').value,
+    };
+  }
+
+  function applyData(d) {
+    document.getElementById('taxYear').value    = d.taxYear || '2025';
+    document.getElementById('f_name').value     = d.f_name || '';
+    document.getElementById('f_deadline').value = d.f_deadline || '';
+    document.getElementById('bizRows').innerHTML = '';
+    bizSeq = 0;
+    (d.bizRows || []).forEach(row => addBizRow(row));
+
+    const revInputs = document.querySelectorAll('[data-other-revenue]');
+    (d.otherRevenue || []).forEach((v, i) => { if (revInputs[i]) revInputs[i].value = v; });
+    const incInputs = document.querySelectorAll('[data-other-income]');
+    (d.otherIncome || []).forEach((v, i) => { if (incInputs[i]) incInputs[i].value = v; });
+    const otherNotes = document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input');
+    (d.otherNote || []).forEach((v, i) => { if (otherNotes[i]) otherNotes[i].value = v; });
+
+    const deductInputs = document.querySelectorAll('[data-deduct]');
+    (d.deduct || []).forEach((v, i) => { if (deductInputs[i]) deductInputs[i].value = v; });
+    const deductNotes = document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input');
+    (d.deductNote || []).forEach((v, i) => { if (deductNotes[i]) deductNotes[i].value = v; });
+
+    document.getElementById('specialDeductRows').innerHTML = '';
+    specialDeductSeq = 0;
+    (d.specialDeducts || []).forEach(row => addSpecialDeductRow(row));
+
+    document.getElementById('creditDetailRows').innerHTML = '';
+    creditSeq = 0;
+    (d.creditDetails || []).forEach(row => addCreditDetailRow(row));
+
+    document.getElementById('tc_agritax').value  = d.tc_agritax  || '';
+    document.getElementById('tc_prepaid').value  = d.tc_prepaid  || '';
+    localTaxManuallyEdited = d.localTaxManuallyEdited || false;
+    document.getElementById('tc_localtax').value = d.tc_localtax || '';
+    document.getElementById('memo').value = d.memo || '';
+
+    calcTotal(); syncDeduct(); syncTaxDeduct();
+  }
+
   function resetAll() {
     if (!confirm('모든 입력 내용을 초기화할까요?')) return;
     document.getElementById('bizRows').innerHTML = '';
+    document.getElementById('specialDeductRows').innerHTML = '';
     document.getElementById('creditDetailRows').innerHTML = '';
-    creditSeq = 0; bizSeq = 0;
+    creditSeq = 0; bizSeq = 0; specialDeductSeq = 0;
     localTaxManuallyEdited = false;
     addBizRow(); addBizRow();
     document.querySelectorAll('input:not([readonly])').forEach(el => {
@@ -697,7 +729,6 @@
     document.getElementById('section-other-body').classList.remove('print-hidden');
   });
 
-  // 시작 시 목록 불러오기
   refreshSelect('');
 </script>
 </body>
