@@ -6,39 +6,34 @@
     <title>종합소득세 신고 요약 안내</title>
     <style>
         body {
-            font-family: 'Malgun Gothic', sans-serif;
+            font-family: Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            margin: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
         }
-        h1 {
-            text-align: center;
+        h1, h2 {
             color: #2c3e50;
-        }
-        h2 {
-            border-left: 5px solid #2c3e50;
-            padding-left: 10px;
-            color: #2c3e50;
-            margin-top: 30px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            background-color: #fff;
         }
         th, td {
-            border: 1px solid #bdc3c7;
+            border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
         }
         th {
-            background-color: #ecf0f1;
+            background-color: #f2f2f2;
         }
         input[type="text"], input[type="number"], select {
-            width: 95%;
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
         }
         .btn-container {
             margin-bottom: 10px;
@@ -50,6 +45,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
         }
         button:hover {
             background-color: #34495e;
@@ -89,7 +85,7 @@
                 <td><input type="text" placeholder="예: OO상사"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateBizRow(this)"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateBizRow(this)"></td>
-                <td><input type="number" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
                 <td>-</td>
             </tr>
         </tbody>
@@ -115,7 +111,7 @@
             </tr>
         </thead>
         <tbody>
-            <!-- 동적 추가 -->
+            <!-- 버튼 클릭 시 동적으로 추가됨 -->
         </tbody>
     </table>
 
@@ -124,7 +120,7 @@
     <table>
         <thead>
             <tr>
-                <th>구분</th>
+                <th style="width: 40%;">구분</th>
                 <th>내용 및 금액 작성</th>
             </tr>
         </thead>
@@ -149,14 +145,14 @@
     <table>
         <thead>
             <tr>
-                <th>구분</th>
+                <th style="width: 40%;">구분</th>
                 <th>금액 및 선택</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>① 종합소득금액 (사업+타소득 자동 연동)</td>
-                <td><input type="number" id="totalIncome" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" id="totalIncome" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
             </tr>
             <tr>
                 <td>② 소득공제합계</td>
@@ -164,7 +160,7 @@
             </tr>
             <tr>
                 <td>③ 과세표준 (① - ②)</td>
-                <td><input type="number" id="taxBase" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" id="taxBase" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
             </tr>
             <tr>
                 <td>④ 세율 선택</td>
@@ -183,38 +179,38 @@
             </tr>
             <tr>
                 <td>⑤ 누진공제액</td>
-                <td><input type="number" id="progDeduction" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" id="progDeduction" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
             </tr>
             <tr>
                 <td>⑥ 산출세액 ((③ × ④) - ⑤)</td>
-                <td><input type="number" id="calculatedTax" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" id="calculatedTax" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
             </tr>
             <tr>
                 <td>⑦ 감면 및 공제 (상세 입력)</td>
                 <td>
-                    <div style="margin-bottom: 5px; text-align: left; padding-left: 10px;">
-                        <span style="display:inline-block; width:110px;">└ 세액감면:</span>
-                        <input type="number" id="taxReduction" class="right" value="0" style="width: 60%;" oninput="calculateTaxSummary()">
+                    <div style="margin-bottom: 5px; text-align: left; padding-left: 5px;">
+                        <span style="display:inline-block; width:120px;">└ 세액감면:</span>
+                        <input type="number" id="taxReduction" class="right" value="0" style="width: 50%;" oninput="calculateTaxSummary()">
                     </div>
-                    <div style="margin-bottom: 5px; text-align: left; padding-left: 10px;">
-                        <span style="display:inline-block; width:110px;">└ 세액공제:</span>
-                        <input type="number" id="taxCredit" class="right" value="0" style="width: 60%;" oninput="calculateTaxSummary()">
+                    <div style="margin-bottom: 5px; text-align: left; padding-left: 5px;">
+                        <span style="display:inline-block; width:120px;">└ 세액공제:</span>
+                        <input type="number" id="taxCredit" class="right" value="0" style="width: 50%;" oninput="calculateTaxSummary()">
                     </div>
-                    <div style="text-align: left; padding-left: 10px;">
-                        <span style="display:inline-block; width:110px;">└ 원천징수세액:</span>
-                        <input type="number" id="prepaidTax" class="right" value="0" style="width: 60%;" oninput="calculateTaxSummary()">
+                    <div style="text-align: left; padding-left: 5px;">
+                        <span style="display:inline-block; width:120px;">└ 원천징수세액:</span>
+                        <input type="number" id="prepaidTax" class="right" value="0" style="width: 50%;" oninput="calculateTaxSummary()">
                     </div>
                 </td>
             </tr>
             <tr>
-                <td>⑧ 납부(환급)할 세액 (⑥ - ⑦감면및공제 합계)</td>
-                <td><input type="number" id="finalTax" class="right" value="0" readonly style="background-color:#f8f9fa; font-weight:bold;"></td>
+                <td>⑧ 납부(환급)할 세액 (⑥ - ⑦ 감면및공제 합계)</td>
+                <td><input type="number" id="finalTax" class="right" value="0" readonly style="background-color:#f4f4f4; font-weight:bold;"></td>
             </tr>
         </tbody>
     </table>
 
     <script>
-        // 1. 사업장별 수입금액 추가
+        // 1. 사업장별 수입금액 행 추가
         function addBizRow() {
             const tbody = document.querySelector('#bizTable tbody');
             const tr = document.createElement('tr');
@@ -222,7 +218,7 @@
                 <td><input type="text"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateBizRow(this)"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateBizRow(this)"></td>
-                <td><input type="number" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
                 <td><button type="button" class="delete-btn" onclick="removeRow(this)">삭제</button></td>
             `;
             tbody.appendChild(tr);
@@ -238,15 +234,15 @@
             updateTotalIncome();
         }
 
-        // 2. 타소득 추가 (버튼 형식)
+        // 2. 타소득 버튼식 추가 행 구현
         function addOtherIncomeRow(type) {
             const tbody = document.querySelector('#otherIncomeTable tbody');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><input type="text" value="${type}소득" readonly style="background-color:#f8f9fa; text-align:center;"></td>
+                <td><input type="text" value="${type}소득" readonly style="background-color:#f4f4f4; text-align:center;"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateOtherRow(this)"></td>
                 <td><input type="number" class="right" value="0" oninput="calculateOtherRow(this)"></td>
-                <td><input type="number" class="right" value="0" readonly style="background-color:#f8f9fa;"></td>
+                <td><input type="number" class="right" value="0" readonly style="background-color:#f4f4f4;"></td>
                 <td><button type="button" class="delete-btn" onclick="removeRow(this)">삭제</button></td>
             `;
             tbody.appendChild(tr);
@@ -264,16 +260,15 @@
 
         function removeRow(button) {
             const tr = button.closest('tr');
-            const table = tr.closest('table');
             tr.remove();
             updateTotalIncome();
         }
 
-        // 4. 데이터 연동 및 세액 계산 요약
+        // 4. 소득 합계 자동 연동 및 세액 연산 처리
         function updateTotalIncome() {
             let total = 0;
 
-            // 사업장 소득금액 합산
+            // 사업장 소득 합산
             const bizRows = document.querySelectorAll('#bizTable tbody tr');
             bizRows.forEach(row => {
                 const inputs = row.querySelectorAll('input[type="number"]');
@@ -282,7 +277,7 @@
                 }
             });
 
-            // 타소득 소득금액 합산
+            // 타소득 소득 합산
             const otherRows = document.querySelectorAll('#otherIncomeTable tbody tr');
             otherRows.forEach(row => {
                 const inputs = row.querySelectorAll('input[type="number"]');
@@ -317,13 +312,13 @@
             if(calculatedTax < 0) calculatedTax = 0;
             document.getElementById('calculatedTax').value = calculatedTax;
 
-            // 감면 및 공제 상세합산
+            // 감면 및 공제 상세 금액 연산
             const reduction = parseFloat(document.getElementById('taxReduction').value) || 0;
             const credit = parseFloat(document.getElementById('taxCredit').value) || 0;
             const prepaid = parseFloat(document.getElementById('prepaidTax').value) || 0;
             const totalCredits = reduction + credit + prepaid;
 
-            // 최종 납부세액
+            // 최종 납부세액 계산
             let finalTax = calculatedTax - totalCredits;
             document.getElementById('finalTax').value = finalTax;
         }
