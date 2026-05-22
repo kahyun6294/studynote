@@ -461,17 +461,17 @@
         </thead>
         <tbody>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span> 금융기관 이자 등</div></td>
+            <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span> 금융기관이자 등</div></td>
             <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="금융기관명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span> 주식배당·펀드분배 등</div></td>
+            <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span> 주식배당 등</div></td>
             <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
-            <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span> 급여·상여 등</div></td>
+            <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span> 급여 등</div></td>
             <td class="td-amount"><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="회사명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
@@ -502,7 +502,7 @@
   <div class="section page-break-before">
     <div class="section-header">
       <div class="section-num">3</div>
-      <span class="section-title">필요경비 / 소득공제 항목</span>
+      <span class="section-title">공제참고자료(국세청자료)</span>
     </div>
     <div class="section-body">
       <table class="deduct-table">
@@ -514,19 +514,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="deduct-section-row"><td colspan="3">▸ 소득공제</td></tr>
+          <tr class="deduct-section-row"><td colspan="3">▸ 소득공제항목</td></tr>
           <tr>
-            <td>인적공제 <span style="font-size:11px;color:var(--muted)">(본인 150만 · 부양가족 1인당 150만)</span></td>
-            <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
-            <td><input class="amount-input" placeholder="인원 수 등" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>국민연금 보험료</td>
+            <td>인적공제 <span style="font-size:11px;color:var(--muted)"></span></td>
             <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
           </tr>
           <tr>
-            <td>건강보험료 <span style="font-size:11px;color:var(--muted)">(지역가입자)</span></td>
+            <td>국민연금보험료</td>
+            <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
+            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
+          </tr>
+          <tr>
+            <td>개인연금저축 <span style="font-size:11px;color:var(--muted)"></span></td>
             <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
           </tr>
@@ -535,29 +535,14 @@
             <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
           </tr>
-          <tr class="deduct-section-row"><td colspan="3">▸ 세액공제</td></tr>
+          <tr class="deduct-section-row"><td colspan="3">▸ 세액공제항목</td></tr>
           <tr>
-            <td>의료비 세액공제 <span style="font-size:11px;color:var(--muted)">(총급여 3% 초과분)</span></td>
+            <td>퇴직연금세액공제<span style="font-size:11px;color:var(--muted)"></span></td>
             <td class="td-amt"><input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
           </tr>
           <tr>
-            <td>교육비 세액공제</td>
-            <td class="td-amt"><input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>기부금 세액공제</td>
-            <td class="td-amt"><input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>자녀 세액공제 <span style="font-size:11px;color:var(--muted)">(1명 15만 · 2명이상 추가)</span></td>
-            <td class="td-amt"><input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>근로·자녀장려금 <span style="font-size:11px;color:var(--muted)">(해당 시)</span></td>
+            <td>연금계좌세액공제</td>
             <td class="td-amt"><input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);float:right;width:100%;text-align:left;padding-left:4px"></td>
           </tr>
