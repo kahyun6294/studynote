@@ -240,10 +240,8 @@
     </div>
   </div>
 
-  <hr class="screen-page-break">
-
   <!-- ③ 공제참고자료 -->
-  <div class="section page-break-before">
+  <div class="section">
     <div class="section-header">
       <div class="section-num">3</div>
       <span class="section-title">공제참고자료(국세청자료)</span>
@@ -591,10 +589,10 @@
 
   window.addEventListener('beforeprint', function() {
     const hasOther = Array.from(document.querySelectorAll('[data-other-income]')).some(el => parse(el) > 0);
-    document.getElementById('section-other').classList.toggle('print-hidden', !hasOther);
+    document.querySelector('#section-other .section-body').classList.toggle('print-hidden', !hasOther);
   });
   window.addEventListener('afterprint', function() {
-    document.getElementById('section-other').classList.remove('print-hidden');
+    document.querySelector('#section-other .section-body').classList.remove('print-hidden');
   });
 </script>
 </body>
