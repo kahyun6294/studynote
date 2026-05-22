@@ -7,108 +7,86 @@
     <style>
         :root {
             --primary-color: #2b4c7e;
-            --table-th-bg: #f4f7fa;
+            --secondary-color: #f4f7fa;
             --border-color: #cfd8dc;
             --text-color: #2c3e50;
         }
         body {
-            font-family: 'Malgun Gothic', Dotum, sans-serif;
-            line-height: 1.5;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
             color: var(--text-color);
-            background-color: #f5f5f5;
+            background-color: #fafafa;
             margin: 0;
-            padding: 30px 10px;
+            padding: 20px;
         }
-        .pdf-page {
-            max-width: 840px;
-            margin: 0 auto bg;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
             background: #ffffff;
-            padding: 50px 40px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            box-sizing: border-box;
-        }
-        .header-tag {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         h1 {
-            font-size: 24px;
             text-align: center;
             color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 5px;
-            font-weight: bold;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 24px;
         }
         .subtitle {
             text-align: center;
             font-size: 13px;
             color: #7f8c8d;
+            margin-top: -20px;
             margin-bottom: 30px;
         }
-        
-        /* 기본 정보 테이블 */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 35px;
-        }
-        .info-table td {
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            font-size: 13px;
-        }
-        .info-table td.label {
-            background-color: var(--table-th-bg);
-            font-weight: bold;
-            color: #34495e;
-            width: 20%;
-            text-align: center;
-        }
-
         h2 {
-            font-size: 15px;
             color: var(--primary-color);
             border-left: 4px solid var(--primary-color);
-            padding-left: 8px;
-            margin-top: 30px;
-            margin-bottom: 12px;
-            font-weight: bold;
+            padding-left: 10px;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
         }
-
-        /* 메인 데이터 테이블 */
-        table.data-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            background: #fff;
         }
-        table.data-table th, table.data-table td {
+        th, td {
             border: 1px solid var(--border-color);
             padding: 10px;
             font-size: 13px;
         }
-        table.data-table th {
-            background-color: var(--table-th-bg);
+        th {
+            background-color: var(--secondary-color);
             color: #34495e;
-            font-weight: bold;
-        }
-        table.data-table td.category {
-            background-color: #fafbfc;
-            font-weight: bold;
+            font-weight: 600;
             text-align: center;
         }
-
-        /* 인풋 스타일 */
-        input[type="text"], input[type="number"], select, textarea {
+        .bg-title {
+            background-color: var(--secondary-color);
+            font-weight: bold;
+            text-align: center;
+            color: #34495e;
+        }
+        .bg-sub-header {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            text-align: left;
+            padding-left: 15px;
+            color: var(--primary-color);
+        }
+        input[type="text"], input[type="number"], select {
             width: 100%;
-            padding: 6px 8px;
-            border: 1px solid #cbd5e0;
-            border-radius: 3px;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
             box-sizing: border-box;
             font-size: 13px;
-            font-family: inherit;
         }
         input[type="number"] {
             text-align: right;
@@ -118,231 +96,206 @@
         }
         input[readonly] {
             background-color: #edf2f7;
-            border-color: var(--border-color);
             color: #4a5568;
         }
-
-        /* 버튼 컨테이너 */
-        .btn-space {
-            margin-bottom: 8px;
+        .btn-container {
+            margin-bottom: 10px;
+            text-align: left;
         }
         button {
-            background-color: #fff;
-            border: 1px solid #cbd5e0;
-            padding: 5px 12px;
-            font-size: 12px;
-            border-radius: 3px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
             cursor: pointer;
-            color: #4a5568;
+            font-weight: bold;
+            font-size: 12px;
         }
         button:hover {
-            background-color: #f7fafc;
+            background-color: #1a3050;
         }
         button.delete-btn {
-            color: #e53e3e;
-            border-color: #fed7d7;
-            background-color: #fff5f5;
+            background-color: #e74c3c;
+            padding: 4px 8px;
+            font-size: 11px;
         }
         button.delete-btn:hover {
-            background-color: #fed7d7;
+            background-color: #c0392b;
         }
-
-        /* 세액계산 흐름 레이아웃 (좌측 기호 열) */
         .sign-col {
-            width: 5%;
             font-weight: bold;
             font-size: 14px;
             color: #7f8c8d;
-            background-color: #fafbfc;
             text-align: center;
+            background-color: #f8f9fa;
+            width: 6%;
         }
-
-        /* 메모 및 하단 서명란 */
-        .memo-box {
-            width: 100%;
-            height: 80px;
-            resize: none;
-            padding: 10px;
-            font-size: 13px;
+        .text-left {
+            text-align: left;
         }
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-        .footer-table td {
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            font-size: 13px;
-        }
-        .footer-table td.label {
-            background-color: var(--table-th-bg);
-            font-weight: bold;
+        .text-center {
             text-align: center;
-            width: 20%;
         }
     </style>
 </head>
 <body>
 
-<div class="pdf-page">
-    <div class="header-tag">INCOME TAX</div>
+<div class="container">
+    <div style="font-size: 11px; color: #7f8c8d; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px;">INCOME TAX</div>
     <h1>종합소득세 신고 요약 서식</h1>
     <div class="subtitle">귀속연도 종합소득세 신고 내역 요약 및 제출 서류 안내</div>
 
-    <table class="info-table">
+    <table>
         <tr>
-            <td class="label">귀속연도</td>
-            <td><input type="number" value="2025" style="text-align: left;"></td>
-            <td class="label">신고 기한</td>
-            <td><input type="text" class="left" value="2026년 5월 31일"></td>
+            <td class="bg-title" style="width: 15%;">귀속연도</td>
+            <td style="width: 35%;"><input type="number" id="infoYear" value="2025"></td>
+            <td class="bg-title" style="width: 15%;">신고 기한</td>
+            <td style="width: 35%;"><input type="text" class="left" value="2026년 5월 31일"></td>
         </tr>
         <tr>
-            <td class="label">상호/성명</td>
+            <td class="bg-title">상호/성명</td>
             <td><input type="text" class="left" value="홍길동/(주)예시상사"></td>
-            <td class="label">사업자 / 주민번호</td>
+            <td class="bg-title">사업자/주민번호</td>
             <td><input type="text" class="left" value="123-45-67890"></td>
         </tr>
     </table>
 
-    <h2>1 사업장별 수입금액 (사업소득)</h2>
-    <div class="btn-space">
+    <h2>|1 사업장별 수입금액 (사업소득)</h2>
+    <div class="btn-container">
         <button type="button" onclick="addBizRow()">+ 사업장 추가</button>
     </div>
-    <table class="data-table" id="bizTable">
+    <table id="bizTable">
         <thead>
             <tr>
-                <th style="width: 35%;">사업장명/상호</th>
-                <th style="width: 20%;">업종코드</th>
-                <th style="width: 30%;">수입금액(원)</th>
+                <th style="width: 50%;">사업장명/상호 입력 <br><span style="font-weight: normal; font-size: 11px; color:#7f8c8d;">업종코드 입력</span></th>
+                <th style="width: 35%;">수입금액(원)</th>
                 <th style="width: 15%;">관리</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><input type="text" class="left" placeholder="사업장명/상호 입력"></td>
-                <td><input type="text" class="left" placeholder="업종코드 입력"></td>
-                <td><input type="number" class="biz-income" value="0" oninput="updateBizTotal()"></td>
-                <td style="text-align: center; color: #a0aec0;">-</td>
+                <td>
+                    <input type="text" class="left" placeholder="사업장명/상호 입력" style="margin-bottom: 4px;">
+                    <input type="text" class="left" placeholder="업종코드 입력">
+                </td>
+                <td style="vertical-align: middle;"><input type="number" class="biz-income" value="0" oninput="calculateGrandTotals()"></td>
+                <td style="text-align: center; vertical-align: middle; color: #a0aec0;">-</td>
             </tr>
         </tbody>
-        <tfoot>
-            <tr style="background-color: #fafbfc; font-weight: bold;">
-                <td colspan="2" style="text-align: center;">사업소득 수입금액 합계</td>
-                <td><input type="number" id="totalBizIncome" value="0" readonly></td>
-                <td></td>
-            </tr>
-        </tfoot>
+        <tr style="background-color: #f8f9fa; font-weight: bold;">
+            <td class="text-center">사업소득 수입금액 합계</td>
+            <td><input type="number" id="totalBizIncome" value="0" readonly></td>
+            <td></td>
+        </tr>
     </table>
 
-    <h2>2 타소득 합산 (합산과세 대상)</h2>
-    <table class="data-table" id="otherIncomeTable">
+    <h2>|2 타소득 합산 (합산과세 대상)</h2>
+    <table id="otherIncomeTable">
         <thead>
             <tr>
-                <th style="width: 25%;">소득 종류</th>
+                <th style="width: 20%;">소득 종류</th>
                 <th style="width: 35%;">내용</th>
                 <th style="width: 25%;">금액(원)</th>
-                <th style="width: 15%;">비고</th>
+                <th style="width: 20%;">비고</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td class="category">이자소득</td>
+                <td class="bg-title">이자소득</td>
                 <td><input type="text" class="left" value="금융기관 이자 등"></td>
-                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
-                <td><input type="text" class="left" placeholder="금융기관명 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="calculateGrandTotals()"></td>
+                <td><input type="text" class="left" value="금융기관"></td>
             </tr>
             <tr>
-                <td class="category">배당소득</td>
+                <td class="bg-title">배당소득</td>
                 <td><input type="text" class="left" value="주식배당 등"></td>
-                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="number" class="other-income" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td class="category">근로소득</td>
+                <td class="bg-title">근로소득</td>
                 <td><input type="text" class="left" value="급여 등"></td>
-                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
-                <td><input type="text" class="left" placeholder="회사명 등"></td>
+                <td><input type="number" class="other-income" value="0" oninput="calculateGrandTotals()"></td>
+                <td><input type="text" class="left" value="회사명 등"></td>
             </tr>
             <tr>
-                <td class="category">연금소득</td>
+                <td class="bg-title">연금소득</td>
                 <td><input type="text" class="left" value="국민연금·사적연금 등"></td>
-                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="number" class="other-income" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td class="category">기타소득</td>
+                <td class="bg-title">기타소득</td>
                 <td><input type="text" class="left" value="강의료·원고료 등"></td>
-                <td><input type="number" class="other-income" value="0" oninput="updateOtherTotal()"></td>
+                <td><input type="number" class="other-income" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
-        </tbody>
-        <tfoot>
-            <tr style="background-color: #fafbfc; font-weight: bold;">
-                <td colspan="2" style="text-align: center;">타소득 합계</td>
+            <tr style="background-color: #f8f9fa; font-weight: bold;">
+                <td colspan="2" class="text-center">타소득 합계</td>
                 <td><input type="number" id="totalOtherIncome" value="0" readonly></td>
                 <td></td>
             </tr>
-        </tfoot>
+        </tbody>
     </table>
 
-    <h2>3 공제참고사항(국세청조회)</h2>
-    <table class="data-table">
+    <h2>|3 공제참고사항(국세청조회)</h2>
+    <table>
         <thead>
             <tr>
-                <th style="width: 35%;">공제 항목</th>
-                <th style="width: 35%;">공제 금액(원)</th>
-                <th>비고</th>
+                <th style="width: 40%;">공제 항목</th>
+                <th style="width: 30%;">공제 금액(원)</th>
+                <th style="width: 30%;">비고</th>
             </tr>
         </thead>
         <tbody>
-            <tr style="background-color: #f7fafc; font-weight: bold;">
-                <td colspan="3" style="text-align: left; padding-left: 15px; color: var(--primary-color);">• 소득공제</td>
+            <tr>
+                <td class="bg-sub-header" colspan="3">• 소득공제</td>
             </tr>
             <tr>
-                <td style="padding-left: 25px; text-align: left;">인적공제</td>
-                <td><input type="number" value="0"></td>
+                <td style="padding-left: 20px;">인적공제</td>
+                <td><input type="number" class="deduct-item" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td style="padding-left: 25px; text-align: left;">국민연금보험료</td>
-                <td><input type="number" value="0"></td>
+                <td style="padding-left: 20px;">국민연금보험료</td>
+                <td><input type="number" class="deduct-item" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td style="padding-left: 25px; text-align: left;">개인연금저축</td>
-                <td><input type="number" value="0"></td>
+                <td style="padding-left: 20px;">개인연금저축</td>
+                <td><input type="number" class="deduct-item" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td style="padding-left: 25px; text-align: left;">노란우산공제(소기업·소상공인 공제)</td>
-                <td><input type="number" value="0"></td>
-                <td><input type="text" class="left"></td>
-            </tr>
-            <tr style="background-color: #f7fafc; font-weight: bold;">
-                <td colspan="3" style="text-align: left; padding-left: 15px; color: var(--primary-color);">• 세액공제</td>
-            </tr>
-            <tr>
-                <td style="padding-left: 25px; text-align: left;">퇴직연금세액공제</td>
-                <td><input type="number" value="0"></td>
+                <td style="padding-left: 20px;">노란우산공제(소기업·소상공인 공제)</td>
+                <td><input type="number" class="deduct-item" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
             <tr>
-                <td style="padding-left: 25px; text-align: left;">연금계좌세액공제</td>
-                <td><input type="number" value="0"></td>
+                <td class="bg-sub-header" colspan="3">• 세액공제</td>
+            </tr>
+            <tr>
+                <td style="padding-left: 20px;">퇴직연금세액공제</td>
+                <td><input type="number" class="credit-item" value="0" oninput="calculateGrandTotals()"></td>
+                <td><input type="text" class="left"></td>
+            </tr>
+            <tr>
+                <td style="padding-left: 20px;">연금계좌세액공제</td>
+                <td><input type="number" class="credit-item" value="0" oninput="calculateGrandTotals()"></td>
                 <td><input type="text" class="left"></td>
             </tr>
         </tbody>
     </table>
 
-    <h2>4 세액 계산 요약</h2>
-    <table class="data-table">
+    <h2>|4 세액 계산 요약</h2>
+    <table>
         <thead>
             <tr>
-                <th style="width: 5%;">기호</th>
-                <th style="width: 30%;">구분</th>
-                <th style="width: 50%;">항목 설명</th>
-                <th style="width: 15%;">금액 / 값</th>
+                <th style="width: 6%;">기호</th>
+                <th style="width: 24%;">구분</th>
+                <th style="width: 45%;">항목 설명</th>
+                <th style="width: 25%;">금액/값</th>
             </tr>
         </thead>
         <tbody>
@@ -358,9 +311,9 @@
                 <td class="left" style="color: #7f8c8d;">사업소득의 실제 경비 또는 단순/기준경비율 적용</td>
                 <td><input type="number" id="calcExpense" value="0" oninput="calculateTaxFlow()"></td>
             </tr>
-            <tr style="background-color: #f7fafc;">
+            <tr style="background-color: #f4f7fa; font-weight: bold;">
                 <td class="sign-col">=</td>
-                <td style="font-weight: bold; color: var(--primary-color);">소득금액</td>
+                <td style="color: var(--primary-color);">소득금액</td>
                 <td class="left"></td>
                 <td><input type="number" id="calcProfit" value="0" readonly></td>
             </tr>
@@ -368,11 +321,11 @@
                 <td class="sign-col">-</td>
                 <td style="font-weight: bold;">소득공제 합계</td>
                 <td class="left" style="color: #7f8c8d;">인적공제, 연금보험료, 노란우산 등 자동 반영</td>
-                <td><input type="number" id="calcDeduction" value="0" oninput="calculateTaxFlow()"></td>
+                <td><input type="number" id="calcDeduction" value="0" readonly></td>
             </tr>
-            <tr style="background-color: #f7fafc;">
+            <tr style="background-color: #f4f7fa; font-weight: bold;">
                 <td class="sign-col">=</td>
-                <td style="font-weight: bold; color: var(--primary-color);">과세표준</td>
+                <td style="color: var(--primary-color);">과세표준</td>
                 <td class="left"></td>
                 <td><input type="number" id="calcTaxBase" value="0" readonly></td>
             </tr>
@@ -382,20 +335,20 @@
                 <td class="left" style="color: #7f8c8d;">과세표준 구간별 법정세율 선택</td>
                 <td>
                     <select id="calcTaxRate" onchange="calculateTaxFlow()">
-                        <option value="0.06">6%</option>
-                        <option value="0.15">15%</option>
-                        <option value="0.24">24%</option>
-                        <option value="0.35">35%</option>
-                        <option value="0.38">38%</option>
-                        <option value="0.40">40%</option>
-                        <option value="0.42">42%</option>
-                        <option value="0.45">45%</option>
+                        <option value="0.06">6% (1,400만원 이하)</option>
+                        <option value="0.15">15% (5,000만원 이하)</option>
+                        <option value="0.24">24% (8,800만원 이하)</option>
+                        <option value="0.35">35% (1억 5,000만원 이하)</option>
+                        <option value="0.38">38% (3억원 이하)</option>
+                        <option value="0.40">40% (5억원 이하)</option>
+                        <option value="0.42">42% (10억원 이하)</option>
+                        <option value="0.45">45% (10억원 초과)</option>
                     </select>
                 </td>
             </tr>
-            <tr style="background-color: #f7fafc;">
+            <tr style="background-color: #f4f7fa; font-weight: bold;">
                 <td class="sign-col">=</td>
-                <td style="font-weight: bold; color: var(--primary-color);">산출세액</td>
+                <td style="color: var(--primary-color);">산출세액</td>
                 <td class="left"></td>
                 <td><input type="number" id="calcCalculatedTax" value="0" readonly></td>
             </tr>
@@ -403,7 +356,7 @@
                 <td class="sign-col">-</td>
                 <td style="font-weight: bold;">세액공제 합계</td>
                 <td class="left" style="color: #7f8c8d;">의료비·교육비·기부금·자녀 등 자동 반영</td>
-                <td><input type="number" id="calcTaxCredit" value="0" oninput="calculateTaxFlow()"></td>
+                <td><input type="number" id="calcTaxCredit" value="0" readonly></td>
             </tr>
             <tr>
                 <td class="sign-col">-</td>
@@ -420,77 +373,90 @@
         </tbody>
     </table>
 
-    <h2>특이사항/담당자 메모</h2>
-    <textarea class="memo-box" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
+    <h2>| 특이사항/담당자 메모</h2>
+    <textarea style="width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; box-sizing: border-box; font-size: 13px; font-family: inherit;" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
 
-    <table class="footer-table">
+    <table style="margin-top: 25px;">
         <tr>
-            <td class="label">작성자/담당 세무사</td>
-            <td><input type="text" class="left" placeholder="이름 입력"></td>
-            <td class="label">작성일</td>
-            <td><input type="text" class="left" value="2026년 5월 22일"></td>
-            <td class="label">확인란</td>
-            <td style="text-align: center; width: 15%; font-weight: bold; color: var(--primary-color);">확인</td>
+            <td class="bg-title" style="width: 20%;">작성자/담당 세무사</td>
+            <td style="width: 20%;"><input type="text" class="left" placeholder="이름"></td>
+            <td class="bg-title" style="width: 15%;">작성일</td>
+            <td style="width: 20%;"><input type="text" class="left" value="2026년 5월 22일"></td>
+            <td class="bg-title" style="width: 12%;">확인란</td>
+            <td class="text-center" style="width: 13%; font-weight: bold; color: var(--primary-color);">확인</td>
         </tr>
     </table>
 </div>
 
 <script>
-    // 1. 사업장 행 추가/삭제
+    // 1. 사업장 행 추가 / 삭제
     function addBizRow() {
         const tbody = document.querySelector('#bizTable tbody');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" class="left" placeholder="사업장명/상호 입력"></td>
-            <td><input type="text" class="left" placeholder="업종코드 입력"></td>
-            <td><input type="number" class="biz-income" value="0" oninput="updateBizTotal()"></td>
-            <td style="text-align: center;"><button type="button" class="delete-btn" onclick="removeBizRow(this)">삭제</button></td>
+            <td>
+                <input type="text" class="left" placeholder="사업장명/상호 입력" style="margin-bottom: 4px;">
+                <input type="text" class="left" placeholder="업종코드 입력">
+            </td>
+            <td style="vertical-align: middle;"><input type="number" class="biz-income" value="0" oninput="calculateGrandTotals()"></td>
+            <td style="text-align: center; vertical-align: middle;"><button type="button" class="delete-btn" onclick="removeBizRow(this)">삭제</button></td>
         `;
-        tbody.appendChild(tr);
+        // 합계행 바로 위에 추가되도록 처리
+        tbody.parentNode.insertBefore(tr, tbody.nextSibling);
+        calculateGrandTotals();
     }
 
     function removeBizRow(btn) {
         btn.closest('tr').remove();
-        updateBizTotal();
+        calculateGrandTotals();
     }
 
-    function updateBizTotal() {
-        let total = 0;
+    // 전역 실시간 연동 계산 시스템
+    function calculateGrandTotals() {
+        // 1) 사업소득 수입금액 합계 계산
+        let bizTotal = 0;
         document.querySelectorAll('.biz-income').forEach(input => {
-            total += parseFloat(input.value) || 0;
+            bizTotal += parseFloat(input.value) || 0;
         });
-        document.getElementById('totalBizIncome').value = total;
-        updateGrandTotal();
-    }
+        document.getElementById('totalBizIncome').value = bizTotal;
 
-    // 2. 타소득 합계 계산
-    function updateOtherTotal() {
-        let total = 0;
+        // 2) 타소득 합계 계산
+        let otherTotal = 0;
         document.querySelectorAll('.other-income').forEach(input => {
-            total += parseFloat(input.value) || 0;
+            otherTotal += parseFloat(input.value) || 0;
         });
-        document.getElementById('totalOtherIncome').value = total;
-        updateGrandTotal();
-    }
+        document.getElementById('totalOtherIncome').value = otherTotal;
 
-    // 4. 연동 및 세액 계산 흐름
-    function updateGrandTotal() {
-        const biz = parseFloat(document.getElementById('totalBizIncome').value) || 0;
-        const other = parseFloat(document.getElementById('totalOtherIncome').value) || 0;
-        
-        document.getElementById('calcTotalIncome').value = biz + other;
+        // 3) 4번 표의 '총수입금액 합계'에 자동 연동
+        document.getElementById('calcTotalIncome').value = bizTotal + otherTotal;
+
+        // 4) 3번 표의 소득공제 및 세액공제 항목 금액 자동 취합 연동
+        let deductTotal = 0;
+        document.querySelectorAll('.deduct-item').forEach(input => {
+            deductTotal += parseFloat(input.value) || 0;
+        });
+        document.getElementById('calcDeduction').value = deductTotal;
+
+        let creditTotal = 0;
+        document.querySelectorAll('.credit-item').forEach(input => {
+            creditTotal += parseFloat(input.value) || 0;
+        });
+        document.getElementById('calcTaxCredit').value = creditTotal;
+
+        // 5) 최종 세액 계산 흐름 호출
         calculateTaxFlow();
     }
 
+    // 4. 세액 계산 흐름 로직
     function calculateTaxFlow() {
         const totalIncome = parseFloat(document.getElementById('calcTotalIncome').value) || 0;
         const expense = parseFloat(document.getElementById('calcExpense').value) || 0;
         
-        // 소득금액 = 총수입금액 - 필요경비
+        // 소득금액 = 총수입금액 합계 - 필요경비
         let profit = totalIncome - expense;
         document.getElementById('calcProfit').value = profit;
 
-        // 과세표준 = 소득금액 - 소득공제
+        // 과세표준 = 소득금액 - 소득공제 합계
         const deduction = parseFloat(document.getElementById('calcDeduction').value) || 0;
         let taxBase = profit - deduction;
         if(taxBase < 0) taxBase = 0;
@@ -501,12 +467,17 @@
         let calculatedTax = Math.floor(taxBase * rate);
         document.getElementById('calcCalculatedTax').value = calculatedTax;
 
-        // 결정세액 = 산출세액 - 세액공제 - 기납부세액
+        // 결정세액 = 산출세액 - 세액공제 합계 - 기납부세액
         const credit = parseFloat(document.getElementById('calcTaxCredit').value) || 0;
         const prepaid = parseFloat(document.getElementById('calcPrepaidTax').value) || 0;
         
         let finalTax = calculatedTax - credit - prepaid;
         document.getElementById('calcFinalTax').value = finalTax;
+    }
+
+    // 초기 구동
+    window.onload = function() {
+        calculateGrandTotals();
     }
 </script>
 
