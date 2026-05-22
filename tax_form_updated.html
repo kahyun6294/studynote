@@ -12,13 +12,24 @@
     --bg: #faf8f3; --bg2: #f3f0e8; --border: #e0d9cc; --text: #1c1c1c; --muted: #7a7065;
   }
   body { font-family: 'Noto Sans KR', sans-serif; background: #eee; color: var(--text); font-size: 13px; line-height: 1.6; }
-  .toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--navy); display: flex; align-items: center; gap: 10px; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--navy); display: flex; align-items: center; gap: 8px; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
   .toolbar-title { color: #fff; font-weight: 600; font-size: 14px; flex: 1; }
-  .toolbar-btn { padding: 7px 16px; border: none; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .toolbar-btn { padding: 7px 14px; border: none; border-radius: 6px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; white-space: nowrap; }
   .btn-print { background: var(--gold); color: #fff; }
   .btn-print:hover { background: var(--gold-light); }
   .btn-reset { background: #ffffff22; color: #fff; border: 1px solid #ffffff44; }
   .btn-reset:hover { background: #ffffff33; }
+  .btn-save { background: #16a34a; color: #fff; }
+  .btn-save:hover { background: #15803d; }
+  .btn-del { background: #dc262622; color: #fca5a5; border: 1px solid #dc262644; }
+  .btn-del:hover { background: #dc262633; }
+  .toolbar-sep { width: 1px; height: 24px; background: #ffffff33; flex-shrink: 0; }
+  .client-select {
+    background: #ffffff15; color: #fff; border: 1px solid #ffffff33;
+    border-radius: 6px; padding: 6px 10px; font-family: inherit; font-size: 12px;
+    cursor: pointer; outline: none; max-width: 160px;
+  }
+  .client-select option { background: var(--navy); color: #fff; }
   .page-wrap { max-width: 820px; margin: 68px auto 40px; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,.15); padding: 40px 44px 48px; }
   .doc-header { border-bottom: 3px solid var(--navy); padding-bottom: 18px; margin-bottom: 24px; }
   .doc-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -116,9 +127,16 @@
 <body>
 <div class="toolbar">
   <span class="toolbar-title">📋 종합소득세 신고 요약</span>
+  <select class="client-select" id="clientSelect" onchange="loadClient(this.value)">
+    <option value="">— 저장된 고객 —</option>
+  </select>
+  <button class="toolbar-btn btn-save" onclick="saveClient()">💾 저장</button>
+  <button class="toolbar-btn btn-del" onclick="deleteClient()">🗑 삭제</button>
+  <div class="toolbar-sep"></div>
   <button class="toolbar-btn btn-reset" onclick="resetAll()">초기화</button>
-  <button class="toolbar-btn btn-print" onclick="window.print()">🖨 인쇄 / PDF 저장</button>
+  <button class="toolbar-btn btn-print" onclick="window.print()">🖨 인쇄 / PDF</button>
 </div>
+
 <div class="page-wrap">
   <div class="doc-header">
     <div class="doc-header-top">
@@ -363,7 +381,7 @@
           <div class="tax-amount"><input class="amount-input" id="tc_finalWithAgri" placeholder="0" readonly style="cursor:default;color:#15803d;font-weight:700;"></div>
         </div>
         <div style="background:var(--bg2);padding:6px 14px;border-top:2px dashed var(--border);border-bottom:1px solid var(--border);">
-          <span style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.02em;">▸ 지방소득세</span>
+          <span style="font-size:11px;font-weight:700;color:var(--navy);">▸ 지방소득세</span>
           <span style="font-size:11px;color:var(--muted);margin-left:8px;">소득세의 10% 자동 계산 (수정 가능)</span>
         </div>
         <div class="tax-row" style="background:#f8f5ff !important;border-radius:0 0 6px 6px;">
@@ -382,12 +400,129 @@
   <div class="section">
     <div class="memo-box">
       <div class="memo-header">📝 특이사항 / 담당자 메모</div>
-      <textarea class="memo-textarea" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
+      <textarea class="memo-textarea" id="memo" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
     </div>
   </div>
-
 </div>
+
 <script>
+  const STORE_KEY = 'incometax_clients';
+
+  function getStore() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function setStore(obj) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch(e) {}
+  }
+
+  function refreshSelect(selectKey) {
+    const store = getStore();
+    const sel = document.getElementById('clientSelect');
+    sel.innerHTML = '<option value="">— 저장된 고객 —</option>';
+    Object.keys(store).sort().forEach(k => {
+      const opt = document.createElement('option');
+      opt.value = k;
+      opt.textContent = k;
+      if (k === selectKey) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  function saveClient() {
+    const name = document.getElementById('f_name').value.trim();
+    if (!name) { alert('성명을 먼저 입력해주세요!'); return; }
+    const store = getStore();
+    store[name] = collectData();
+    setStore(store);
+    refreshSelect(name);
+    alert('💾 [' + name + '] 저장 완료!');
+  }
+
+  function loadClient(name) {
+    if (!name) return;
+    const store = getStore();
+    if (store[name]) applyData(store[name]);
+  }
+
+  function deleteClient() {
+    const name = document.getElementById('clientSelect').value;
+    if (!name) { alert('삭제할 고객을 먼저 선택해주세요.'); return; }
+    if (!confirm('[' + name + '] 데이터를 삭제할까요?')) return;
+    const store = getStore();
+    delete store[name];
+    setStore(store);
+    refreshSelect('');
+  }
+
+  // ── 데이터 수집/적용 ──────────────────────────
+
+  function collectData() {
+    const bizRows = [];
+    document.getElementById('bizRows').querySelectorAll('tr').forEach(tr => {
+      bizRows.push({
+        name:    tr.querySelector('.amount-input.left')?.value || '',
+        code:    tr.querySelector('.amount-input.center')?.value || '',
+        income:  tr.querySelector('[data-biz-income]')?.value || '',
+        expense: tr.querySelector('[data-biz-expense]')?.value || '',
+      });
+    });
+    const otherIncome = [], otherNote = [];
+    document.querySelectorAll('[data-other-income]').forEach(el => otherIncome.push(el.value));
+    document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input').forEach(el => otherNote.push(el.value));
+    const deduct = [], deductNote = [];
+    document.querySelectorAll('[data-deduct]').forEach(el => deduct.push(el.value));
+    document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input').forEach(el => deductNote.push(el.value));
+    const taxdeductNote = [];
+    document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input').forEach(el => taxdeductNote.push(el.value));
+    const creditDetails = [];
+    document.getElementById('creditDetailRows').querySelectorAll('div[id^="credit_r"]').forEach(div => {
+      const inputs = div.querySelectorAll('input');
+      creditDetails.push({ label: inputs[0]?.value || '', amount: inputs[1]?.value || '' });
+    });
+    return {
+      taxYear: document.getElementById('taxYear').value,
+      f_name: document.getElementById('f_name').value,
+      f_deadline: document.getElementById('f_deadline').value,
+      bizRows, otherIncome, otherNote, deduct, deductNote,
+      tc_agritax: document.getElementById('tc_agritax').value,
+      tc_prepaid: document.getElementById('tc_prepaid').value,
+      tc_localtax: document.getElementById('tc_localtax').value,
+      localTaxManuallyEdited,
+      creditDetails,
+      memo: document.getElementById('memo').value,
+    };
+  }
+
+  function applyData(d) {
+    document.getElementById('taxYear').value    = d.taxYear || '2025';
+    document.getElementById('f_name').value     = d.f_name || '';
+    document.getElementById('f_deadline').value = d.f_deadline || '';
+    document.getElementById('bizRows').innerHTML = '';
+    bizSeq = 0;
+    (d.bizRows || []).forEach(row => addBizRow(row));
+    const otherInputs = document.querySelectorAll('[data-other-income]');
+    (d.otherIncome || []).forEach((v, i) => { if (otherInputs[i]) otherInputs[i].value = v; });
+    const otherNotes = document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input');
+    (d.otherNote || []).forEach((v, i) => { if (otherNotes[i]) otherNotes[i].value = v; });
+    const deductInputs = document.querySelectorAll('[data-deduct]');
+    (d.deduct || []).forEach((v, i) => { if (deductInputs[i]) deductInputs[i].value = v; });
+    const deductNotes = document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input');
+    (d.deductNote || []).forEach((v, i) => { if (deductNotes[i]) deductNotes[i].value = v; });
+    document.getElementById('creditDetailRows').innerHTML = '';
+    creditSeq = 0;
+    (d.creditDetails || []).forEach(row => addCreditDetailRow(row));
+    document.getElementById('tc_agritax').value  = d.tc_agritax  || '';
+    document.getElementById('tc_prepaid').value  = d.tc_prepaid  || '';
+    localTaxManuallyEdited = d.localTaxManuallyEdited || false;
+    document.getElementById('tc_localtax').value = d.tc_localtax || '';
+    document.getElementById('memo').value = d.memo || '';
+    calcTotal();
+    syncDeduct();
+    syncTaxDeduct();
+  }
+
+  // ── 계산 로직 ──────────────────────────────────
+
   function fmt(n) {
     if (isNaN(n) || n === 0) return '';
     return Math.abs(Math.round(n)).toLocaleString('ko-KR');
@@ -402,7 +537,7 @@
   }
 
   let bizSeq = 0;
-  function addBizRow() {
+  function addBizRow(data) {
     bizSeq++;
     const rowId = 'biz_r' + bizSeq;
     const tbody = document.getElementById('bizRows');
@@ -410,20 +545,20 @@
     tr.id = rowId;
     tr.innerHTML =
       '<td class="td-del"><button class="del-row-btn" onclick="removeBizRow(\'' + rowId + '\')" title="삭제">×</button></td>' +
-      '<td><input class="amount-input left" placeholder="사업장명"></td>' +
-      '<td><input class="amount-input center" placeholder="등록번호"></td>' +
-      '<td><input class="amount-input" data-biz-income placeholder="0" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
-      '<td><input class="amount-input" data-biz-expense placeholder="0" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
+      '<td><input class="amount-input left" placeholder="사업장명" value="' + (data&&data.name||'') + '"></td>' +
+      '<td><input class="amount-input center" placeholder="등록번호" value="' + (data&&data.code||'') + '"></td>' +
+      '<td><input class="amount-input" data-biz-income placeholder="0" value="' + (data&&data.income||'') + '" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
+      '<td><input class="amount-input" data-biz-expense placeholder="0" value="' + (data&&data.expense||'') + '" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
       '<td><input class="amount-input" data-biz-net placeholder="0" readonly style="cursor:default;color:var(--navy);font-weight:600;background:#faf8f3;"></td>';
     tbody.appendChild(tr);
+    if (data && data.income) calcBizRow(tr.querySelector('[data-biz-income]'));
   }
   function removeBizRow(id) {
     const el = document.getElementById(id);
     if (el) el.remove();
     calcTotal();
   }
-  addBizRow();
-  addBizRow();
+  addBizRow(); addBizRow();
 
   function calcBizRow(el) {
     const tr = el.closest('tr');
@@ -432,7 +567,6 @@
     const net = Math.max(0, income - expense);
     tr.querySelector('[data-biz-net]').value = net ? net.toLocaleString('ko-KR') : '';
   }
-
   function calcTotal() {
     let bizIncome = 0, bizExpense = 0, bizNet = 0;
     document.querySelectorAll('[data-biz-income]').forEach(el => { bizIncome += parse(el); });
@@ -449,7 +583,6 @@
     document.getElementById('tc_netincome').value = (bizNet + otherTotal) ? fmt(bizNet + otherTotal) : '';
     calcTax();
   }
-
   function syncDeduct() {
     let sum = 0;
     document.querySelectorAll('[data-deduct]').forEach(e => { sum += parse(e); });
@@ -479,9 +612,7 @@
   }
 
   let localTaxManuallyEdited = false;
-  document.getElementById('tc_localtax').addEventListener('focus', function() {
-    localTaxManuallyEdited = true;
-  });
+  document.getElementById('tc_localtax').addEventListener('focus', () => { localTaxManuallyEdited = true; });
 
   function calcTax() {
     const income  = parse(document.getElementById('tc_income'));
@@ -496,10 +627,8 @@
     const calcTaxAmt = taxBase > 0 ? Math.max(0, Math.round(taxBase * bracket.rate) - bracket.progressive) : 0;
     const finalAmt   = calcTaxAmt - credit - prepaid;
     const finalWithAgri = finalAmt + agritax;
-
     document.getElementById('tc_taxbase').value  = taxBase    ? fmt(taxBase)    : '';
     document.getElementById('tc_calctax').value  = calcTaxAmt ? fmt(calcTaxAmt) : '';
-
     if (taxBase > 0) {
       document.getElementById('tc_ratePct').textContent        = Math.round(bracket.rate * 100) + '%';
       document.getElementById('tc_progressiveAmt').textContent = fmt(bracket.progressive) + '원';
@@ -507,7 +636,6 @@
       document.getElementById('tc_ratePct').textContent        = '—';
       document.getElementById('tc_progressiveAmt').textContent = '—';
     }
-
     const finalEl = document.getElementById('tc_final');
     const finalLabel = document.getElementById('finalLabel');
     if (finalAmt < 0) {
@@ -519,11 +647,9 @@
       finalLabel.textContent = '결정세액 (납부)';
       finalEl.style.color = 'var(--gold)';
     }
-
     const fwaEl = document.getElementById('tc_finalWithAgri');
     fwaEl.value = finalWithAgri ? fmt(Math.abs(finalWithAgri)) : '';
     fwaEl.style.color = finalWithAgri < 0 ? '#22c55e' : '#15803d';
-
     if (!localTaxManuallyEdited) {
       const autoLocal = finalAmt > 0 ? Math.round(finalAmt * 0.1) : 0;
       document.getElementById('tc_localtax').value = autoLocal ? fmt(autoLocal) : '';
@@ -531,7 +657,7 @@
   }
 
   let creditSeq = 0;
-  function addCreditDetailRow() {
+  function addCreditDetailRow(data) {
     creditSeq++;
     const rowId = 'credit_r' + creditSeq;
     const wrap = document.getElementById('creditDetailRows');
@@ -540,8 +666,8 @@
     div.style.cssText = 'display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:5px 14px;border-top:1px solid var(--border);';
     div.innerHTML =
       '<button class="del-row-btn" onclick="document.getElementById(\'' + rowId + '\').remove();syncTaxDeduct()" title="삭제" style="width:18px;height:18px;font-size:11px;">×</button>' +
-      '<input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-family:inherit;font-size:12px;padding:4px;outline:none;width:100%;" placeholder="공제·감면 항목명">' +
-      '<input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()" style="width:150px;font-size:12px;">';
+      '<input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-family:inherit;font-size:12px;padding:4px;outline:none;width:100%;" placeholder="공제·감면 항목명" value="' + (data&&data.label||'') + '">' +
+      '<input class="amount-input" data-taxdeduct placeholder="0" value="' + (data&&data.amount||'') + '" oninput="handleInput(this);syncTaxDeduct()" style="width:150px;font-size:12px;">';
     wrap.appendChild(div);
   }
 
@@ -560,6 +686,7 @@
     document.querySelectorAll('[readonly]').forEach(el => el.value = '');
     document.getElementById('tc_ratePct').textContent = '—';
     document.getElementById('tc_progressiveAmt').textContent = '—';
+    document.getElementById('clientSelect').value = '';
   }
 
   window.addEventListener('beforeprint', function() {
@@ -569,6 +696,9 @@
   window.addEventListener('afterprint', function() {
     document.getElementById('section-other-body').classList.remove('print-hidden');
   });
+
+  // 시작 시 목록 불러오기
+  refreshSelect('');
 </script>
 </body>
 </html>
