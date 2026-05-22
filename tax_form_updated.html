@@ -12,11 +12,7 @@
     --bg: #faf8f3; --bg2: #f3f0e8; --border: #e0d9cc; --text: #1c1c1c; --muted: #7a7065;
   }
   body { font-family: 'Noto Sans KR', sans-serif; background: #eee; color: var(--text); font-size: 13px; line-height: 1.6; }
-  .toolbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: var(--navy); display: flex; align-items: center; gap: 10px;
-    padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.3);
-  }
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--navy); display: flex; align-items: center; gap: 10px; padding: 10px 20px; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
   .toolbar-title { color: #fff; font-weight: 600; font-size: 14px; flex: 1; }
   .toolbar-btn { padding: 7px 16px; border: none; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s; }
   .btn-print { background: var(--gold); color: #fff; }
@@ -31,7 +27,7 @@
   .doc-year-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px; text-align: center; }
   .doc-year-label { font-size: 11px; color: var(--muted); }
   .doc-year-val { font-size: 20px; font-weight: 700; color: var(--navy); outline: none; border: none; background: transparent; width: 80px; text-align: center; font-family: inherit; }
-  .client-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+  .client-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
   .client-field { display: flex; flex-direction: column; gap: 3px; }
   .field-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .field-input { border: none; border-bottom: 1.5px solid var(--border); padding: 5px 4px; font-family: inherit; font-size: 13px; color: var(--text); background: transparent; outline: none; transition: border-color .15s; }
@@ -107,18 +103,15 @@
   .send-info { display: flex; flex-direction: column; gap: 4px; }
   .send-label { font-size: 11px; color: var(--muted); }
   .send-val { font-weight: 600; color: var(--navy); }
-  .screen-page-break { border: none; border-top: 2px dashed #c0b8a8; margin: 8px 0 32px; position: relative; }
-  .screen-page-break::after { content: '✂  2쪽'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #fff; padding: 0 10px; font-size: 11px; color: #c0b8a8; letter-spacing: .05em; }
   @media print {
     body { background: #fff; }
-    .toolbar, .add-row-wrap, .del-row-btn, .screen-page-break { display: none !important; }
+    .toolbar, .add-row-wrap, .del-row-btn { display: none !important; }
     .page-wrap { margin: 0; box-shadow: none; padding: 20px 24px 28px; }
     .field-input, .amount-input, .doc-year-val, .memo-textarea,
     .section-header, .row-total td, .tax-row-final,
     .doc-tag, .deduct-section-row td, .biz-table tfoot td, .progressive-badge {
       -webkit-print-color-adjust: exact; print-color-adjust: exact;
     }
-    .page-break-before { page-break-before: always; break-before: page; padding-top: 24px; }
     .print-hidden { display: none !important; }
     @page { size: A4; margin: 14mm 15mm 16mm; }
   }
@@ -177,9 +170,9 @@
         <tfoot>
           <tr>
             <td colspan="3" style="color:var(--navy);font-weight:700;font-size:13px;">합계</td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizIncome" placeholder="0" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizExpense" placeholder="0" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizNet" placeholder="0" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizIncome" placeholder="" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizExpense" placeholder="" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizNet" placeholder="" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
           </tr>
         </tfoot>
       </table>
@@ -195,7 +188,7 @@
       <div class="section-num">2</div>
       <span class="section-title">타소득 합산 <span style="font-size:11px;font-weight:400;opacity:.8">(합산과세 대상)</span></span>
     </div>
-    <div class="section-body">
+    <div class="section-body" id="section-other-body">
       <table class="income-table">
         <thead>
           <tr>
@@ -397,6 +390,19 @@
     </div>
   </div>
 
+  <!-- 푸터 -->
+  <div class="send-footer">
+    <div class="send-info">
+      <span class="send-label">담당 세무사</span>
+      <span class="send-val">이헌</span>
+    </div>
+    <div class="send-info" style="text-align:center">
+      <span class="send-label">작성일</span>
+      <input class="field-input send-val" id="f_date" style="font-size:13px;border-bottom-width:1px;text-align:center">
+    </div>
+  </div>
+</div>
+
 <script>
   const today = new Date();
   document.getElementById('f_date').value =
@@ -416,7 +422,7 @@
   }
 
   let bizSeq = 0;
-  function addBizRow(name, code) {
+  function addBizRow() {
     bizSeq++;
     const rowId = 'biz_r' + bizSeq;
     const tbody = document.getElementById('bizRows');
@@ -424,8 +430,8 @@
     tr.id = rowId;
     tr.innerHTML =
       '<td class="td-del"><button class="del-row-btn" onclick="removeBizRow(\'' + rowId + '\')" title="삭제">×</button></td>' +
-      '<td><input class="amount-input left" placeholder="사업장명" value="' + (name||'') + '"></td>' +
-      '<td><input class="amount-input center" placeholder="업종코드" value="' + (code||'') + '"></td>' +
+      '<td><input class="amount-input left" placeholder="사업장명"></td>' +
+      '<td><input class="amount-input center" placeholder="등록번호"></td>' +
       '<td><input class="amount-input" data-biz-income placeholder="0" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
       '<td><input class="amount-input" data-biz-expense placeholder="0" oninput="handleInput(this);calcBizRow(this);calcTotal()"></td>' +
       '<td><input class="amount-input" data-biz-net placeholder="0" readonly style="cursor:default;color:var(--navy);font-weight:600;background:#faf8f3;"></td>';
@@ -436,7 +442,8 @@
     if (el) el.remove();
     calcTotal();
   }
-  addBizRow(); addBizRow();
+  addBizRow();
+  addBizRow();
 
   function calcBizRow(el) {
     const tr = el.closest('tr');
@@ -445,6 +452,7 @@
     const net = Math.max(0, income - expense);
     tr.querySelector('[data-biz-net]').value = net ? net.toLocaleString('ko-KR') : '';
   }
+
   function calcTotal() {
     let bizIncome = 0, bizExpense = 0, bizNet = 0;
     document.querySelectorAll('[data-biz-income]').forEach(el => { bizIncome += parse(el); });
@@ -461,6 +469,7 @@
     document.getElementById('tc_netincome').value = (bizNet + otherTotal) ? fmt(bizNet + otherTotal) : '';
     calcTax();
   }
+
   function syncDeduct() {
     let sum = 0;
     document.querySelectorAll('[data-deduct]').forEach(e => { sum += parse(e); });
@@ -519,7 +528,7 @@
       document.getElementById('tc_progressiveAmt').textContent = '—';
     }
 
-    const finalEl    = document.getElementById('tc_final');
+    const finalEl = document.getElementById('tc_final');
     const finalLabel = document.getElementById('finalLabel');
     if (finalAmt < 0) {
       finalEl.value = fmt(Math.abs(finalAmt));
@@ -551,7 +560,7 @@
     div.style.cssText = 'display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;padding:5px 14px;border-top:1px solid var(--border);';
     div.innerHTML =
       '<button class="del-row-btn" onclick="document.getElementById(\'' + rowId + '\').remove();syncTaxDeduct()" title="삭제" style="width:18px;height:18px;font-size:11px;">×</button>' +
-      '<input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-family:inherit;font-size:12px;padding:4px;outline:none;width:100%;" placeholder="공제·감면 항목명 (예: 중소기업 특별세액감면)">' +
+      '<input style="border:none;border-bottom:1px solid var(--border);background:transparent;font-family:inherit;font-size:12px;padding:4px;outline:none;width:100%;" placeholder="공제·감면 항목명">' +
       '<input class="amount-input" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()" style="width:150px;font-size:12px;">';
     wrap.appendChild(div);
   }
@@ -576,10 +585,10 @@
 
   window.addEventListener('beforeprint', function() {
     const hasOther = Array.from(document.querySelectorAll('[data-other-income]')).some(el => parse(el) > 0);
-    document.querySelector('#section-other .section-body').classList.toggle('print-hidden', !hasOther);
+    document.getElementById('section-other-body').classList.toggle('print-hidden', !hasOther);
   });
   window.addEventListener('afterprint', function() {
-    document.querySelector('#section-other .section-body').classList.remove('print-hidden');
+    document.getElementById('section-other-body').classList.remove('print-hidden');
   });
 </script>
 </body>
