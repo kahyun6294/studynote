@@ -3,151 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>종합소득세 신고 요약 (WEHAGO PDF 자동 분석)</title>
-    <!-- PDF.js 라이브러리 로드 (PDF 분석용) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <title>종합소득세 신고 내역 요약</title>
     <style>
-        body { font-family: 'Malgun Gothic', sans-serif; margin: 20px; background: #f5f6f7; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border: 1px solid #ddd; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
-        h2 { text-align: center; color: #111; margin-bottom: 30px; }
-        .action-bar { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px; background: #eaeaea; padding: 15px; border-radius: 5px; }
-        .action-bar input[type="file"] { display: none; }
-        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        .btn-upload { background: #007bff; color: white; }
-        .btn-save { background: #28a745; color: white; }
-        .btn-print { background: #17a2b8; color: white; }
-        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-        .info-group { display: flex; flex-direction: column; }
-        .info-group label { font-size: 12px; color: #666; margin-bottom: 5px; font-weight: bold; }
-        .info-group input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; font-size: 14px; }
-        th { background: #f8f9fa; font-weight: bold; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .btn-add { background: #6c757d; color: white; padding: 5px 10px; font-size: 12px; margin-bottom: 10px; }
-        .summary-box { background: #f9f9f9; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 14px; }
-        .summary-row.total { border-bottom: none; font-weight: bold; font-size: 16px; color: #d9534f; padding-top: 15px; }
-        .status-msg { font-size: 13px; color: #555; align-self: center; font-style: italic; }
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 40px; background: #fff; color: #333; line-height: 1.5; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; color: #111; font-size: 28px; margin-bottom: 30px; letter-spacing: -1px; }
+        
+        /* 상단 툴바 */
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #333; }
+        .btn { padding: 8px 16px; border: 1px solid #ccc; background: #fff; color: #333; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 500; }
+        .btn:hover { background: #f8f9fa; }
+        
+        .btn-upload { background: #2b8a3e; color: white; border: 1px solid #2b8a3e; }
+        .btn-upload:hover { background: #237032; }
+        .btn-save { background: #37b24d; color: white; border: 1px solid #37b24d; margin-left: 5px; }
+        .btn-save:hover { background: #2f9e44; }
+        .btn-print { background: #1c7ed6; color: white; border: 1px solid #1c7ed6; }
+        .btn-print:hover { background: #1a6ca8; }
+        
+        .status-msg { font-size: 12px; color: #666; font-weight: bold; }
+        
+        /* 텍스트 붙여넣기 박스 */
+        .paste-zone { display: none; margin-bottom: 25px; background: #f8f9fa; padding: 15px; border: 1px solid #ced4da; border-radius: 4px; }
+        .paste-zone textarea { width: 98%; height: 100px; padding: 8px; border: 1px solid #ced4da; border-radius: 3px; font-size: 13px; resize: none; }
+        .paste-zone-btn { display: flex; justify-content: flex-end; gap: 5px; margin-top: 8px; }
+
+        /* 기본 정보 서식 */
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        .info-table td { border: 1px solid #dee2e6; padding: 12px; font-size: 14px; }
+        .info-table td.label { background: #f8f9fa; font-weight: bold; width: 15%; text-align: center; }
+        .info-table input { width: 90%; padding: 6px; border: 1px solid #ced4da; border-radius: 3px; font-size: 14px; }
+        
+        h3 { font-size: 18px; color: #111; margin: 30px 0 10px 0; border-left: 4px solid #2b8a3e; padding-left: 10px; }
+        
+        /* 테이블 스타일 */
+        table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        table.data-table th, table.data-table td { border: 1px solid #dee2e6; padding: 10px; text-align: center; font-size: 14px; }
+        table.data-table th { background: #f8f9fa; font-weight: bold; color: #495057; }
+        table.data-table input { width: 90%; padding: 5px; border: 1px solid #ced4da; border-radius: 3px; text-align: center; }
+        table.data-table input.text-right { text-align: right; }
+        
+        .btn-add { background: #e9ecef; border: 1px solid #ced4da; color: #495057; padding: 5px 12px; font-size: 13px; border-radius: 3px; cursor: pointer; margin-bottom: 20px; }
+        .btn-add:hover { background: #dee2e6; }
+        
+        /* 세액 계산 명세 */
+        .tax-calc-table { width: 100%; border-collapse: collapse; }
+        .tax-calc-table td { border: 1px solid #dee2e6; padding: 12px; font-size: 14px; }
+        .tax-calc-table td.label { background: #f8f9fa; font-weight: bold; width: 40%; padding-left: 20px; }
+        .tax-calc-table input { width: 150px; padding: 6px; border: 1px solid #ced4da; border-radius: 3px; text-align: right; font-size: 14px; }
+        .tax-calc-table .result-val { font-weight: bold; text-align: right; padding-right: 15px; }
+        
+        .highlight-row { background: #f4fbf7; font-weight: bold; }
+        .total-row { background: #ebfbee; color: #2b8a3e; font-weight: bold; font-size: 16px; }
+        .total-row .result-val { font-size: 18px; }
+
         @media print {
-            body { background: white; margin: 0; }
-            .action-bar, .btn-add { display: none !important; }
-            .container { border: none; box-shadow: none; padding: 0; }
+            body { margin: 0; background: white; }
+            .action-bar, .btn-add, .paste-zone { display: none !important; }
+            .container { width: 100%; }
+            input { border: none !important; background: transparent !important; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>종합소득세 신고 결과 요약 안내</h2>
+    <h1>종합소득세 신고 내역 요약</h1>
     
-    <!-- 기능 버튼 바 -->
+    <!-- 상단 툴바 -->
     <div class="action-bar">
         <div>
-            <label for="pdfFile" class="btn btn-upload">📄 위하고 PDF 불러오기</label>
-            <input type="file" id="pdfFile" accept=".pdf" onchange="processPdf(event)">
+            <button class="btn btn-upload" onclick="togglePasteZone()">📋 위하고 텍스트 붙여넣기</button>
             <button class="btn btn-save" onclick="saveToLocal()">💾 데이터 저장</button>
         </div>
-        <div class="status-msg" id="statusMsg">데이터를 입력하거나 PDF를 업로드하세요.</div>
-        <button class="btn btn-print" onclick="window.print()">🖨️ 요약본 인쇄 / PDF 출력</button>
+        <div class="status-msg" id="statusMsg">위하고 데이터를 복사해 붙여넣거나 직접 입력하세요.</div>
+        <button class="btn btn-print" onclick="window.print()">🖨️ 인쇄 / PDF 출력</button>
     </div>
 
-    <!-- 기본 정보 -->
-    <div class="info-grid">
-        <div class="info-group">
-            <label>귀속 연도</label>
-            <input type="text" id="taxYear" placeholder="예: 2025">
-        </div>
-        <div class="info-group">
-            <label>상호 / 성명 (고객명)</label>
-            <input type="text" id="taxpayerName" placeholder="홍길동">
-        </div>
-        <div class="info-group">
-            <label>신고(납부) 기한</label>
-            <input type="text" id="dueDate" value="2026. 06. 02">
+    <!-- 텍스트 붙여넣기 영역 (기본 숨김) -->
+    <div class="paste-zone" id="pasteZone">
+        <textarea id="rawText" placeholder="위하고 PDF를 열고 전체 선택(Ctrl+A) -> 복사(Ctrl+C)한 내용을 여기에 붙여넣기(Ctrl+V) 하세요."></textarea>
+        <div class="paste-zone-btn">
+            <button class="btn" style="background:#6c757d; color:#fff;" onclick="togglePasteZone()">취소</button>
+            <button class="btn" style="background:#2b8a3e; color:#fff;" onclick="parsePastedText()">데이터 분석하기</button>
         </div>
     </div>
 
-    <!-- 사업장별 내역 -->
-    <h3>1. 사업장별 수입금액 및 소득금액 명세</h3>
-    <button class="btn btn-add" onclick="addBusinessRow()">＋ 사업장 추가</button>
-    <table>
+    <!-- 기본 정보 서식 -->
+    <table class="info-table">
+        <tr>
+            <td class="label">귀속연도</td>
+            <td><input type="text" id="taxYear" placeholder="2025"></td>
+            <td class="label">성명 (상호)</td>
+            <td><input type="text" id="taxpayerName" placeholder="홍길동"></td>
+            <td class="label">납부기한</td>
+            <td><input type="text" id="dueDate" value="2026. 06. 02"></td>
+        </tr>
+    </table>
+
+    <!-- 1. 사업장별 명세 -->
+    <h3>1. 사업장별 수입금액 및 소득금액</h3>
+    <button class="btn-add" onclick="addBusinessRow()">＋ 사업장 추가</button>
+    <table class="data-table">
         <thead>
             <tr>
-                <th>상호(사업장)</th>
-                <th>사업자등록번호</th>
-                <th>총수입금액(매출)</th>
-                <th>필요경비</th>
-                <th>소득금액</th>
+                <th style="width: 25%;">상호(사업장명)</th>
+                <th style="width: 20%;">사업자등록번호</th>
+                <th style="width: 20%;">총수입금액(매출)</th>
+                <th style="width: 15%;">필요경비</th>
+                <th style="width: 20%;">소득금액</th>
             </tr>
         </thead>
         <tbody id="businessBody">
-            <!-- 행이 동적으로 추가됩니다 -->
+            <!-- 행 동적 생성 -->
         </tbody>
     </table>
 
-    <!-- 세액 계산 요약 -->
-    <h3>2. 종합소득세 산출 명세 요약</h3>
-    <div class="summary-box">
-        <div class="summary-row">
-            <span>① 종합소득금액 (사업소득 + 타소득)</span>
-            <input type="text" id="totalIncomeAmt" class="text-right" value="0" oninput="calculateTax()">
-        </div>
-        <div class="summary-row">
-            <span>② 소득공제 합계 (인적공제 등)</span>
-            <input type="text" id="taxDeduction" class="text-right" value="0" oninput="calculateTax()">
-        </div>
-        <div class="summary-row" style="background: #f1f3f5; font-weight: bold;">
-            <span>③ 과세표준 (① - ②)</span>
-            <span id="taxBase">0</span>
-        </div>
-        <div class="summary-row">
-            <span>④ 세율 (%)</span>
-            <span id="taxRate">0%</span>
-        </div>
-        <div class="summary-row">
-            <span>⑤ 산출세액 (③ × ④ - 누진공제)</span>
-            <span id="calculatedTax">0</span>
-        </div>
-        <div class="summary-row">
-            <span>⑥ 세액공제 및 감면 합계</span>
-            <input type="text" id="taxCredit" class="text-right" value="0" oninput="calculateTax()">
-        </div>
-        <div class="summary-row total">
-            <span>⑦ 최종 납부(환급)할 세액 (⑤ - ⑥)</span>
-            <span id="finalTax">0 원</span>
-        </div>
-    </div>
+    <!-- 2. 세액 계산 명세 -->
+    <h3>2. 세액 계산 명세 요약</h3>
+    <table class="tax-calc-table">
+        <tr>
+            <td class="label">① 종합소득금액 (사업소득 + 타소득)</td>
+            <td class="text-right"><input type="text" id="totalIncomeAmt" value="0" oninput="calculateTax()"></td>
+        </tr>
+        <tr>
+            <td class="label">② 소득공제 합계 (인적공제 등)</td>
+            <td class="text-right"><input type="text" id="taxDeduction" value="0" oninput="calculateTax()"></td>
+        </tr>
+        <tr class="highlight-row">
+            <td class="label">③ 과세표준 (① - ②)</td>
+            <td class="result-val" id="taxBase">0</td>
+        </tr>
+        <tr>
+            <td class="label">④ 세율 (%)</td>
+            <td class="result-val" id="taxRate">0%</td>
+        </tr>
+        <tr>
+            <td class="label">⑤ 산출세액 (③ × ④ - 누진공제)</td>
+            <td class="result-val" id="calculatedTax">0</td>
+        </tr>
+        <tr>
+            <td class="label">⑥ 세액공제 및 감면 합계</td>
+            <td class="text-right"><input type="text" id="taxCredit" value="0" oninput="calculateTax()"></td>
+        </tr>
+        <tr class="total-row">
+            <td class="label">⑦ 최종 납부(환급)할 세액 (⑤ - ⑥)</td>
+            <td class="result-val" id="finalTax">0 원</td>
+        </tr>
+    </table>
 </div>
 
 <script>
-    // PDF.js 워커 설정
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-
-    // 화면 시작 시 기존에 저장된 데이터가 있으면 불러옴 (대리님 요청 반영!)
     window.onload = function() {
         loadFromLocal();
         if(document.getElementById('businessBody').children.length === 0) {
-            addBusinessRow(); // 기본 한 행 추가
+            addBusinessRow();
         }
     };
 
-    // 사업장 테이블 행 추가
+    function togglePasteZone() {
+        const zone = document.getElementById('pasteZone');
+        zone.style.display = zone.style.display === 'block' ? 'none' : 'block';
+    }
+
     function addBusinessRow(name='', num='', income='0', expense='0', net='0') {
         const tbody = document.getElementById('businessBody');
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td><input type="text" value="${name}" style="width:90%;"></td>
-            <td><input type="text" value="${num}" style="width:90%;"></td>
-            <td><input type="text" class="text-right b-income" value="${formatNum(income)}" oninput="updateRowCalc(this)" style="width:90%;"></td>
-            <td><input type="text" class="text-right b-expense" value="${formatNum(expense)}" oninput="updateRowCalc(this)" style="width:90%;"></td>
-            <td><input type="text" class="text-right b-net" value="${formatNum(net)}" readonly style="width:90%; background:#f5f5f5;"></td>
+            <td><input type="text" value="${name}"></td>
+            <td><input type="text" value="${num}"></td>
+            <td><input type="text" class="text-right b-income" value="${formatNum(income)}" oninput="updateRowCalc(this)"></td>
+            <td><input type="text" class="text-right b-expense" value="${formatNum(expense)}" oninput="updateRowCalc(this)"></td>
+            <td><input type="text" class="text-right b-net" value="${formatNum(net)}" readonly style="background:#f8f9fa; border:none;"></td>
         `;
         tbody.appendChild(tr);
     }
 
-    // 숫자 콤마 포맷팅
     function formatNum(val) {
         val = String(val).replace(/[^0-9-]/g, '');
         if(!val) return '0';
@@ -163,8 +194,6 @@
         const income = parseNum(tr.querySelector('.b-income').value);
         const expense = parseNum(tr.querySelector('.b-expense').value);
         tr.querySelector('.b-net').value = formatNum(income - expense);
-        
-        // 사업소득 합계를 종합소득금액에 자동 반영
         updateTotalIncomeFromTable();
     }
 
@@ -177,7 +206,6 @@
         calculateTax();
     }
 
-    // 종합소득세 세율 및 세액 산정 로직 (실제 세율표 반영)
     function calculateTax() {
         const totalIncome = parseNum(document.getElementById('totalIncomeAmt').value);
         const deduction = parseNum(document.getElementById('taxDeduction').value);
@@ -186,10 +214,7 @@
         if (base < 0) base = 0;
         document.getElementById('taxBase').innerText = formatNum(base);
 
-        let rate = 6;
-        let cumDeduction = 0;
-
-        // 과세표준 구간별 세율 계산
+        let rate = 6; let cumDeduction = 0;
         if (base <= 14000000) { rate = 6; cumDeduction = 0; }
         else if (base <= 50000000) { rate = 15; cumDeduction = 1260000; }
         else if (base <= 88000000) { rate = 24; cumDeduction = 5760000; }
@@ -200,18 +225,67 @@
         else { rate = 45; cumDeduction = 65940000; }
 
         document.getElementById('taxRate').innerText = rate + '%';
-        
         let calcTax = Math.floor(base * (rate / 100) - cumDeduction);
         if (calcTax < 0) calcTax = 0;
         document.getElementById('calculatedTax').innerText = formatNum(calcTax);
 
         const credit = parseNum(document.getElementById('taxCredit').value);
         let final = calcTax - credit;
-        
         document.getElementById('finalTax').innerText = formatNum(final) + ' 원';
     }
 
-    // 로컬 스토리지에 데이터 안전하게 저장 기능
+    // 💡 [핵심] 복사 붙여넣기 텍스트 유연하게 가공하기
+    function parsePastedText() {
+        const text = document.getElementById('rawText').value;
+        if(!text.trim()) {
+            alert("텍스트를 입력해 주세요.");
+            return;
+        }
+
+        // 1. 성명 및 연도 유추
+        const nameMatch = text.match(/(?:성명|성 명|성\s+명)\s*[:\s]([가-힣\s]{2,5})\s/) || text.match(/([가-힣]{2,4})\s*(?:귀하|고객)/);
+        if(nameMatch) document.getElementById('taxpayerName').value = nameMatch[1].trim();
+
+        const yearMatch = text.match(/(202\d)년도/) || text.match(/(202\d)\s*귀속/);
+        if(yearMatch) document.getElementById('taxYear').value = yearMatch[1];
+
+        // 2. 텍스트 안에서 큰 숫자 배열을 순서대로 추적 (매출액 -> 소득금액 유추용)
+        // 위하고를 긁으면 보통 큰 숫자(매출)가 먼저 나오고 소득금액, 공제액 순으로 나열됩니다.
+        const numbers = text.match(/\b[\d,]{5,13}\b/g); 
+        
+        let income = "0";
+        let netIncome = "0";
+        let deduction = "0";
+        let credit = "0";
+
+        if(numbers && numbers.length >= 2) {
+            // 가장 큰 숫자를 수입금액, 그 다음을 소득금액으로 유연하게 임시 지정
+            let sortedNums = [...numbers].map(n => parseNum(n)).sort((a,b) => b-a);
+            income = formatNum(sortedNums[0]);
+            netIncome = formatNum(sortedNums[1]);
+            if(sortedNums[2]) deduction = formatNum(sortedNums[sortedNums.length - 1]); // 가장 작은 숫자를 공제나 감면으로 유추
+        }
+
+        // 상호 및 사업자번호 매칭
+        const bizNameMatch = text.match(/(?:상호|상 호)\s*[:\s]([가-힣a-zA-Z0-9\s]+?)\s/);
+        const bizNumMatch = text.match(/[0-9]{3}-[0-9]{2}-[0-9]{5}/);
+        let bizName = bizNameMatch ? bizNameMatch[1].trim() : "주요 사업장";
+        let bizNum = bizNumMatch ? bizNumMatch[0] : "";
+
+        // 테이블 리셋 후 반영
+        const tbody = document.getElementById('businessBody');
+        tbody.innerHTML = '';
+        
+        let expense = formatNum(parseNum(income) - parseNum(netIncome));
+        addBusinessRow(bizName, bizNum, income, expense, netIncome);
+
+        document.getElementById('taxDeduction').value = deduction;
+        
+        updateTotalIncomeFromTable();
+        togglePasteZone(); // 입력창 닫기
+        document.getElementById('statusMsg').innerText = "텍스트 붙여넣기 분석 완료! 빈 칸을 보완해 주세요.";
+    }
+
     function saveToLocal() {
         const data = {
             taxYear: document.getElementById('taxYear').value,
@@ -222,31 +296,23 @@
             taxCredit: document.getElementById('taxCredit').value,
             businesses: []
         };
-
         const rows = document.getElementById('businessBody').children;
         for(let tr of rows) {
             const inputs = tr.querySelectorAll('input');
             if(inputs.length >= 5) {
                 data.businesses.push({
-                    name: inputs[0].value,
-                    num: inputs[1].value,
-                    income: inputs[2].value,
-                    expense: inputs[3].value,
-                    net: inputs[4].value
+                    name: inputs[0].value, num: inputs[1].value, income: inputs[2].value, expense: inputs[3].value, net: inputs[4].value
                 });
             }
         }
-
         localStorage.setItem('tax_summary_data', JSON.stringify(data));
-        document.getElementById('statusMsg').innerText = "장부에 성공적으로 저장되었습니다!";
-        alert("현재 입력된 내역이 브라우저에 임시 저장되었습니다.");
+        document.getElementById('statusMsg').innerText = "장부에 성공적으로 저장되었습니다.";
+        alert("현재 입력한 내역이 안전하게 보관되었습니다.");
     }
 
-    // 로컬 스토리지에서 데이터 불러오기
     function loadFromLocal() {
         const saved = localStorage.getItem('tax_summary_data');
         if(!saved) return;
-        
         const data = JSON.parse(saved);
         document.getElementById('taxYear').value = data.taxYear || '';
         document.getElementById('taxpayerName').value = data.taxpayerName || '';
@@ -263,88 +329,7 @@
             });
         }
         calculateTax();
-        document.getElementById('statusMsg').innerText = "이전 저장 데이터를 복구했습니다.";
-    }
-
-    // 🔥 핵심: 진짜 WEHAGO PDF 텍스트 파싱 로직
-    async function processPdf(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        document.getElementById('statusMsg').innerText = "PDF 파일 텍스트 분석 중...";
-        
-        const fileReader = new FileReader();
-        fileReader.onload = async function() {
-            const typedarray = new Uint8Array(this.result);
-            try {
-                const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                let fullText = "";
-                
-                // PDF 전체 페이지 텍스트 긁어모으기
-                for(let i=1; i<=pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map(item => item.str).join(" ");
-                    fullText += pageText + "\n";
-                }
-                
-                // 추출된 텍스트 기반으로 위하고 서식의 키워드 매핑 매칭
-                parseWehagoText(fullText);
-                
-            } catch (error) {
-                console.error(error);
-                alert("PDF 파일에서 텍스트를 추출하는 데 실패했습니다. 스캔본이 아닌 위하고 전자출력 파일인지 확인해 주세요.");
-                document.getElementById('statusMsg').innerText = "분석 오류 발생.";
-            }
-        };
-        fileReader.readAsArrayBuffer(file);
-    }
-
-    // 위하고 특유의 텍스트 패턴 정규식으로 분석
-    function parseWehagoText(text) {
-        console.log("추출된 원본 텍스트 요약: ", text.substring(0, 1000)); // 디버깅용
-        
-        // 1. 성명/고객명 매칭 패턴 (종합소득세 신고서 서식 기준)
-        const nameMatch = text.match(/성\s*명\s*[:\s]([가-힣\s]{2,5})\s/);
-        if(nameMatch) document.getElementById('taxpayerName').value = nameMatch[1].trim();
-
-        // 2. 귀속연도 찾기
-        const yearMatch = text.match(/(202\d)년\s*귀속/);
-        if(yearMatch) document.getElementById('taxYear').value = yearMatch[1];
-
-        // 3. 수입금액 및 세액 수치 추출 (위하고 소득세신고서 내 주요 항목명 기준)
-        // 정규식 설명: 항목명 뒤에 나오는 숫자 배열 중 정수값을 타겟팅
-        const incomeMatch = text.match(/총\s*수\s*입\s*금\s*액[\s\S]*?([\d,]+)/);
-        const netIncomeMatch = text.match(/소\s*득\s*금\s*액[\s\S]*?([\d,]+)/);
-        const deductionMatch = text.match(/소\s*득\s*공\s*제\s*합\s*계[\s\S]*?([\d,]+)/);
-        const creditMatch = text.match(/세\s*액\s*공\s*제\s*합\s*계[\s\S]*?([\d,]+)/);
-
-        // 테이블 리셋 후 파싱 데이터 주입
-        const tbody = document.getElementById('businessBody');
-        tbody.innerHTML = '';
-
-        let parsedIncome = incomeMatch ? incomeMatch[1] : "0";
-        let parsedNet = netIncomeMatch ? netIncomeMatch[1] : "0";
-        let parsedExpense = formatNum(parseNum(parsedIncome) - parseNum(parsedNet));
-
-        // 위하고 파일에서 상호나 사업자번호 유추 시도
-        const bizNameMatch = text.match(/상\s*호\s*[:\s]([가-힣a-zA-Z0-9\s]+?)\s/);
-        const bizNumMatch = text.match(/사업자\s*등록\s*번호\s*[:\s]([0-9-]{10,12})/);
-        
-        let bizName = bizNameMatch ? bizNameMatch[1].trim() : "주요 사업장";
-        let bizNum = bizNumMatch ? bizNumMatch[1] : "";
-
-        // 테이블 채우기
-        addBusinessRow(bizName, bizNum, parsedIncome, parsedExpense, parsedNet);
-
-        // 세액 요약칸 채우기
-        if(deductionMatch) document.getElementById('taxDeduction').value = formatNum(deductionMatch[1]);
-        if(creditMatch) document.getElementById('taxCredit').value = formatNum(creditMatch[1]);
-
-        updateTotalIncomeFromTable();
-        
-        document.getElementById('statusMsg').innerText = "PDF 데이터가 자동으로 채워졌습니다! 오타가 없는지 확인해 보세요.";
-        alert("위하고 PDF 분석 완료! 완벽하지 않은 항목은 직접 보완해 주세요.");
+        document.getElementById('statusMsg').innerText = "이전 저장 내역을 성공적으로 복구했습니다.";
     }
 </script>
 </body>
