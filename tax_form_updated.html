@@ -343,8 +343,10 @@
     // 사업장명: ④상호 행
     const hoLine = findLine('④상호') || findLine('상호');
     const bizNames = hoLine
-      ? hoLine.split('\t').filter(s => /[가-힣]/.test(s) && !/(상호|코드|국내|국외)/.test(s))
-      : [];
+  ? hoLine.split('\t')
+      .filter(s => /[가-힣]/.test(s) && !/(상호|코드|국내|국외)/.test(s))
+      .map(s => s.replace(/\s+/g, ''))
+  : [];
 
     // 사업자번호: ④상호 행 다음 ⑤사업자등록번호 행 (사업소득명세서)
     const hoIdx = hoLine ? lines.indexOf(hoLine) : -1;
@@ -409,12 +411,12 @@
     }
 
     // 국민연금
-    const nLine = findLine('국민연금');
-    if (nLine) {
-      const segs = nLine.split('\t').filter(s => /\d/.test(s) && !/[가-힣]/.test(s));
-      const v = numsFromSegs(segs, 100000, 9999999)[0];
-      if (v) result.국민연금 = v;
-    }
+   const nLine = findLine('국민연금');
+if (nLine) {
+  const nums = (flat(nLine).replace(/[가-힣⑨⑩]/g,'').match(/[\d,]{5,}/g)||[])
+    .map(s => pn(s)).filter(n => n >= 100000 && n <= 9999999);
+  if (nums[0]) result.국민연금 = nums[0];
+}
 
     // 노란우산공제 (소기업·소상공인 공제부금 행)
     const yLine = lines.find(l => /(소기업|소상공인|노란우산)/.test(flat(l)));
