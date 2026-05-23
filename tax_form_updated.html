@@ -212,31 +212,31 @@
         <tbody>
           <tr>
             <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span></div></td>
-            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="금융기관명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
             <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span></div></td>
-            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
             <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span></div></td>
-            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="회사명 등" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
             <td><div class="td-label"><span class="type-badge badge-teal">연금소득</span></div></td>
-            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
           <tr>
             <td><div class="td-label"><span class="type-badge badge-gray">기타소득</span></div></td>
-            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this)"></td>
+            <td><input class="amount-input" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
           </tr>
@@ -288,8 +288,6 @@
             <td class="td-amt"><input class="amount-input" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
             <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
           </tr>
-
-          <!-- 특별소득공제 - 추가형 -->
           <tr class="deduct-section-row"><td colspan="3">▸ 특별소득공제 <span style="font-size:11px;font-weight:400;">(근로소득자)</span></td></tr>
           <tr>
             <td colspan="3" style="padding:0;">
@@ -299,7 +297,6 @@
               </div>
             </td>
           </tr>
-
           <tr class="deduct-section-row"><td colspan="3">▸ 세액공제항목</td></tr>
           <tr>
             <td>퇴직연금세액공제</td>
@@ -336,8 +333,13 @@
         </div>
         <div class="tax-row tax-row-result">
           <div class="tax-operator">=</div>
-          <div class="tax-label">소득금액 <small style="color:var(--muted)">사업소득금액 + 타소득금액 자동 반영</small></div>
+          <div class="tax-label">소득금액 <small style="color:var(--muted)">결손 시 음수 표시</small></div>
           <div class="tax-amount"><input class="amount-input" id="tc_netincome" placeholder="0" readonly style="cursor:default"></div>
+        </div>
+        <div class="tax-row" style="background:#fff8f0 !important;">
+          <div class="tax-operator" style="color:#c2410c;">－</div>
+          <div class="tax-label" style="color:#c2410c;font-weight:600;">이월결손금 <small style="color:#c2410c;">전기 이월 결손금 공제</small></div>
+          <div class="tax-amount"><input class="amount-input" id="tc_carryover" placeholder="0" oninput="handleInput(this);calcTax()" style="color:#c2410c;font-weight:600;"></div>
         </div>
         <div class="tax-row">
           <div class="tax-operator">－</div>
@@ -375,6 +377,11 @@
           <div style="padding:6px 14px 6px 46px;">
             <button class="add-row-btn" onclick="addCreditDetailRow()" style="font-size:11px;padding:3px 10px;">＋ 공제·감면 항목 추가</button>
           </div>
+        </div>
+        <div class="tax-row" style="background:#fff8f8 !important;">
+          <div class="tax-operator" style="color:#dc2626;">＋</div>
+          <div class="tax-label" style="color:#dc2626;font-weight:600;">가산세 <small style="color:#dc2626;">무신고·납부지연·무기장 등</small></div>
+          <div class="tax-amount"><input class="amount-input" id="tc_penalty" placeholder="0" oninput="handleInput(this);calcTax()" style="color:#dc2626;font-weight:600;"></div>
         </div>
         <div class="tax-row">
           <div class="tax-operator">＋</div>
@@ -461,8 +468,12 @@
     refreshSelect('');
   }
 
-  function fmt(n) { if (isNaN(n) || n === 0) return ''; return Math.abs(Math.round(n)).toLocaleString('ko-KR'); }
-  function parse(el) { return parseFloat((el.value || '0').replace(/,/g, '')) || 0; }
+  function fmt(n) {
+    if (n === 0 || isNaN(n)) return '';
+    const abs = Math.abs(Math.round(n));
+    return (n < 0 ? '△ ' : '') + abs.toLocaleString('ko-KR');
+  }
+  function parse(el) { return parseFloat((el.value || '0').replace(/,/g, '').replace('△ ', '')) || 0; }
   function handleInput(el) {
     const raw = el.value.replace(/[^0-9]/g, '');
     if (!raw) { el.value = ''; return; }
@@ -493,43 +504,90 @@
     const tr = el.closest('tr');
     const income  = parseFloat((tr.querySelector('[data-biz-income]').value  || '0').replace(/,/g,'')) || 0;
     const expense = parseFloat((tr.querySelector('[data-biz-expense]').value || '0').replace(/,/g,'')) || 0;
-    const net = Math.max(0, income - expense);
-    tr.querySelector('[data-biz-net]').value = net ? net.toLocaleString('ko-KR') : '';
+    // ② 결손 허용 - 음수 가능
+    const net = income - expense;
+    const netEl = tr.querySelector('[data-biz-net]');
+    if (net === 0) {
+      netEl.value = '';
+      netEl.style.color = 'var(--navy)';
+    } else if (net < 0) {
+      netEl.value = '△ ' + Math.abs(net).toLocaleString('ko-KR');
+      netEl.style.color = '#dc2626';
+    } else {
+      netEl.value = net.toLocaleString('ko-KR');
+      netEl.style.color = 'var(--navy)';
+    }
   }
 
   function calcTotal() {
     let bizIncome = 0, bizExpense = 0, bizNet = 0;
-    document.querySelectorAll('[data-biz-income]').forEach(el => { bizIncome += parse(el); });
-    document.querySelectorAll('[data-biz-expense]').forEach(el => { bizExpense += parse(el); });
-    document.querySelectorAll('[data-biz-net]').forEach(el => { bizNet += parse(el); });
-    document.getElementById('totalBizIncome').value  = bizIncome  ? fmt(bizIncome)  : '';
-    document.getElementById('totalBizExpense').value = bizExpense ? fmt(bizExpense) : '';
-    document.getElementById('totalBizNet').value     = bizNet     ? fmt(bizNet)     : '';
+    document.querySelectorAll('[data-biz-income]').forEach(el => { bizIncome += parseFloat((el.value||'0').replace(/,/g,''))||0; });
+    document.querySelectorAll('[data-biz-expense]').forEach(el => { bizExpense += parseFloat((el.value||'0').replace(/,/g,''))||0; });
+    // 사업장별 net 합산 (음수 포함)
+    document.querySelectorAll('[data-biz-net]').forEach(el => {
+      const v = el.value.replace('△ ','').replace(/,/g,'');
+      const n = parseFloat(v) || 0;
+      bizNet += el.value.includes('△') ? -n : n;
+    });
+    document.getElementById('totalBizIncome').value  = bizIncome  ? bizIncome.toLocaleString('ko-KR')  : '';
+    document.getElementById('totalBizExpense').value = bizExpense ? bizExpense.toLocaleString('ko-KR') : '';
+    // 합계 소득금액도 음수 표시
+    if (bizNet === 0) {
+      document.getElementById('totalBizNet').value = '';
+      document.getElementById('totalBizNet').style.color = 'var(--navy)';
+    } else if (bizNet < 0) {
+      document.getElementById('totalBizNet').value = '△ ' + Math.abs(bizNet).toLocaleString('ko-KR');
+      document.getElementById('totalBizNet').style.color = '#dc2626';
+    } else {
+      document.getElementById('totalBizNet').value = bizNet.toLocaleString('ko-KR');
+      document.getElementById('totalBizNet').style.color = 'var(--navy)';
+    }
+
     let otherRevenue = 0, otherIncome = 0;
-    document.querySelectorAll('[data-other-revenue]').forEach(el => { otherRevenue += parse(el); });
-    document.querySelectorAll('[data-other-income]').forEach(el => { otherIncome += parse(el); });
-    document.getElementById('totalOtherRevenue').value = otherRevenue ? fmt(otherRevenue) : '';
-    document.getElementById('totalOtherIncome').value  = otherIncome  ? fmt(otherIncome)  : '';
-    document.getElementById('tc_income').value    = (bizIncome + otherRevenue) ? fmt(bizIncome + otherRevenue) : '';
-    document.getElementById('tc_expense').value   = bizExpense ? fmt(bizExpense) : '';
-    document.getElementById('tc_netincome').value = (bizNet + otherIncome) ? fmt(bizNet + otherIncome) : '';
+    document.querySelectorAll('[data-other-revenue]').forEach(el => { otherRevenue += parseFloat((el.value||'0').replace(/,/g,''))||0; });
+    document.querySelectorAll('[data-other-income]').forEach(el => { otherIncome += parseFloat((el.value||'0').replace(/,/g,''))||0; });
+    document.getElementById('totalOtherRevenue').value = otherRevenue ? otherRevenue.toLocaleString('ko-KR') : '';
+    document.getElementById('totalOtherIncome').value  = otherIncome  ? otherIncome.toLocaleString('ko-KR')  : '';
+
+    const totalIncome = bizIncome + otherRevenue;
+    const totalNet    = bizNet + otherIncome;
+
+    document.getElementById('tc_income').value = totalIncome ? totalIncome.toLocaleString('ko-KR') : '';
+    document.getElementById('tc_expense').value = bizExpense ? bizExpense.toLocaleString('ko-KR') : '';
+
+    const netEl = document.getElementById('tc_netincome');
+    if (totalNet === 0) {
+      netEl.value = ''; netEl.style.color = 'var(--navy)';
+    } else if (totalNet < 0) {
+      netEl.value = '△ ' + Math.abs(totalNet).toLocaleString('ko-KR');
+      netEl.style.color = '#dc2626';
+    } else {
+      netEl.value = totalNet.toLocaleString('ko-KR');
+      netEl.style.color = 'var(--navy)';
+    }
     calcTax();
+  }
+
+  function parseSignedEl(el) {
+    const v = el.value;
+    if (!v) return 0;
+    const n = parseFloat(v.replace('△ ','').replace(/,/g,'')) || 0;
+    return v.includes('△') ? -n : n;
   }
 
   function syncDeduct() {
     let sum = 0;
-    document.querySelectorAll('[data-deduct]').forEach(e => { sum += parse(e); });
-    document.getElementById('tc_deduct').value = sum ? fmt(sum) : '';
+    document.querySelectorAll('[data-deduct]').forEach(e => { sum += parseFloat((e.value||'0').replace(/,/g,''))||0; });
+    document.getElementById('tc_deduct').value = sum ? sum.toLocaleString('ko-KR') : '';
     calcTax();
   }
   function syncTaxDeduct() {
     let sum = 0;
-    document.querySelectorAll('[data-taxdeduct]').forEach(e => { sum += parse(e); });
-    document.getElementById('tc_taxcredit').value = sum ? fmt(sum) : '';
+    document.querySelectorAll('[data-taxdeduct]').forEach(e => { sum += parseFloat((e.value||'0').replace(/,/g,''))||0; });
+    document.getElementById('tc_taxcredit').value = sum ? sum.toLocaleString('ko-KR') : '';
     calcTax();
   }
 
-  // 특별소득공제 추가형
   let specialDeductSeq = 0;
   function addSpecialDeductRow(data) {
     specialDeductSeq++;
@@ -565,47 +623,50 @@
   document.getElementById('tc_localtax').addEventListener('focus', () => { localTaxManuallyEdited = true; });
 
   function calcTax() {
-    const netIncome = parse(document.getElementById('tc_netincome'));
-    const deduct    = parse(document.getElementById('tc_deduct'));
-    const credit    = parse(document.getElementById('tc_taxcredit'));
-    const prepaid   = parse(document.getElementById('tc_prepaid'));
-    const agritax   = parse(document.getElementById('tc_agritax'));
-    const taxBase    = Math.max(0, netIncome - deduct);
+    const netIncome  = parseSignedEl(document.getElementById('tc_netincome'));
+    const carryover  = parseFloat((document.getElementById('tc_carryover').value||'0').replace(/,/g,''))||0;
+    const deduct     = parseFloat((document.getElementById('tc_deduct').value||'0').replace(/,/g,''))||0;
+    const credit     = parseFloat((document.getElementById('tc_taxcredit').value||'0').replace(/,/g,''))||0;
+    const penalty    = parseFloat((document.getElementById('tc_penalty').value||'0').replace(/,/g,''))||0;
+    const prepaid    = parseFloat((document.getElementById('tc_prepaid').value||'0').replace(/,/g,''))||0;
+    const agritax    = parseFloat((document.getElementById('tc_agritax').value||'0').replace(/,/g,''))||0;
+
+    const taxBase    = Math.max(0, netIncome - carryover - deduct);
     const bracket    = getBracket(taxBase);
     const calcTaxAmt = taxBase > 0 ? Math.max(0, Math.round(taxBase * bracket.rate) - bracket.progressive) : 0;
-    const finalAmt   = calcTaxAmt - credit - prepaid;
+    const finalAmt   = calcTaxAmt - credit + penalty - prepaid;
     const finalWithAgri = finalAmt + agritax;
 
-    document.getElementById('tc_taxbase').value  = taxBase    ? fmt(taxBase)    : '';
-    document.getElementById('tc_calctax').value  = calcTaxAmt ? fmt(calcTaxAmt) : '';
+    document.getElementById('tc_taxbase').value  = taxBase    ? taxBase.toLocaleString('ko-KR')    : '';
+    document.getElementById('tc_calctax').value  = calcTaxAmt ? calcTaxAmt.toLocaleString('ko-KR') : '';
 
     if (taxBase > 0) {
       document.getElementById('tc_ratePct').textContent        = Math.round(bracket.rate * 100) + '%';
-      document.getElementById('tc_progressiveAmt').textContent = fmt(bracket.progressive) + '원';
+      document.getElementById('tc_progressiveAmt').textContent = bracket.progressive.toLocaleString('ko-KR') + '원';
     } else {
       document.getElementById('tc_ratePct').textContent        = '—';
       document.getElementById('tc_progressiveAmt').textContent = '—';
     }
 
-    const finalEl = document.getElementById('tc_final');
+    const finalEl    = document.getElementById('tc_final');
     const finalLabel = document.getElementById('finalLabel');
     if (finalAmt < 0) {
-      finalEl.value = fmt(Math.abs(finalAmt));
+      finalEl.value = Math.abs(finalAmt).toLocaleString('ko-KR');
       finalLabel.textContent = '결정세액 (환급)';
       finalEl.style.color = '#22c55e';
     } else {
-      finalEl.value = finalAmt ? fmt(finalAmt) : '';
+      finalEl.value = finalAmt ? finalAmt.toLocaleString('ko-KR') : '';
       finalLabel.textContent = '결정세액 (납부)';
       finalEl.style.color = 'var(--gold)';
     }
 
     const fwaEl = document.getElementById('tc_finalWithAgri');
-    fwaEl.value = finalWithAgri ? fmt(Math.abs(finalWithAgri)) : '';
+    fwaEl.value = finalWithAgri ? Math.abs(finalWithAgri).toLocaleString('ko-KR') : '';
     fwaEl.style.color = finalWithAgri < 0 ? '#22c55e' : '#15803d';
 
     if (!localTaxManuallyEdited) {
       const autoLocal = finalAmt > 0 ? Math.round(finalAmt * 0.1) : 0;
-      document.getElementById('tc_localtax').value = autoLocal ? fmt(autoLocal) : '';
+      document.getElementById('tc_localtax').value = autoLocal ? autoLocal.toLocaleString('ko-KR') : '';
     }
   }
 
@@ -657,9 +718,11 @@
       f_deadline: document.getElementById('f_deadline').value,
       bizRows, otherRevenue, otherIncome, otherNote, deduct, deductNote,
       specialDeducts, creditDetails,
-      tc_agritax: document.getElementById('tc_agritax').value,
-      tc_prepaid: document.getElementById('tc_prepaid').value,
-      tc_localtax: document.getElementById('tc_localtax').value,
+      tc_carryover: document.getElementById('tc_carryover').value,
+      tc_penalty:   document.getElementById('tc_penalty').value,
+      tc_agritax:   document.getElementById('tc_agritax').value,
+      tc_prepaid:   document.getElementById('tc_prepaid').value,
+      tc_localtax:  document.getElementById('tc_localtax').value,
       localTaxManuallyEdited,
       memo: document.getElementById('memo').value,
     };
@@ -672,33 +735,29 @@
     document.getElementById('bizRows').innerHTML = '';
     bizSeq = 0;
     (d.bizRows || []).forEach(row => addBizRow(row));
-
     const revInputs = document.querySelectorAll('[data-other-revenue]');
     (d.otherRevenue || []).forEach((v, i) => { if (revInputs[i]) revInputs[i].value = v; });
     const incInputs = document.querySelectorAll('[data-other-income]');
     (d.otherIncome || []).forEach((v, i) => { if (incInputs[i]) incInputs[i].value = v; });
     const otherNotes = document.querySelectorAll('#section-other-body .income-table tbody tr:not(.row-total) td:last-child input');
     (d.otherNote || []).forEach((v, i) => { if (otherNotes[i]) otherNotes[i].value = v; });
-
     const deductInputs = document.querySelectorAll('[data-deduct]');
     (d.deduct || []).forEach((v, i) => { if (deductInputs[i]) deductInputs[i].value = v; });
     const deductNotes = document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input');
     (d.deductNote || []).forEach((v, i) => { if (deductNotes[i]) deductNotes[i].value = v; });
-
     document.getElementById('specialDeductRows').innerHTML = '';
     specialDeductSeq = 0;
     (d.specialDeducts || []).forEach(row => addSpecialDeductRow(row));
-
     document.getElementById('creditDetailRows').innerHTML = '';
     creditSeq = 0;
     (d.creditDetails || []).forEach(row => addCreditDetailRow(row));
-
-    document.getElementById('tc_agritax').value  = d.tc_agritax  || '';
-    document.getElementById('tc_prepaid').value  = d.tc_prepaid  || '';
+    document.getElementById('tc_carryover').value = d.tc_carryover || '';
+    document.getElementById('tc_penalty').value   = d.tc_penalty   || '';
+    document.getElementById('tc_agritax').value   = d.tc_agritax   || '';
+    document.getElementById('tc_prepaid').value   = d.tc_prepaid   || '';
     localTaxManuallyEdited = d.localTaxManuallyEdited || false;
-    document.getElementById('tc_localtax').value = d.tc_localtax || '';
+    document.getElementById('tc_localtax').value  = d.tc_localtax  || '';
     document.getElementById('memo').value = d.memo || '';
-
     calcTotal(); syncDeduct(); syncTaxDeduct();
   }
 
@@ -722,7 +781,7 @@
   }
 
   window.addEventListener('beforeprint', function() {
-    const hasOther = Array.from(document.querySelectorAll('[data-other-income]')).some(el => parse(el) > 0);
+    const hasOther = Array.from(document.querySelectorAll('[data-other-income]')).some(el => el.value && el.value !== '0');
     document.getElementById('section-other-body').classList.toggle('print-hidden', !hasOther);
   });
   window.addEventListener('afterprint', function() {
