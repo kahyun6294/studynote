@@ -41,6 +41,13 @@
   @keyframes spin { to{transform:rotate(360deg)} }
   .overlay-msg { font-size:14px; font-weight:600; color:var(--navy); }
   .overlay-sub { font-size:12px; color:var(--muted); margin-top:4px; }
+  /* 디버그 모달 */
+  .debug-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:300; align-items:center; justify-content:center; }
+  .debug-modal.show { display:flex; }
+  .debug-box { background:#fff; border-radius:12px; padding:24px; width:90%; max-width:700px; max-height:80vh; display:flex; flex-direction:column; gap:12px; }
+  .debug-box h3 { font-size:14px; color:var(--navy); }
+  .debug-text { flex:1; overflow:auto; border:1px solid var(--border); border-radius:6px; padding:12px; font-size:11px; font-family:monospace; white-space:pre-wrap; background:#fafafa; }
+  .debug-btns { display:flex; gap:8px; justify-content:flex-end; }
   .page-wrap { max-width: 820px; margin: 68px auto 40px; background: #fff; box-shadow: 0 4px 24px rgba(0,0,0,.15); padding: 40px 44px 48px; }
   .doc-header { border-bottom: 3px solid var(--navy); padding-bottom: 18px; margin-bottom: 24px; }
   .doc-header-top { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -142,7 +149,19 @@
   <div class="overlay-box">
     <div class="overlay-spinner"></div>
     <div class="overlay-msg">PDF 분석 중...</div>
-    <div class="overlay-sub">신고서에서 데이터를 추출하고 있어요</div>
+    <div class="overlay-sub">잠깐만요!</div>
+  </div>
+</div>
+
+<!-- 디버그 모달 -->
+<div class="debug-modal" id="debugModal">
+  <div class="debug-box">
+    <h3>📄 추출된 텍스트 (이 내용을 복사해서 알려주세요)</h3>
+    <div class="debug-text" id="debugText"></div>
+    <div class="debug-btns">
+      <button class="toolbar-btn btn-save" onclick="copyDebugText()">복사</button>
+      <button class="toolbar-btn btn-reset" onclick="closeDebug()">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -464,7 +483,15 @@
 
   const API_URL = 'https://script.google.com/macros/s/AKfycbziHJ0t95r2AeXclKzAh5PX4cIn8Z-aXg6syBD9wiamomcYkHPYsjomLeWns62Sc1CV/exec';
 
-  // ── PDF 업로드 (pdf.js 무료) ───────────────────
+  let debugFullText = '';
+
+  function copyDebugText() {
+    navigator.clipboard.writeText(debugFullText).then(() => alert('복사됐어요!'));
+  }
+  function closeDebug() {
+    document.getElementById('debugModal').classList.remove('show');
+  }
+
   async function uploadPDF(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -478,179 +505,21 @@
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const tc = await page.getTextContent();
-        // 위치 기반으로 정렬 (y 내림차순, x 오름차순)
         const items = tc.items
           .filter(it => it.str.trim())
-          .map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5] }))
-          .sort((a, b) => b.y - a.y || a.x - b.x);
+          .sort((a, b) => b.transform[5] - a.transform[5] || a.transform[4] - b.transform[4]);
         fullText += items.map(it => it.str).join(' ') + '\n';
       }
 
-      const data = parseKoreanTaxReturn(fullText);
-      applyPDFData(data);
-    } catch(e) {
-      alert('PDF 분석 중 오류가 발생했어요.\n' + e.message);
-      console.error(e);
-    } finally {
+      debugFullText = fullText;
+      document.getElementById('debugText').textContent = fullText.substring(0, 3000);
       document.getElementById('loadingOverlay').classList.remove('show');
+      document.getElementById('debugModal').classList.add('show');
+
+    } catch(e) {
+      document.getElementById('loadingOverlay').classList.remove('show');
+      alert('오류: ' + e.message);
     }
-  }
-
-  function parseKoreanTaxReturn(raw) {
-    const t = raw.replace(/\s+/g, ' ');
-
-    const pn = (s) => {
-      if (!s) return 0;
-      const n = parseInt(String(s).replace(/[,\s]/g, ''), 10);
-      return isNaN(n) ? 0 : n;
-    };
-    const extractNums = (s) => {
-      return (s.match(/[\d,]{4,}/g) || [])
-        .map(n => parseInt(n.replace(/,/g,''), 10))
-        .filter(n => n >= 1000);
-    };
-
-    const result = {
-      name:'', taxYear:'', deadline:'',
-      bizRows:[],
-      인적공제:0, 국민연금:0, 개인연금저축:0, 노란우산공제:0,
-      퇴직연금세액공제:0, 연금계좌세액공제:0,
-      기타세액공제:[],
-      tc_agritax:0, tc_prepaid:0,
-    };
-
-    // 귀속연도
-    const yearM = t.match(/[\(（]\s*(\d{4})\s*년\s*귀속/);
-    if (yearM) result.taxYear = yearM[1];
-
-    // 성명 + 납부기한
-    const dlM = t.match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일\s*신고인\s*([\가-힣]{2,6})/);
-    if (dlM) {
-      result.deadline = `${dlM[1]}년 ${dlM[2]}월 ${dlM[3]}일`;
-      result.name = dlM[4];
-    }
-
-    // 사업자등록번호 패턴
-    const allRegs = [...new Set(t.match(/\d{3}-\d{2}-\d{5}/g) || [])];
-
-    // 사업소득명세서 섹션에서 수입/경비 추출
-    const bizM = t.match(/사업소득명세서(.+?)(?=종합소득금액|이월결손금|소득공제명세서|$)/s);
-    if (bizM) {
-      const bz = bizM[1];
-      const bizRegs = [...new Set(bz.match(/\d{3}-\d{2}-\d{5}/g) || [])];
-      const incM = bz.match(/총\s*수\s*입\s*금\s*액\s+([\d,\s]+)/);
-      const expM = bz.match(/필\s*요\s*경\s*비\s+([\d,\s]+)/);
-      const incomes  = incM  ? extractNums(incM[1])  : [];
-      const expenses = expM  ? extractNums(expM[1])  : [];
-
-      // 사업장명 추출 (상호 ~ 사업자등록번호 사이)
-      const nameM = bz.match(/상\s*호\s+([\s\S]+?)(?=사\s*업\s*자\s*등\s*록|⑤)/);
-      let bizNames = [];
-      if (nameM) {
-        const ns = nameM[1].replace(/\s+/g,' ').trim();
-        if (bizRegs.length === 1) {
-          bizNames = [ns];
-        } else {
-          // 첫번째 닫는 괄호 뒤에서 분리
-          const sp = ns.match(/^(.+?[\)\）])\s+(.+)$/);
-          if (sp) bizNames = [sp[1].trim(), sp[2].trim()];
-          else bizNames = ns.split(/\s{2,}/);
-        }
-      }
-
-      (bizRegs.length > 0 ? bizRegs : allRegs).forEach((reg, i) => {
-        result.bizRows.push({
-          name:    bizNames[i] || '',
-          code:    reg,
-          income:  incomes[i]  || 0,
-          expense: expenses[i] || 0,
-        });
-      });
-    } else if (allRegs.length > 0) {
-      // 섹션 못 찾으면 전체 텍스트에서 추출
-      const incM = t.match(/⑨\s*총\s*수\s*입\s*금\s*액\s+([\d,\s]+)/);
-      const expM = t.match(/⑩\s*필\s*요\s*경\s*비\s+([\d,\s]+)/);
-      const incomes  = incM ? extractNums(incM[1])  : [];
-      const expenses = expM ? extractNums(expM[1]) : [];
-      allRegs.forEach((reg, i) => {
-        result.bizRows.push({ name:'', code:reg, income:incomes[i]||0, expense:expenses[i]||0 });
-      });
-    }
-
-    // 인적공제 (본인)
-    const pm = t.match(/①\s*본\s*인\s+([\d,]+)/);
-    if (pm) result.인적공제 = pn(pm[1]);
-
-    // 국민연금
-    const nm = t.match(/⑨\s*국\s*민\s*연\s*금\s+([\d,]+)/);
-    if (nm) result.국민연금 = pn(nm[1]);
-
-    // 노란우산공제
-    const ym = t.match(/소기업\s*[ㆍ·]\s*소상공인\s*공제부금[^\d]+([\d,]+)/);
-    if (ym) result.노란우산공제 = pn(ym[1]);
-
-    // 고용증대세액공제
-    const em = t.match(/고용을?\s*증대시킨\s*기업[^\d]+([\d,]+)\s+([\d,]+)/);
-    if (em) {
-      const amt = pn(em[2]);
-      if (amt > 0) result.기타세액공제.push({ label:'고용증대세액공제', amount:amt });
-    }
-
-    // 표준세액공제
-    const sm = t.match(/표\s*준\s*세\s*액\s*공\s*제\s*\d+\s+([\d,]+)/);
-    if (sm) {
-      const amt = pn(sm[1]);
-      if (amt > 0) result.기타세액공제.push({ label:'표준세액공제', amount:amt });
-    }
-
-    // 농어촌특별세 (신고기한내납부할세액 두번째 숫자)
-    const agM = t.match(/신고기한내\s*납부할\s*세액[^\d]+([\d,]+)\s+([\d,]+)/);
-    if (agM) result.tc_agritax = pn(agM[2]);
-    else {
-      const agM2 = t.match(/산\s*출\s*세\s*액\s+([\d,]+)\s+([\d,]+)/);
-      if (agM2) result.tc_agritax = pn(agM2[2]);
-    }
-
-    return result;
-  }
-
-  function applyPDFData(d) {
-    if (d.name)     document.getElementById('f_name').value     = d.name;
-    if (d.taxYear)  document.getElementById('taxYear').value    = d.taxYear;
-    if (d.deadline) document.getElementById('f_deadline').value = d.deadline;
-
-    document.getElementById('bizRows').innerHTML = '';
-    bizSeq = 0;
-    if (d.bizRows && d.bizRows.length > 0) {
-      d.bizRows.forEach(row => addBizRow({
-        name:    row.name,
-        code:    row.code,
-        income:  row.income  ? row.income.toLocaleString('ko-KR')  : '',
-        expense: row.expense ? row.expense.toLocaleString('ko-KR') : '',
-      }));
-    } else { addBizRow(); addBizRow(); }
-
-    const di = document.querySelectorAll('[data-deduct]');
-    [d.인적공제, d.국민연금, d.개인연금저축, d.노란우산공제].forEach((v,i) => {
-      if (di[i]) di[i].value = v ? v.toLocaleString('ko-KR') : '';
-    });
-
-    const ti = document.querySelectorAll('[data-taxdeduct]');
-    [d.퇴직연금세액공제, d.연금계좌세액공제].forEach((v,i) => {
-      if (ti[i]) ti[i].value = v ? v.toLocaleString('ko-KR') : '';
-    });
-
-    document.getElementById('creditDetailRows').innerHTML = '';
-    creditSeq = 0;
-    (d.기타세액공제 || []).forEach(item => {
-      if (item.amount > 0) addCreditDetailRow({ label:item.label, amount:item.amount.toLocaleString('ko-KR') });
-    });
-
-    if (d.tc_agritax) document.getElementById('tc_agritax').value = d.tc_agritax.toLocaleString('ko-KR');
-    if (d.tc_prepaid) document.getElementById('tc_prepaid').value = d.tc_prepaid.toLocaleString('ko-KR');
-
-    calcTotal(); syncDeduct(); syncTaxDeduct();
-    alert('✅ PDF 데이터를 불러왔어요!\n내용 확인 후 필요한 부분만 수정해주세요.');
   }
 
   // ── Google Sheets 연동 ──────────────────────────
@@ -710,7 +579,6 @@
     catch(e) { setSyncStatus('error','삭제 실패'); }
   }
 
-  // ── 계산 로직 ──────────────────────────────────
   function parseSignedEl(el) {
     const v = el.value; if (!v) return 0;
     const n = parseFloat(v.replace('△ ','').replace(/,/g,''))||0;
@@ -766,13 +634,11 @@
     if(bn===0){ne2.value='';ne2.style.color='var(--navy)';}
     else if(bn<0){ne2.value='△ '+Math.abs(bn).toLocaleString('ko-KR');ne2.style.color='#dc2626';}
     else{ne2.value=bn.toLocaleString('ko-KR');ne2.style.color='var(--navy)';}
-
     let or=0,oi=0;
     document.querySelectorAll('[data-other-revenue]').forEach(e=>{or+=parseFloat((e.value||'0').replace(/,/g,''))||0;});
     document.querySelectorAll('[data-other-income]').forEach(e=>{oi+=parseFloat((e.value||'0').replace(/,/g,''))||0;});
     document.getElementById('totalOtherRevenue').value = or ? or.toLocaleString('ko-KR') : '';
     document.getElementById('totalOtherIncome').value  = oi ? oi.toLocaleString('ko-KR') : '';
-
     const tn=bn+oi;
     document.getElementById('tc_income').value  = (bi+or) ? (bi+or).toLocaleString('ko-KR') : '';
     document.getElementById('tc_expense').value = be ? be.toLocaleString('ko-KR') : '';
