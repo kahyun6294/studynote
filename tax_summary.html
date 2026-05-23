@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-  // pdf.js 워커 경로 설정
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 </script>
 <style>
@@ -35,10 +34,6 @@
   .client-select option { background: var(--navy); color: #fff; }
   .sync-status { font-size: 11px; color: #86efac; display: flex; align-items: center; gap: 4px; }
   .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
-  .sync-dot.loading { background: #fbbf24; animation: pulse .8s infinite; }
-  .sync-dot.error { background: #f87171; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-  /* 로딩 오버레이 */
   .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
   .overlay.show { display:flex; }
   .overlay-box { background:#fff; border-radius:12px; padding:32px 40px; text-align:center; }
@@ -59,7 +54,6 @@
   .field-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
   .field-input { border: none; border-bottom: 1.5px solid var(--border); padding: 5px 4px; font-family: inherit; font-size: 13px; color: var(--text); background: transparent; outline: none; transition: border-color .15s; }
   .field-input:focus { border-bottom-color: var(--navy); }
-  .field-input::placeholder { color: #bbb; }
   .section { margin-bottom: 28px; }
   .section-header { display: flex; align-items: center; gap: 10px; background: var(--navy); color: #fff; padding: 9px 14px; border-radius: 6px 6px 0 0; }
   .section-num { background: var(--gold); color: #fff; font-size: 11px; font-weight: 700; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -67,46 +61,15 @@
   .section-body { border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; }
   .biz-table { width: 100%; border-collapse: collapse; }
   .biz-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-  .biz-table td { padding: 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .biz-table td { padding: 5px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
   .biz-table tr:last-child td { border-bottom: none; }
-  .biz-table tr:hover td { background: var(--bg); }
-  .biz-table .td-del { width: 38px; text-align: center; padding: 6px 4px; }
   .biz-table tfoot td { background: #f0ede5; font-weight: 700; padding: 8px 10px; border-top: 2px solid var(--border); }
-  .income-table { width: 100%; border-collapse: collapse; }
-  .income-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
-  .income-table th.th-r { text-align: right; }
-  .income-table td { padding: 0; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .income-table tr:last-child td { border-bottom: none; }
-  .income-table tr:hover td { background: var(--bg); }
-  .income-table .td-label { padding: 9px 10px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
-  .row-total td { background: #f0ede5 !important; font-weight: 700; }
-  .amount-input { text-align: right; border: none; background: transparent; font-family: inherit; font-size: 13px; color: var(--text); padding: 9px 10px 9px 4px; width: 100%; outline: none; }
-  .amount-input:focus { background: #fffbf0; }
-  .amount-input::placeholder { color: #ccc; font-size: 12px; }
-  .amount-input.left { text-align: left; padding: 9px 10px; }
-  .amount-input.center { text-align: center; padding: 9px 6px; }
-  .type-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
-  .badge-blue   { background: #dbeafe; color: #1d4ed8; }
-  .badge-orange { background: #ffedd5; color: #c2410c; }
-  .badge-gray   { background: #f1f5f9; color: #475569; }
-  .badge-teal   { background: #ccfbf1; color: #0f766e; }
-  .add-row-btn { font-size: 12px; color: var(--navy); background: var(--bg2); border: 1px dashed var(--border); border-radius: 4px; padding: 5px 14px; cursor: pointer; font-family: inherit; transition: all .1s; display: inline-flex; align-items: center; gap: 4px; }
-  .add-row-btn:hover { background: var(--border); }
-  .del-row-btn { width: 22px; height: 22px; border-radius: 50%; background: #fee2e2; color: #dc2626; border: none; cursor: pointer; font-size: 13px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-family: inherit; padding: 0; flex-shrink: 0; transition: background .1s; }
-  .del-row-btn:hover { background: #fca5a5; }
-  .add-row-wrap { padding: 8px 12px; border-top: 1px solid var(--border); background: var(--bg); }
-  .deduct-table { width: 100%; border-collapse: collapse; }
-  .deduct-table th { background: var(--bg2); font-size: 11px; font-weight: 600; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--border); text-align: left; }
-  .deduct-table th.th-r { text-align: right; }
-  .deduct-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-  .deduct-table tr:last-child td { border-bottom: none; }
-  .deduct-table tr:hover td { background: var(--bg); }
-  .deduct-table .td-amt { text-align: right; }
-  .deduct-section-row td { background: var(--bg2); font-weight: 700; font-size: 12px; color: var(--navy); padding: 6px 12px; border-top: 1px solid var(--border); }
+  .amount-input { text-align: right; border: none; background: transparent; font-family: inherit; font-size: 13px; color: var(--text); padding: 5px 0; width: 100%; outline: none; }
+  .amount-input.left { text-align: left; }
+  .amount-input.center { text-align: center; }
   .tax-calc { padding: 0; }
-  .tax-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); transition: background .1s; }
+  .tax-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
   .tax-row:last-child { border-bottom: none; }
-  .tax-row:hover { background: var(--bg); }
   .tax-operator { font-size: 16px; font-weight: 700; text-align: center; color: var(--muted); }
   .tax-label { font-size: 13px; }
   .tax-label small { font-size: 11px; color: var(--muted); display: block; }
@@ -118,25 +81,14 @@
   .tax-row-final { background: var(--navy) !important; }
   .tax-row-final .tax-operator, .tax-row-final .tax-label { color: #fff !important; font-weight: 700; }
   .tax-row-final .amount-input { color: var(--gold) !important; font-weight: 700; font-size: 15px; }
-  .tax-row-final:hover { background: var(--navy-light) !important; }
-  .progressive-badge { display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 4px 10px; font-size: 11px; color: #1d4ed8; font-weight: 600; white-space: nowrap; }
-  .progressive-badge .rate-pct { font-size: 15px; font-weight: 700; color: var(--navy); }
-  .progressive-badge .sep { color: #93c5fd; }
-  .progressive-badge .deduction-amt { color: #dc2626; font-weight: 700; }
-  .memo-box { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  .memo-header { background: var(--bg2); padding: 8px 14px; font-size: 11px; font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
-  .memo-textarea { width: 100%; min-height: 80px; padding: 12px 14px; border: none; font-family: inherit; font-size: 12.5px; color: var(--text); resize: vertical; outline: none; background: #fff; line-height: 1.6; }
-  .memo-textarea::placeholder { color: #bbb; }
+  .add-row-wrap { padding: 8px 12px; border-top: 1px solid var(--border); background: var(--bg); }
+  .add-row-btn { font-size: 12px; color: var(--navy); background: var(--bg2); border: 1px dashed var(--border); border-radius: 4px; padding: 5px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .del-row-btn { width: 22px; height: 22px; border-radius: 50%; background: #fee2e2; color: #dc2626; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
   @media print {
     body { background: #fff; }
     .toolbar, .add-row-wrap, .del-row-btn { display: none !important; }
     .page-wrap { margin: 0; box-shadow: none; padding: 20px 24px 28px; }
-    .field-input, .amount-input, .doc-year-val, .memo-textarea,
-    .section-header, .row-total td, .tax-row-final,
-    .doc-tag, .deduct-section-row td, .biz-table tfoot td, .progressive-badge {
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    .print-hidden { display: none !important; }
+    .field-input, .amount-input, .doc-year-val, .tax-row-final { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     @page { size: A4; margin: 14mm 15mm 16mm; }
   }
 </style>
@@ -146,28 +98,18 @@
 <div class="overlay" id="loadingOverlay">
   <div class="overlay-box">
     <div class="overlay-spinner"></div>
-    <div class="overlay-msg">PDF 분석 중...</div>
-    <div class="overlay-sub">신고서에서 데이터를 추출하고 있어요</div>
+    <div class="overlay-msg">위하고 PDF 분석 중...</div>
+    <div class="overlay-sub">신고서 서식에서 데이터를 매칭하고 있어요</div>
   </div>
 </div>
 
 <div class="toolbar">
-  <span class="toolbar-title">📋 종합소득세 신고 요약</span>
-  <div class="sync-status">
-    <div class="sync-dot" id="syncDot"></div>
-    <span id="syncLabel">로컬 모드</span>
-  </div>
-  <select class="client-select" id="clientSelect" onchange="loadClient(this.value)">
-    <option value="">— 저장된 고객 —</option>
-  </select>
-  <button class="toolbar-btn btn-save" onclick="saveClient()">💾 저장</button>
-  <button class="toolbar-btn btn-del" onclick="deleteClient()">🗑 삭제</button>
-  <div class="toolbar-sep"></div>
-  <button class="toolbar-btn btn-pdf" onclick="document.getElementById('pdfInput').click()">📄 신고서 PDF</button>
+  <span class="toolbar-title">📋 종합소득세 신고 요약 (위하고 호환 버전)</span>
+  <button class="toolbar-btn btn-pdf" onclick="document.getElementById('pdfInput').click()">📄 위하고 PDF 불러오기</button>
   <input type="file" id="pdfInput" accept=".pdf" style="display:none" onchange="uploadPDF(event)">
   <div class="toolbar-sep"></div>
   <button class="toolbar-btn btn-reset" onclick="resetAll()">초기화</button>
-  <button class="toolbar-btn btn-print" onclick="window.print()">🖨 인쇄 / PDF</button>
+  <button class="toolbar-btn btn-print" onclick="window.print()">🖨 인쇄 / PDF 출력</button>
 </div>
 
 <div class="page-wrap">
@@ -184,521 +126,154 @@
       </div>
     </div>
   </div>
+
   <div class="client-row">
     <div class="client-field">
       <span class="field-label">성명</span>
-      <input class="field-input" id="f_name" placeholder="홍길동 대표님">
+      <input class="field-input" id="f_name" placeholder="고객 성명">
     </div>
     <div class="client-field">
       <span class="field-label">납부기한</span>
-      <input class="field-input" id="f_deadline" placeholder="2026년 6월 1일">
+      <input class="field-input" id="f_deadline" value="2026년 06월 01일">
     </div>
   </div>
 
   <div class="section">
     <div class="section-header">
       <div class="section-num">1</div>
-      <span class="section-title">사업장별 수입금액 <span style="font-size:11px;font-weight:400;opacity:.8">(사업소득)</span></span>
+      <span class="section-title">사업장별 수입금액 및 소득금액</span>
     </div>
     <div class="section-body">
       <table class="biz-table">
         <thead>
           <tr>
-            <th style="width:38px;text-align:center"></th>
-            <th style="width:22%">사업장명</th>
-            <th style="width:15%;text-align:center">사업자등록번호</th>
-            <th style="width:20%;text-align:right">수입금액 (원)</th>
-            <th style="width:20%;text-align:right">필요경비 (원)</th>
-            <th style="width:20%;text-align:right">소득금액 (원)</th>
+            <th style="width:50px; text-align:center;">삭제</th>
+            <th style="width:25%">상호 (사업장명)</th>
+            <th style="width:20%; text-align:center">사업자번호</th>
+            <th style="width:18%; text-align:right">총수입금액 (원)</th>
+            <th style="width:18%; text-align:right">필요경비 (원)</th>
+            <th style="width:19%; text-align:right">소득금액 (원)</th>
           </tr>
         </thead>
         <tbody id="bizRows"></tbody>
         <tfoot>
           <tr>
-            <td colspan="3" style="color:var(--navy);font-weight:700;font-size:13px;">합계</td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizIncome" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizExpense" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td style="text-align:right;"><input class="amount-input" id="totalBizNet" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
+            <td colspan="3" style="color:var(--navy); font-weight:700;">사업소득 합계</td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizIncome" readonly style="font-weight:700; color:var(--navy);"></td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizExpense" readonly style="font-weight:700; color:var(--navy);"></td>
+            <td style="text-align:right;"><input class="amount-input" id="totalBizNet" readonly style="font-weight:700; color:var(--navy);"></td>
           </tr>
         </tfoot>
       </table>
       <div class="add-row-wrap">
-        <button class="add-row-btn" onclick="addBizRow()">＋ 사업장 추가</button>
+        <button class="add-row-btn" onclick="addBizRow('', '', 0, 0, 0)">＋ 사업장 추가</button>
       </div>
     </div>
   </div>
 
-  <div class="section" id="section-other">
+  <div class="section">
     <div class="section-header">
       <div class="section-num">2</div>
-      <span class="section-title">타소득 합산 <span style="font-size:11px;font-weight:400;opacity:.8">(합산과세 대상)</span></span>
+      <span class="section-title">세액 계산 명세</span>
     </div>
-    <div class="section-body" id="section-other-body">
-      <table class="income-table">
-        <thead>
-          <tr>
-            <th style="width:32%">소득 종류</th>
-            <th class="th-r" style="width:22%">수입금액 (원)</th>
-            <th class="th-r" style="width:22%">소득금액 (원)</th>
-            <th class="th-r" style="width:24%">비고</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">이자소득</span></div></td>
-            <td><input class="amount-input" id="rev_interest" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" id="inc_interest" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" placeholder="금융기관명 등" style="font-size:12px;color:var(--muted)"></td>
-          </tr>
-          <tr>
-            <td><div class="td-label"><span class="type-badge badge-orange">배당소득</span></div></td>
-            <td><input class="amount-input" id="rev_dividend" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" id="inc_dividend" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
-          </tr>
-          <tr>
-            <td><div class="td-label"><span class="type-badge badge-blue">근로소득</span></div></td>
-            <td><input class="amount-input" id="rev_work" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" id="inc_work" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" placeholder="회사명 등" style="font-size:12px;color:var(--muted)"></td>
-          </tr>
-          <tr>
-            <td><div class="td-label"><span class="type-badge badge-teal">연금소득</span></div></td>
-            <td><input class="amount-input" id="rev_pension" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" id="inc_pension" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
-          </tr>
-          <tr>
-            <td><div class="td-label"><span class="type-badge badge-gray">기타소득</span></div></td>
-            <td><input class="amount-input" id="rev_other" data-other-revenue placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" id="inc_other" data-other-income placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted)"></td>
-          </tr>
-          <tr class="row-total">
-            <td><div class="td-label" style="font-weight:700;color:var(--navy)">타소득 합계</div></td>
-            <td><input class="amount-input" id="totalOtherRevenue" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td><input class="amount-input" id="totalOtherIncome" readonly style="cursor:default;font-weight:700;color:var(--navy);"></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">3</div>
-      <span class="section-title">공제참고자료(국세청자료)</span>
-    </div>
-    <div class="section-body">
-      <table class="deduct-table">
-        <thead>
-          <tr>
-            <th style="width:45%">공제 항목</th>
-            <th class="th-r" style="width:28%">공제 금액 (원)</th>
-            <th class="th-r" style="width:27%">비고</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="deduct-section-row"><td colspan="3">▸ 소득공제항목</td></tr>
-          <tr>
-            <td>인적공제</td>
-            <td class="td-amt"><input class="amount-input" id="ded_personal" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>국민연금보험료</td>
-            <td class="td-amt"><input class="amount-input" id="ded_npension" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>개인연금저축</td>
-            <td class="td-amt"><input class="amount-input" id="ded_ppension" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>노란우산공제 <span style="font-size:11px;color:var(--muted)">(소기업·소상공인 공제)</span></td>
-            <td class="td-amt"><input class="amount-input" id="ded_yellow" data-deduct placeholder="0" oninput="handleInput(this);syncDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr class="deduct-section-row"><td colspan="3">▸ 특별소득공제 <span style="font-size:11px;font-weight:400;">(근로소득자)</span></td></tr>
-          <tr>
-            <td colspan="3" style="padding:0;">
-              <div id="specialDeductRows"></div>
-              <div style="padding:7px 12px;background:var(--bg);border-top:1px solid var(--border);">
-                <button class="add-row-btn" onclick="addSpecialDeductRow()" style="font-size:11px;padding:3px 10px;">＋ 특별공제 항목 추가</button>
-              </div>
-            </td>
-          </tr>
-          <tr class="deduct-section-row"><td colspan="3">▸ 세액공제항목</td></tr>
-          <tr>
-            <td>퇴직연금세액공제</td>
-            <td class="td-amt"><input class="amount-input" id="crd_retire" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-          <tr>
-            <td>연금계좌세액공제</td>
-            <td class="td-amt"><input class="amount-input" id="crd_pension" data-taxdeduct placeholder="0" oninput="handleInput(this);syncTaxDeduct()"></td>
-            <td><input class="amount-input" placeholder="" style="font-size:12px;color:var(--muted);width:100%;text-align:left;padding-left:4px"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-header">
-      <div class="section-num">4</div>
-      <span class="section-title">세액 계산 요약</span>
-    </div>
-    <div class="section-body">
-      <div class="tax-calc">
-        <div class="tax-row">
-          <div class="tax-operator" style="color:var(--navy)">①</div>
-          <div class="tax-label">총수입금액 합계 <small>사업소득 + 타소득 자동 합산</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_income" placeholder="0" readonly style="cursor:default;"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">－</div>
-          <div class="tax-label">필요경비 <small>사업장별 필요경비 합계 자동 반영</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_expense" placeholder="0" readonly style="cursor:default;"></div>
-        </div>
-        <div class="tax-row tax-row-result">
-          <div class="tax-operator">=</div>
-          <div class="tax-label">소득금액 <small style="color:var(--muted)">결손 시 음수 표시</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_netincome" placeholder="0" readonly style="cursor:default"></div>
-        </div>
-        <div class="tax-row" style="background:#fff8f0 !important;">
-          <div class="tax-operator" style="color:#c2410c;">－</div>
-          <div class="tax-label" style="color:#c2410c;font-weight:600;">이월결손금 <small style="color:#c2410c;">전기 이월 결손금 공제</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_carryover" placeholder="0" oninput="handleInput(this);calcTax()" style="color:#c2410c;font-weight:600;"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">－</div>
-          <div class="tax-label">소득공제 합계 <small>인적공제, 연금보험료, 특별공제 등 자동 반영</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_deduct" placeholder="0" oninput="handleInput(this);calcTax()"></div>
-        </div>
-        <div class="tax-row tax-row-result">
-          <div class="tax-operator">=</div>
-          <div class="tax-label">과세표준</div>
-          <div class="tax-amount"><input class="amount-input" id="tc_taxbase" placeholder="0" readonly style="cursor:default"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">×</div>
-          <div class="tax-label">세율 <small>과세표준에 따라 자동 적용</small></div>
-          <div class="tax-amount" style="padding-right:10px;">
-            <span class="progressive-badge">
-              <span class="rate-pct" id="tc_ratePct">—</span>
-              <span class="sep">|</span>
-              누진공제 <span class="deduction-amt" id="tc_progressiveAmt">—</span>
-            </span>
-          </div>
-        </div>
-        <div class="tax-row tax-row-result">
-          <div class="tax-operator">=</div>
-          <div class="tax-label">산출세액 <small style="color:var(--muted)">= 과세표준 × 세율 − 누진공제</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_calctax" placeholder="0" readonly style="cursor:default"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">－</div>
-          <div class="tax-label">세액공제·감면 합계 <small>공제·감면 항목 상세 입력 가능</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_taxcredit" placeholder="0" oninput="handleInput(this);calcTax()"></div>
-        </div>
-        <div id="creditDetailWrap" style="border-bottom:1px solid var(--border);background:#fafaf7;">
-          <div id="creditDetailRows"></div>
-          <div style="padding:6px 14px 6px 46px;">
-            <button class="add-row-btn" onclick="addCreditDetailRow()" style="font-size:11px;padding:3px 10px;">＋ 공제·감면 항목 추가</button>
-          </div>
-        </div>
-        <div class="tax-row" style="background:#fff8f8 !important;">
-          <div class="tax-operator" style="color:#dc2626;">＋</div>
-          <div class="tax-label" style="color:#dc2626;font-weight:600;">가산세 <small style="color:#dc2626;">무신고·납부지연·무기장 등</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_penalty" placeholder="0" oninput="handleInput(this);calcTax()" style="color:#dc2626;font-weight:600;"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">＋</div>
-          <div class="tax-label">농어촌특별세 <small>공제·감면에 따른 농특세 (해당 시 기재)</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_agritax" placeholder="0" oninput="handleInput(this);calcTax()"></div>
-        </div>
-        <div class="tax-row">
-          <div class="tax-operator">－</div>
-          <div class="tax-label">기납부세액 <small>중간예납, 원천징수 세액</small></div>
-          <div class="tax-amount"><input class="amount-input" id="tc_prepaid" placeholder="0" oninput="handleInput(this);calcTax()"></div>
-        </div>
-        <div class="tax-row tax-row-final">
-          <div class="tax-operator" style="color:var(--gold)">＝</div>
-          <div class="tax-label" id="finalLabel">결정세액 (납부)</div>
-          <div class="tax-amount"><input class="amount-input" id="tc_final" placeholder="0" readonly style="cursor:default"></div>
-        </div>
-        <div class="tax-row" style="background:#f0fdf4 !important;">
-          <div class="tax-operator" style="color:#15803d;">＋</div>
-          <div class="tax-label" style="color:#15803d;font-weight:600;">농어촌특별세 포함 최종 납부세액</div>
-          <div class="tax-amount"><input class="amount-input" id="tc_finalWithAgri" placeholder="0" readonly style="cursor:default;color:#15803d;font-weight:700;"></div>
-        </div>
-        <div style="background:var(--bg2);padding:6px 14px;border-top:2px dashed var(--border);border-bottom:1px solid var(--border);">
-          <span style="font-size:11px;font-weight:700;color:var(--navy);">▸ 지방소득세</span>
-          <span style="font-size:11px;color:var(--muted);margin-left:8px;">소득세의 10% 자동 계산 (수정 가능)</span>
-        </div>
-        <div class="tax-row" style="background:#f8f5ff !important;border-radius:0 0 6px 6px;">
-          <div class="tax-operator" style="color:#7c3aed;">＋</div>
-          <div class="tax-label" style="color:#6d28d9;font-weight:600;">
-            지방소득세
-            <small style="color:#7c3aed;">결정세액 × 10% 자동 계산 · 직접 수정 가능</small>
-          </div>
-          <div class="tax-amount"><input class="amount-input" id="tc_localtax" placeholder="0" oninput="handleInput(this)" style="color:#6d28d9;font-weight:600;"></div>
-        </div>
+    <div class="section-body tax-calc">
+      <div class="tax-row">
+        <div class="tax-operator"></div>
+        <div class="tax-label">종합소득금액 <small>사업소득 + 타소득 합산 금액</small></div>
+        <div class="tax-amount"><input class="amount-input" id="tc_total_income" placeholder="0" oninput="handleAmtInput(this)"></div>
       </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="memo-box">
-      <div class="memo-header">📝 특이사항 / 담당자 메모</div>
-      <textarea class="memo-textarea" id="memo" placeholder="신고 관련 특이사항, 추가 안내사항 등을 입력하세요..."></textarea>
+      <div class="tax-row">
+        <div class="tax-operator">－</div>
+        <div class="tax-label">소득공제 종합합계 <small>인적공제, 연금보험료 등 공제액</small></div>
+        <div class="tax-amount"><input class="amount-input" id="tc_deduction" placeholder="0" oninput="handleAmtInput(this)"></div>
+      </div>
+      <div class="tax-row tax-row-result">
+        <div class="tax-operator">＝</div>
+        <div class="tax-label">과세표준</div>
+        <div class="tax-amount"><input class="amount-input" id="tc_tax_base" readonly placeholder="0"></div>
+      </div>
+      <div class="tax-row">
+        <div class="tax-operator">×</div>
+        <div class="tax-label">세율 (%)</div>
+        <div class="tax-amount"><input class="amount-input center" id="tc_rate" placeholder="—" style="width:80px; text-align:center;"></div>
+      </div>
+      <div class="tax-row tax-row-result">
+        <div class="tax-operator">＝</div>
+        <div class="tax-label">산출세액</div>
+        <div class="tax-amount"><input class="amount-input" id="tc_calc_amt" placeholder="0" oninput="handleAmtInput(this)"></div>
+      </div>
+      <div class="tax-row">
+        <div class="tax-operator">－</div>
+        <div class="tax-label">세액공제 및 감면 <small>전자신고공제 등 공제합계</small></div>
+        <div class="tax-amount"><input class="amount-input" id="tc_credit" placeholder="0" oninput="handleAmtInput(this)"></div>
+      </div>
+      <div class="tax-row tax-row-final">
+        <div class="tax-operator">＝</div>
+        <div class="tax-label" id="finalLabel">결정세액 (납부)</div>
+        <div class="tax-amount"><input class="amount-input" id="tc_final" readonly placeholder="0"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  let bizSeq = 0;
-
-  // 인풋 핸들러 (천단위 콤마 설정용)
-  function handleInput(el) {
-    let val = el.value.replace(/[^0-9-]/g, '');
-    if(val === '-') { el.value = '-'; return; }
-    let num = parseInt(val, 10);
-    if(isNaN(num)) el.value = '';
-    else el.value = num.toLocaleString('ko-KR');
+  function fmtNum(num) {
+    if (isNaN(num)) return "0";
+    return num.toLocaleString('ko-KR');
   }
 
   function parseNum(str) {
-    if(!str) return 0;
-    let clean = str.replace(/,/g, '');
-    let num = parseInt(clean, 10);
-    return isNaN(num) ? 0 : num;
+    if (!str) return 0;
+    return parseInt(str.replace(/[^0-9-]/g, '')) || 0;
   }
 
-  function fmtNum(n) {
-    if (!n || n === 0) return '';
-    return Math.round(n).toLocaleString('ko-KR');
+  function handleAmtInput(el) {
+    let val = parseNum(el.value);
+    el.value = fmtNum(val);
+    calcAll();
   }
 
-  // 임시 비즈니스 로우 추가 함수 (기존 코드 누락분 보완)
-  function addBizRow(data = {}) {
-    bizSeq++;
+  function addBizRow(name='', bno='', inc=0, exp=0, net=0) {
     const tbody = document.getElementById('bizRows');
     const tr = document.createElement('tr');
-    tr.id = `bizRow_${bizSeq}`;
     tr.innerHTML = `
-      <td class="td-del"><button class="del-row-btn" onclick="removeBizRow(${bizSeq})">×</button></td>
-      <td><input class="amount-input left biz-name" value="${data.name || ''}" placeholder="사업장명"></td>
-      <td><input class="amount-input center biz-code" value="${data.code || ''}" placeholder="000-00-00000"></td>
-      <td><input class="amount-input biz-income" value="${data.income || ''}" placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-      <td><input class="amount-input biz-expense" value="${data.expense || ''}" placeholder="0" oninput="handleInput(this);calcTotal()"></td>
-      <td><input class="amount-input biz-net" readonly style="cursor:default;" placeholder="0"></td>
+      <td style="text-align:center;"><button class="del-row-btn" onclick="this.closest('tr').remove(); calcAll();">×</button></td>
+      <td><input class="amount-input left" value="${name}" placeholder="신성건축사사무소"></td>
+      <td><input class="amount-input center" value="${bno}" placeholder="000-00-00000"></td>
+      <td><input class="amount-input biz-inc" value="${fmtNum(inc)}" oninput="handleAmtInput(this)"></td>
+      <td><input class="amount-input biz-exp" value="${fmtNum(exp)}" oninput="handleAmtInput(this)"></td>
+      <td><input class="amount-input biz-net" value="${fmtNum(net)}" oninput="handleAmtInput(this)"></td>
     `;
     tbody.appendChild(tr);
-    calcTotal();
+    calcAll();
   }
 
-  function removeBizRow(seq) {
-    const row = document.getElementById(`bizRow_${seq}`);
-    if(row) row.remove();
-    calcTotal();
-  }
-
-  // 더미 함수 정의 (에러 방지용)
-  function addSpecialDeductRow() {}
-  function addCreditDetailRow() {}
-  function syncDeduct() { calcTotal(); }
-  function syncTaxDeduct() { calcTotal(); }
-
-  // ── [수정 핵심] PDF 업로드 및 완전 무료 브라우저 파싱 로직 ──────────────────────
-  async function uploadPDF(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    event.target.value = ''; // 초기화
-
-    document.getElementById('loadingOverlay').classList.add('show');
+  function calcAll() {
+    let tInc = 0, tExp = 0, tNet = 0;
     
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      let fullText = "";
-
-      // PDF 텍스트 전체 순회 추출
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(" ");
-        fullText += pageText + "\n";
-      }
-
-      console.log("=== 추출된 국세청 PDF 텍스트 ===");
-      console.log(fullText);
-
-      // 브라우저 텍스트 파싱 처리 엔진 가동
-      applyParsedTextData(fullText);
-
-    } catch(e) {
-      console.error(e);
-      alert('PDF 분석 중 오류가 발생했습니다.\n보안 문서이거나 텍스트가 없는 스캔 이미지 파일인지 확인해 주세요.');
-    } finally {
-      document.getElementById('loadingOverlay').classList.remove('show');
-    }
-  }
-
-  // 국세청 텍스트 정규식 분석 및 반영 매칭 엔진
-  function applyParsedTextData(text) {
-    // 1. 성명 추출 (성 명 또는 성명 뒤 가한 글자 매칭)
-    const nameMatch = text.match(/성\s*명\s*[:\s]*([가-힣\s]{2,5})/);
-    if (nameMatch) {
-      document.getElementById('f_name').value = nameMatch[1].trim();
-    }
-
-    // 2. 귀속연도 추출 (예: 2025 귀속 종합소득세 -> 2025 추출)
-    const yearMatch = text.match(/(\d{4})\s*귀속/);
-    if (yearMatch) {
-      document.getElementById('taxYear').value = yearMatch[1];
-    }
-
-    // 3. 인적공제, 연금, 저축 항목 파싱 패턴 예시
-    const personalDeduct = text.match(/인적공제.*?([\d,]+)/);
-    if (personalDeduct) document.getElementById('ded_personal').value = personalDeduct[1];
-
-    const nationalPension = text.match(/국민연금보험료.*?([\d,]+)/);
-    if (nationalPension) document.getElementById('ded_npension').value = nationalPension[1];
-
-    const yellowDeduct = text.match(/(노란우산|소기업).*?([\d,]+)/);
-    if (yellowDeduct) document.getElementById('ded_yellow').value = yellowDeduct[1];
-
-    // 4. 사업장 수입금액 및 필요경비 기본 파싱 (패턴 발견 시 자동 로우 생성)
-    // 국세청 서식 내 주업종코드 또는 사업자번호 근처 배치 텍스트 추적
-    const bizPattern = /([가-힣a-zA-Z0-9\s\(유\)\(주\)]+)\s+(\d{3}-\d{2}-\d{5})\s+([\d,]+)\s+([\d,]+)/g;
-    let match;
-    let foundBiz = false;
-    
-    // 기존 동적 행 일단 비우기
-    document.getElementById('bizRows').innerHTML = '';
-    bizSeq = 0;
-
-    while ((match = bizPattern.exec(text)) !== null) {
-      foundBiz = true;
-      addBizRow({
-        name: match[1].trim(),
-        code: match[2],
-        income: match[3],
-        expense: match[4]
-      });
-    }
-
-    // 고정 패턴이 안 잡힐 경우 기본 빈 로우 하나 세팅해 주기
-    if (!foundBiz) {
-      // 대안 패턴: 사업자번호 및 금액만 나열된 구조 추적
-       const altBizPattern = /(\d{3}-\d{2}-\d{5})\s+([\d,]+)/g;
-       let altMatch = altBizPattern.exec(text);
-       if(altMatch) {
-           addBizRow({ name: "확인 필요 사업장", code: altMatch[1], income: altMatch[2], expense: '0'});
-       } else {
-           addBizRow(); // 단일 빈 행 추가
-       }
-    }
-
-    // 금액 총정리 정산기 가동
-    calcTotal();
-    alert('PDF 데이터 분석 완료! 폼에 반영되었습니다.');
-  }
-
-  // ── 자동 합산 계산기 ──────────────────────
-  function calcTotal() {
-    let totalIncome = 0;
-    let totalExpense = 0;
-    let totalNet = 0;
-
-    // 1. 사업장별 금액 연산
-    const rows = document.querySelectorAll('#bizRows tr');
-    rows.forEach(row => {
-      const inc = parseNum(row.querySelector('.biz-income').value);
-      const exp = parseNum(row.querySelector('.biz-expense').value);
-      const net = inc - exp;
+    document.querySelectorAll('#bizRows tr').forEach(tr => {
+      let inc = parseNum(tr.querySelector('.biz-inc').value);
+      let exp = parseNum(tr.querySelector('.biz-exp').value);
+      let net = inc - exp;
+      tr.querySelector('.biz-net').value = fmtNum(net);
       
-      row.querySelector('.biz-net').value = net === 0 ? '' : net.toLocaleString('ko-KR');
-      totalIncome += inc;
-      totalExpense += exp;
-      totalNet += net;
+      tInc += inc; tExp += exp; tNet += net;
     });
 
-    document.getElementById('totalBizIncome').value = fmtNum(totalIncome);
-    document.getElementById('totalBizExpense').value = fmtNum(totalExpense);
-    document.getElementById('totalBizNet').value = (totalNet < 0 ? '-' : '') + fmtNum(Math.abs(totalNet));
+    document.getElementById('totalBizIncome').value = fmtNum(tInc);
+    document.getElementById('totalBizExpense').value = fmtNum(tExp);
+    document.getElementById('totalBizNet').value = fmtNum(tNet);
 
-    // 2. 타소득 합산 연산
-    let otherRev = 0;
-    let otherInc = 0;
-    document.querySelectorAll('[data-other-revenue]').forEach(el => otherRev += parseNum(el.value));
-    document.querySelectorAll('[data-other-income]').forEach(el => otherInc += parseNum(el.value));
-    
-    document.getElementById('totalOtherRevenue').value = fmtNum(otherRev);
-    document.getElementById('totalOtherIncome').value = fmtNum(otherInc);
+    // 세액계산 연동
+    let totalIncome = parseNum(document.getElementById('tc_total_income').value);
+    let deduction = parseNum(document.getElementById('tc_deduction').value);
+    let taxBase = Math.max(0, totalIncome - deduction);
+    document.getElementById('tc_tax_base').value = fmtNum(taxBase);
 
-    // 3. 세액 요약표 연동 반영
-    const finalRevenue = totalIncome + otherRev;
-    const finalExpense = totalExpense;
-    const finalNetIncome = totalNet + otherInc;
+    let calcAmt = parseNum(document.getElementById('tc_calc_amt').value);
+    let credit = parseNum(document.getElementById('tc_credit').value);
+    let finalTax = calcAmt - credit;
 
-    document.getElementById('tc_income').value = fmtNum(finalRevenue);
-    document.getElementById('tc_expense').value = fmtNum(finalExpense);
-    document.getElementById('tc_netincome').value = (finalNetIncome < 0 ? '-' : '') + fmtNum(Math.abs(finalNetIncome));
-
-    // 소득공제 합산 처리
-    let totalDeduct = 0;
-    document.querySelectorAll('[data-deduct]').forEach(el => totalDeduct += parseNum(el.value));
-    document.getElementById('tc_deduct').value = fmtNum(totalDeduct);
-
-    calcTax();
-  }
-
-  // 세율 및 최종결정세액 세부 수식 정산
-  function calcTax() {
-    const netIncome = parseNum(document.getElementById('tc_netincome').value);
-    const carryOver = parseNum(document.getElementById('tc_carryover').value);
-    const deduct = parseNum(document.getElementById('tc_deduct').value);
-
-    // 과세표준 = 소득금액 - 이월결손금 - 소득공제
-    let taxBase = netIncome - carryOver - deduct;
-    if(taxBase < 0) taxBase = 0;
-    document.getElementById('tc_taxbase').value = fmtNum(taxBase);
-
-    // 2025-2026년도 소득세 기본세율표 자동 매칭 구간 계산
-    let rate = 0;
-    let progressive = 0;
-
-    if (taxBase <= 14000000) { rate = 6; progressive = 0; }
-    else if (taxBase <= 50000000) { rate = 15; progressive = 1260000; }
-    else if (taxBase <= 88000000) { rate = 24; progressive = 5760000; }
-    else if (taxBase <= 150000000) { rate = 35; progressive = 15440000; }
-    else if (taxBase <= 300000000) { rate = 38; progressive = 19940000; }
-    else if (taxBase <= 500000000) { rate = 40; progressive = 25940000; }
-    else if (taxBase <= 1000000000) { rate = 42; progressive = 35940000; }
-    else { rate = 45; progressive = 65940000; }
-
-    document.getElementById('tc_ratePct').innerText = taxBase > 0 ? `${rate}%` : '—';
-    document.getElementById('tc_progressiveAmt').innerText = taxBase > 0 ? fmtNum(progressive) : '—';
-
-    // 산출세액 계산
-    let calcTaxAmt = Math.round(taxBase * (rate / 100) - progressive);
-    if(calcTaxAmt < 0) calcTaxAmt = 0;
-    document.getElementById('tc_calctax').value = fmtNum(calcTaxAmt);
-
-    // 세액공제, 가산세, 농특세 가감산
-    const taxCredit = parseNum(document.getElementById('tc_taxcredit').value);
-    const penalty = parseNum(document.getElementById('tc_penalty').value);
-    const agriTax = parseNum(document.getElementById('tc_agritax').value);
-    const prepaid = parseNum(document.getElementById('tc_prepaid').value);
-
-    // 결정세액 = 산출세액 - 세액공제감면 + 가산세 - 기납부세액
-    let finalTax = calcTaxAmt - taxCredit + penalty - prepaid;
-    
     const labelEl = document.getElementById('finalLabel');
     if (finalTax < 0) {
       labelEl.innerText = "결정세액 (환급)";
@@ -708,27 +283,176 @@
       labelEl.style.color = "#fff";
     }
     document.getElementById('tc_final').value = fmtNum(finalTax);
-
-    // 최종납부세액 (농특세 합산)
-    const finalWithAgri = finalTax + agriTax;
-    document.getElementById('tc_finalWithAgri').value = fmtNum(finalWithAgri);
-
-    // 지방소득세 계산 (결정세액의 10%, 환급인 경우 동일하게 10% 환급 계산)
-    const localTax = Math.floor(finalTax * 0.1 / 10) * 10; // 십원단위 절사
-    document.getElementById('tc_localtax').value = fmtNum(localTax);
   }
 
   function resetAll() {
-    if(!confirm('모든 입력 값을 초기화할까요?')) return;
-    document.querySelectorAll('.field-input, .amount-input, textarea').forEach(el => el.value = '');
-    document.getElementById('taxYear').value = '2025';
+    document.getElementById('f_name').value = '';
     document.getElementById('bizRows').innerHTML = '';
-    addBizRow();
+    document.getElementById('tc_total_income').value = '';
+    document.getElementById('tc_deduction').value = '';
+    document.getElementById('tc_tax_base').value = '';
+    document.getElementById('tc_rate').value = '';
+    document.getElementById('tc_calc_amt').value = '';
+    document.getElementById('tc_credit').value = '';
+    document.getElementById('tc_final').value = '';
+    calcAll();
   }
 
-  // 초기 실행 시 빈 사업장 로우 하나 띄우기
-  window.onload = function() {
-    addBizRow();
+  async function uploadPDF(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById('loadingOverlay').classList.add('show');
+    
+    try {
+      const fileReader = new FileReader();
+      fileReader.onload = async function() {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+        let fullText = "";
+
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join("\n");
+          fullText += `\n--- PAGE ${i} ---\n` + pageText;
+        }
+
+        parseWehagoData(fullText);
+        document.getElementById('loadingOverlay').classList.remove('show');
+        alert("위하고 PDF 데이터 분석 완료! 폼에 정상 반영되었습니다.");
+      };
+      fileReader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error(error);
+      document.getElementById('loadingOverlay').classList.remove('show');
+      alert("PDF를 분석하는 도중 오류가 발생했습니다.");
+    }
+  }
+
+  function parseWehagoData(text) {
+    // 1. 기본정보 (성명 추출)
+    let nameMatch = text.match(/1성\s*?\n?\s*명([가-힣\s]+)\n/);
+    if (!nameMatch) nameMatch = text.match(/신고인\s*?\n?\s*([가-힣]+)/);
+    if (nameMatch) {
+      document.getElementById('f_name').value = nameMatch[1].replace(/\s/g, '').trim();
+    }
+
+    // 귀속연도 추출
+    let yearMatch = text.match(/\((\d{4})년\s*귀속\)/);
+    if (yearMatch) document.getElementById('taxYear').value = yearMatch[1];
+
+    // 납부기한 세팅
+    let dateMatch = text.match(/(\d{4})\s*년\s*(\d{2})\s*월\s*(\d{2})\s*일\s*?\n?\s*신고인/);
+    if (dateMatch) {
+      document.getElementById('f_deadline').value = `${dateMatch[1]}년 ${dateMatch[2]}월 ${dateMatch[3]}일`;
+    }
+
+    // 2. 사업소득명세서 표 파싱 (상호, 사업자번호, 총수입금액, 필요경비, 소득금액)
+    document.getElementById('bizRows').innerHTML = ''; // 초기화
+    
+    // 위하고 양식의 행 추적 데이터 정리
+    let bizSection = text.split("● 사업소득명세서")[1];
+    if (bizSection) {
+      let nextSectionIdx = bizSection.search(/●/);
+      if (nextSectionIdx !== -1) bizSection = bizSection.substring(0, nextSectionIdx);
+
+      // 항목별 줄바꿈 데이터 분리 정제
+      let cleanTokens = bizSection.split('\n').map(t => t.replace(/["\s]/g, '').trim()).filter(t => t.length > 0);
+      
+      // 상호 리스트 위치 추적
+      let bnos = [], names = [], revenues = [], expenses = [], incomes = [];
+      
+      for(let i=0; i<cleanTokens.length; i++) {
+        if (cleanTokens[i].includes('사업자등록번호') || cleanTokens[i] === '⑤사업자등록번호') {
+          let j = i + 1;
+          while(j < cleanTokens.length && /^\d{3}-\d{2}-\d{5}$/.test(cleanTokens[j])) {
+            bnos.push(cleanTokens[j]);
+            j++;
+          }
+        }
+        if (cleanTokens[i] === '4상호' || cleanTokens[i] === '상호') {
+          let j = i + 1;
+          while(j < cleanTokens.length && !cleanTokens[j].includes('사업자') && bnos.length > names.length) {
+            names.push(cleanTokens[j]);
+            j++;
+          }
+        }
+        if (cleanTokens[i] === '총수입금액') {
+          let j = i + 1;
+          while(j < cleanTokens.length && /^[\d,]+$/.test(cleanTokens[j]) && revenues.length < bnos.length) {
+            revenues.push(parseNum(cleanTokens[j]));
+            j++;
+          }
+        }
+        if (cleanTokens[i] === '10필요경비' || cleanTokens[i] === '필요경비') {
+          let j = i + 1;
+          while(j < cleanTokens.length && /^[\d,]+$/.test(cleanTokens[j]) && expenses.length < bnos.length) {
+            expenses.push(parseNum(cleanTokens[j]));
+            j++;
+          }
+        }
+        if (cleanTokens[i].includes('1소득금액') || cleanTokens[i] === '소득금액(9-10)') {
+          let j = i + 1;
+          while(j < cleanTokens.length && /^[\d,]+$/.test(cleanTokens[j]) && incomes.length < bnos.length) {
+            incomes.push(parseNum(cleanTokens[j]));
+            j++;
+          }
+        }
+      }
+
+      // 파싱된 테이블 데이터를 행으로 동적 추가
+      for(let k=0; k<bnos.length; k++) {
+        let bName = names[k] || '사업장';
+        // 괄호 안에 대표자명 숨어있는 경우 정제 (예: 신성건축사사무소(신현수) -> 신성건축사사무소)
+        bName = bName.split('(')[0]; 
+        addBizRow(bName, bnos[k], revenues[k]||0, expenses[k]||0, incomes[k]||0);
+      }
+    }
+
+    // 3. 세액의 계산 파싱 처리
+    let calcSection = text.split("● 세액의 계산")[1];
+    if (calcSection) {
+      let tokens = calcSection.split('\n').map(t => t.replace(/["\s]/g, '').trim()).filter(t => t.length > 0);
+      
+      for(let i=0; i<tokens.length; i++) {
+        if(tokens[i].includes("합소득액종금") || tokens[i].includes("종합소득금액")) {
+          // 다음 유효 숫자 토큰 매칭
+          let val = findNextNumToken(tokens, i);
+          if(val > 0) document.getElementById('tc_total_income').value = fmtNum(val);
+        }
+        if(tokens[i].includes("제소공득") || tokens[i].includes("소득공제")) {
+          let val = findNextNumToken(tokens, i);
+          if(val > 0) document.getElementById('tc_deduction').value = fmtNum(val);
+        }
+        if(tokens[i].includes("산세액출") || tokens[i].includes("산출세액")) {
+          let val = findNextNumToken(tokens, i);
+          if(val > 0) document.getElementById('tc_calc_amt').value = fmtNum(val);
+        }
+        if(tokens[i].includes("세제액공") || tokens[i].includes("세액공제")) {
+          let val = findNextNumToken(tokens, i);
+          if(val > 0) document.getElementById('tc_credit').value = fmtNum(val);
+        }
+        if(tokens[i].includes("세율")) {
+          for(let j=i+1; j<i+5; j++) {
+            if(tokens[j] && tokens[j].includes('%')) {
+              document.getElementById('tc_rate').value = tokens[j];
+              break;
+            }
+          }
+        }
+      }
+    }
+    calcAll();
+  }
+
+  function findNextNumToken(tokens, startIdx) {
+    for(let j = startIdx + 1; j < startIdx + 6; j++) {
+      if(tokens[j] && /^[\d,.]+$/.test(tokens[j]) && !tokens[j].includes('%')) {
+        return parseNum(tokens[j].split('.')[0]); // 소수점 잘라내기
+      }
+    }
+    return 0;
   }
 </script>
 </body>
