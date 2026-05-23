@@ -458,7 +458,6 @@
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   const API_URL = 'https://script.google.com/macros/s/AKfycbziHJ0t95r2AeXclKzAh5PX4cIn8Z-aXg6syBD9wiamomcYkHPYsjomLeWns62Sc1CV/exec';
 
-  // ── PDF 업로드 (Y좌표 기반 행 분리) ───────────────
   async function uploadPDF(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -467,45 +466,30 @@
     try {
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
       const allItems = [];
       for (let p = 1; p <= pdf.numPages; p++) {
         const page = await pdf.getPage(p);
-        const tc   = await page.getTextContent();
-        const vp   = page.getViewport({ scale: 1 });
+        const tc = await page.getTextContent();
+        const vp = page.getViewport({ scale: 1 });
         tc.items.forEach(it => {
           if (it.str.trim()) {
-            allItems.push({
-              str: it.str,
-              x:   it.transform[4],
-              y:   Math.round(vp.height - it.transform[5]), // 위→아래 방향으로 변환
-              pg:  p
-            });
+            allItems.push({ str: it.str, x: it.transform[4], y: Math.round(vp.height - it.transform[5]), pg: p });
           }
         });
       }
-
-      // 페이지 → Y → X 순 정렬
       allItems.sort((a, b) => a.pg - b.pg || a.y - b.y || a.x - b.x);
-
-      // Y 좌표가 4px 이내이면 같은 행으로 묶기
       const rows = [];
       let cur = null;
       allItems.forEach(it => {
-        if (!cur || Math.abs(it.y - cur.y) > 4) {
+        if (!cur || it.pg !== cur.pg || Math.abs(it.y - cur.y) > 4) {
           cur = { y: it.y, pg: it.pg, items: [it] };
           rows.push(cur);
         } else {
           cur.items.push(it);
         }
       });
-
-      // 각 행을 하나의 문자열로
       const lines = rows.map(r => r.items.map(i => i.str).join(''));
-      const fullText = lines.join('\n');
-
-      const data = parseKoreanTaxReturn(fullText, lines);
-      applyPDFData(data);
+      applyPDFData(parseKoreanTaxReturn(lines));
     } catch(e) {
       alert('PDF 분석 오류: ' + e.message);
     } finally {
@@ -513,25 +497,7 @@
     }
   }
 
-  // 숫자만 파싱 (최대 9자리 = 10억 미만으로 제한)
-  function pn(s, maxDigits) {
-    const clean = String(s).replace(/[,\s]/g, '');
-    const n = parseInt(clean, 10);
-    if (isNaN(n) || n <= 0) return 0;
-    if (maxDigits && clean.length > maxDigits) return 0;
-    return n;
-  }
-
-  // 행에서 유효 숫자 추출 (1,000 이상 999,999,999 이하)
-  function numsFromLine(line) {
-    return (line.match(/[\d,]+/g) || [])
-      .map(s => pn(s, 9))
-      .filter(n => n >= 1000 && n <= 999999999);
-  }
-
-  function parseKoreanTaxReturn(fullText, lines) {
-    const t = fullText.replace(/\s/g, '');
-
+  function parseKoreanTaxReturn(lines) {
     const result = {
       name:'', taxYear:'', deadline:'', bizRows:[],
       인적공제:0, 국민연금:0, 개인연금저축:0, 노란우산공제:0,
@@ -539,111 +505,105 @@
       기타세액공제:[], tc_agritax:0, tc_prepaid:0,
     };
 
-    // ── 귀속연도
-    const ym = t.match(/(\d{4})년귀속/);
+    const nums = (line, min, max) =>
+      (line.match(/\d{3,}/g) || [])
+        .map(s => parseInt(s.replace(/,/g,''), 10))
+        .filter(n => n >= (min||1000) && n <= (max||999999999));
+
+    const fullT = lines.join('').replace(/\s/g, '');
+
+    // 귀속연도
+    const ym = fullT.match(/(\d{4})년귀속/);
     if (ym) result.taxYear = ym[1];
 
-    // ── 성명
-    const nm1 = t.match(/신고인([가-힣]{2,5})[（(]/);
-    if (nm1) result.name = nm1[1];
-    else { const nm2 = t.match(/성명([가-힣]{2,5})주민/); if (nm2) result.name = nm2[1]; }
+    // 성명
+    const nm = fullT.match(/신고인([가-힣]{2,5})[（(]/);
+    if (nm) result.name = nm[1];
+    else { const nm2 = fullT.match(/성명([가-힣]{2,5})주민/); if (nm2) result.name = nm2[1]; }
 
-    // ── 납부기한
-    const dlm = t.match(/(\d{4})년(\d{2})월(\d{2})일신고인/);
-    if (dlm) result.deadline = `${dlm[1]}년 ${parseInt(dlm[2])}월 ${parseInt(dlm[3])}일`;
+    // 납부기한
+    const dl = fullT.match(/(\d{4})년(\d{2})월(\d{2})일신고인/);
+    if (dl) result.deadline = `${dl[1]}년 ${parseInt(dl[2])}월 ${parseInt(dl[3])}일`;
 
-    // ── 사업자등록번호 (XXX-XX-XXXXX 패턴은 항상 정확하게 추출됨)
-    const allRegs = [...new Set(fullText.match(/\d{3}-\d{2}-\d{5}/g) || [])];
+    // 세무대리인 사업자번호 수집 (제외용)
+    const agentRegs = new Set();
+    lines.forEach(l => {
+      if (/(세무대리인|대리인|관리번호|조정반)/.test(l)) {
+        (l.match(/\d{3}-\d{2}-\d{5}/g) || []).forEach(r => agentRegs.add(r));
+      }
+    });
 
-    // ── 사업장별 수입/경비: 사업자번호가 포함된 행에서 숫자 추출
-    allRegs.forEach(reg => {
-      // 이 번호가 포함된 행 찾기
-      const line = lines.find(l => l.includes(reg));
-      if (!line) return;
+    // 사업자번호: 세무대리인 번호 제외
+    const allRegs = [...new Set(
+      lines.flatMap(l => l.match(/\d{3}-\d{2}-\d{5}/g) || [])
+    )].filter(r => !agentRegs.has(r));
 
-      const nums = numsFromLine(line.replace(reg, '')); // 번호 자체 숫자 제외
-      // 상호명: 사업자번호 앞의 한글
-      const nameM = line.match(/^([가-힣\w()\s]+?)\s*\d{3}-\d{2}-\d{5}/);
-      const bizName = nameM ? nameM[1].trim() : '';
+    // ⑨총수입금액 행 찾기
+    const incLine = lines.find(l => /⑨/.test(l) && /총수입/.test(l));
+    // ⑩필요경비 행 찾기
+    const expLine = lines.find(l => /⑩/.test(l) && /필요경비/.test(l));
+    // ④상호 행 찾기
+    const nameLine = lines.find(l => /④/.test(l) && /상호/.test(l));
 
+    // 각 행에서 사업장별 숫자 추출 (1,000~999,999,999)
+    const incNums = incLine ? nums(incLine, 1000, 999999999) : [];
+    const expNums = expLine ? nums(expLine, 1000, 999999999) : [];
+
+    // 상호명 추출: ④상호 행에서 한글 단어들
+    let bizNames = [];
+    if (nameLine) {
+      const withoutLabel = nameLine.replace(/④|상호/g, '');
+      bizNames = (withoutLabel.match(/[가-힣]+(?:\([가-힣]+\))?/g) || []).filter(n => n.length >= 2);
+    }
+
+    // 사업장 없으면 부동산임대소득명세에서 보완
+    const bLine = lines.find(l => /주택외임대소득/.test(l));
+    const bNums = bLine ? nums(bLine, 1000, 999999999) : [];
+
+    allRegs.forEach((reg, i) => {
       result.bizRows.push({
-        name:    bizName,
+        name:    bizNames[i] || '',
         code:    reg,
-        income:  nums[0] || 0,
-        expense: nums[1] || 0,
+        income:  incNums[i]  || (i === 0 ? bNums[0] : 0) || 0,
+        expense: expNums[i]  || (i === 0 ? bNums[1] : 0) || 0,
       });
     });
 
-    // 사업장 수입/경비가 없으면 부동산임대소득명세에서 보완
-    if (result.bizRows.length > 0 && result.bizRows[0].income === 0) {
-      const bline = lines.find(l => /주택외임대소득/.test(l));
-      if (bline) {
-        const nums = numsFromLine(bline);
-        if (nums.length >= 2) {
-          result.bizRows[0].income  = nums[0];
-          result.bizRows[0].expense = nums[1];
-        }
-      }
+    // 인적공제
+    const pLine = lines.find(l => /본인/.test(l) && nums(l, 500000, 9000000).length > 0);
+    if (pLine) result.인적공제 = nums(pLine, 500000, 9000000)[0] || 0;
+
+    // 국민연금
+    const nLine = lines.find(l => /국민연금/.test(l) && nums(l, 100000, 9999999).length > 0);
+    if (nLine) result.국민연금 = nums(nLine, 100000, 9999999)[0] || 0;
+
+    // 노란우산공제: 사업자번호 없는 행 우선
+    const yLines = lines.filter(l => /(소기업|소상공인|노란우산)/.test(l));
+    for (const yl of yLines) {
+      const v = nums(yl, 100000, 9999999)[0];
+      if (v) { result.노란우산공제 = v; break; }
     }
 
-    // ── 인적공제: "본인" 포함 행에서 숫자
-    const pline = lines.find(l => /①본인|본인/.test(l.replace(/\s/g,'')) && /[\d,]{6,}/.test(l));
-    if (pline) {
-      const v = numsFromLine(pline).find(n => n >= 500000 && n <= 9000000);
-      if (v) result.인적공제 = v;
+    // 고용증대세액공제
+    const eLine = lines.find(l => /고용.*증대/.test(l));
+    if (eLine) {
+      const vs = nums(eLine, 10000, 99999999);
+      if (vs.length > 0) result.기타세액공제.push({ label:'고용증대세액공제', amount: vs[vs.length-1] });
     }
 
-    // ── 국민연금
-    const nline = lines.find(l => /국민연금/.test(l) && /[\d,]{5,}/.test(l));
-    if (nline) {
-      const v = numsFromLine(nline).find(n => n >= 100000 && n <= 9999999);
-      if (v) result.국민연금 = v;
+    // 표준세액공제
+    const sLine = lines.find(l => /표준세액공제/.test(l) && nums(l, 10000, 999999).length > 0);
+    if (sLine) {
+      const v = nums(sLine, 10000, 999999)[0];
+      if (v) result.기타세액공제.push({ label:'표준세액공제', amount: v });
     }
 
-    // ── 노란우산공제 (사업자번호 포함 행 제외 후 찾기)
-    const yline = lines.find(l => /(소기업|소상공인|노란우산)/.test(l) && !l.includes('-') && /[\d,]{5,}/.test(l));
-    if (yline) {
-      const v = numsFromLine(yline).find(n => n >= 100000 && n <= 9999999);
-      if (v) result.노란우산공제 = v;
-    } else {
-      // 사업자번호 있는 행에서도 찾되 숫자 범위 제한
-      const yline2 = lines.find(l => /(소기업|소상공인|노란우산)/.test(l));
-      if (yline2) {
-        const v = numsFromLine(yline2).find(n => n >= 100000 && n <= 9999999);
-        if (v) result.노란우산공제 = v;
-      }
-    }
-
-    // ── 고용증대세액공제
-    const eline = lines.find(l => /고용을?증대/.test(l.replace(/\s/g,'')));
-    if (eline) {
-      const nums = numsFromLine(eline);
-      // 보통 공제대상금액(큰수), 세액공제(작은수) 순
-      const v = nums.filter(n => n >= 10000 && n <= 99999999).pop();
-      if (v) result.기타세액공제.push({ label:'고용증대세액공제', amount:v });
-    }
-
-    // ── 표준세액공제
-    const sline = lines.find(l => /표준세액공제/.test(l) && /[\d,]{4,}/.test(l));
-    if (sline) {
-      const v = numsFromLine(sline).find(n => n >= 10000 && n <= 999999);
-      if (v) result.기타세액공제.push({ label:'표준세액공제', amount:v });
-    }
-
-    // ── 농특세: 신고서 표에서 두 번째 금액 컬럼
-    const agline = lines.find(l => /신고기한내납부할세액|신고기한내납부/.test(l.replace(/\s/g,'')) && /[\d,]{4,}/.test(l));
-    if (agline) {
-      const nums = numsFromLine(agline);
-      if (nums.length >= 2) result.tc_agritax = nums[1];
-      else if (nums.length === 1) result.tc_agritax = nums[0];
-    }
-    // 보완: 산출세액 행에서 농특세 찾기
-    if (!result.tc_agritax) {
-      const agline2 = lines.find(l => /산출세액/.test(l) && /[\d,]{4,}/.test(l));
-      if (agline2) {
-        const nums = numsFromLine(agline2);
-        if (nums.length >= 2) result.tc_agritax = nums[1];
-      }
+    // 농특세: 신고기한내납부 행
+    const agLine = lines.find(l => /신고기한내납부/.test(l.replace(/\s/g,'')) && nums(l, 10000).length > 0);
+    if (agLine) {
+      const vs = nums(agLine, 10000, 999999999);
+      if (vs.length >= 2) result.tc_agritax = vs[1];
+      else if (vs.length === 1) result.tc_agritax = vs[0];
     }
 
     return result;
@@ -653,18 +613,15 @@
     if (d.name)     document.getElementById('f_name').value     = d.name;
     if (d.taxYear)  document.getElementById('taxYear').value    = d.taxYear;
     if (d.deadline) document.getElementById('f_deadline').value = d.deadline;
-
     document.getElementById('bizRows').innerHTML = '';
     bizSeq = 0;
     if (d.bizRows && d.bizRows.length > 0) {
       d.bizRows.forEach(row => addBizRow({
-        name:    row.name,
-        code:    row.code,
+        name: row.name, code: row.code,
         income:  row.income  ? row.income.toLocaleString('ko-KR')  : '',
         expense: row.expense ? row.expense.toLocaleString('ko-KR') : '',
       }));
     } else { addBizRow(); addBizRow(); }
-
     const di = document.querySelectorAll('[data-deduct]');
     [d.인적공제, d.국민연금, d.개인연금저축, d.노란우산공제].forEach((v,i) => {
       if (di[i]) di[i].value = v ? v.toLocaleString('ko-KR') : '';
@@ -676,16 +633,14 @@
     document.getElementById('creditDetailRows').innerHTML = '';
     creditSeq = 0;
     (d.기타세액공제||[]).forEach(item => {
-      if (item.amount > 0) addCreditDetailRow({ label:item.label, amount:item.amount.toLocaleString('ko-KR') });
+      if (item.amount > 0) addCreditDetailRow({ label: item.label, amount: item.amount.toLocaleString('ko-KR') });
     });
     if (d.tc_agritax) document.getElementById('tc_agritax').value = d.tc_agritax.toLocaleString('ko-KR');
     if (d.tc_prepaid) document.getElementById('tc_prepaid').value = d.tc_prepaid.toLocaleString('ko-KR');
-
     calcTotal(); syncDeduct(); syncTaxDeduct();
     alert('✅ PDF 데이터를 불러왔어요!\n내용 확인 후 필요한 부분 수정해주세요.');
   }
 
-  // ── Google Sheets 연동 ──────────────────────────
   function setSyncStatus(state, msg) {
     const dot = document.getElementById('syncDot');
     const label = document.getElementById('syncLabel');
@@ -742,7 +697,6 @@
     catch(e) { setSyncStatus('error','삭제 실패'); }
   }
 
-  // ── 계산 로직 ──────────────────────────────────
   function parseSignedEl(el) {
     const v = el.value; if (!v) return 0;
     const n = parseFloat(v.replace('△ ','').replace(/,/g,''))||0;
@@ -799,8 +753,7 @@
     else if(bn<0){ne2.value='△ '+Math.abs(bn).toLocaleString('ko-KR');ne2.style.color='#dc2626';}
     else{ne2.value=bn.toLocaleString('ko-KR');ne2.style.color='var(--navy)';}
     let or=0,oi=0;
-    document.querySelectorAll('[data-other-revenue]').forEach(e=>{or+=parseFloat((e.value||'0').replace(/,/g,''))||0
-                                                                  ;});
+    document.querySelectorAll('[data-other-revenue]').forEach(e=>{or+=parseFloat((e.value||'0').replace(/,/g,''))||0;});
     document.querySelectorAll('[data-other-income]').forEach(e=>{oi+=parseFloat((e.value||'0').replace(/,/g,''))||0;});
     document.getElementById('totalOtherRevenue').value = or ? or.toLocaleString('ko-KR') : '';
     document.getElementById('totalOtherIncome').value  = oi ? oi.toLocaleString('ko-KR') : '';
