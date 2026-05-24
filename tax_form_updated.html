@@ -393,7 +393,7 @@
     const di=document.querySelectorAll('[data-deduct]');
     [d.인적공제,d.국민연금,d.개인연금저축,d.노란우산공제].forEach((v,i)=>{if(di[i])di[i].value=v?v.toLocaleString('ko-KR'):'';});
     calcTotal(); syncDeduct(); calcTax();
-    alert('✅ PDF 데이터를 불러왔어요!\n세액공제·감면, 농특세는 직접 입력해주세요.');
+    alert('✅ PDF 데이터를 불러왔어요!\n세액공제·감면, 농특세는 직접 입력해주세요 😊');
   }
 
   function setSyncStatus(s,m){document.getElementById('syncDot').className='sync-dot'+(s==='loading'?' loading':s==='error'?' error':'');document.getElementById('syncLabel').textContent=m;}
