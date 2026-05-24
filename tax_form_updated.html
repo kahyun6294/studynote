@@ -330,9 +330,9 @@
     }
 
     const incLine = findLine('⑨총수입금액') || findLine('총수입금액');
-    const incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=999999999) : [];
+    const incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999) : [];
     const expLine = findLine('⑩필요경비') || findLine('필요경비');
-    const expenses = expLine ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=999999999) : [];
+    const expenses = expLine ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=9999999999) : [];
 
     const maxBiz = Math.max(bizRegs.length, 1);
     for (let i = 0; i < maxBiz; i++) {
