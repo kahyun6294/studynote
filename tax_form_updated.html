@@ -299,20 +299,6 @@
       return nums[0] || 0;
     };
 
-    // ====== 디버그 alert ======
-    const dbg = [];
-    ['①본인','본인','⑨국민연금','국민연금','소기업','소상공인','세액공제합계','신고기한내납부할세액','④상호','⑤사업자등록번호','⑨총수입금액','⑩필요경비'].forEach(kw => {
-      const i = F.indexOf(kw);
-      dbg.push('【' + kw + '】위치:' + i);
-      if (i >= 0) dbg.push(F.substring(i, i+70));
-      dbg.push('');
-    });
-    const agL = findLine('신고기한내납부할세액');
-    dbg.push('【농특세행탭분리】');
-    dbg.push(agL ? agL.replace(/\t/g,'[T]') : '없음');
-    alert(dbg.join('\n'));
-    // ====== 디버그 끝 ======
-
     const result = {
       name:'', taxYear:'', deadline:'', bizRows:[],
       인적공제:0, 국민연금:0, 개인연금저축:0, 노란우산공제:0,
