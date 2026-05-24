@@ -389,17 +389,27 @@
       if (nums[0]) result.노란우산공제 = nums[0];
     }
 
-    // 고용증대세액공제
-    const eIdx = F.indexOf('고용증대시킨');
-    if (eIdx >= 0) {
-      const after = F.substring(eIdx).replace(/\d{3}-\d{2}-\d{5}/g,'').replace(/[가-힣\n①-⑮]/g,'');
-      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=10000&&n<=99999999);
-      if (nums.length>0) result.기타세액공제.push({ label:'고용증대세액공제', amount: nums[nums.length-1] });
-    }
-
-    // 표준세액공제
-    const stv = afterKw('표준세액공제', 10000, 999999);
-    if (stv) result.기타세액공제.push({ label:'표준세액공제', amount: stv });
+ // 세액공제 항목 동적 추출 (세액공제명세서 구간)
+    const creditKws = [
+      { kw:'표준세액공제', label:'표준세액공제', min:10000, max:999999 },
+      { kw:'고용을증대시킨기업에대한세액공제', label:'고용증대세액공제', min:10000, max:99999999 },
+      { kw:'중소기업에대한특별세액감면', label:'중소기업특별세액감면', min:10000, max:99999999 },
+      { kw:'창업중소기업에대한세액감면', label:'창업중소기업세액감면', min:10000, max:99999999 },
+      { kw:'통합고용세액공제', label:'통합고용세액공제', min:10000, max:99999999 },
+      { kw:'연구및인력개발비에대한세액공제', label:'R&D세액공제', min:10000, max:99999999 },
+      { kw:'근로소득세액공제', label:'근로소득세액공제', min:10000, max:999999 },
+      { kw:'배당세액공제', label:'배당세액공제', min:1000, max:99999999 },
+      { kw:'기장세액공제', label:'기장세액공제', min:1000, max:99999999 },
+    ];
+    creditKws.forEach(({ kw, label, min, max }) => {
+      const idx = F.indexOf(kw);
+      if (idx < 0) return;
+      const after = F.substring(idx + kw.length)
+        .replace(/\d{3}-\d{2}-\d{5}/g,'')
+        .replace(/[가-힣\n①-⑰·ㆍ%\/]/g,'');
+      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=min&&n<=max);
+      if (nums.length > 0) result.기타세액공제.push({ label, amount: nums[nums.length-1] });
+    });
 
     // 농특세
     const agIdx = F.indexOf('신고기한내납부할세액');
