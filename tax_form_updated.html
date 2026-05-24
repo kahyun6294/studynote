@@ -330,7 +330,8 @@
     }
 
     const incLine = findLine('⑨총수입금액') || findLine('총수입금액');
-    const incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999) : [];
+    const incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999) :
+      (() => { const m = F.match(/⑨총수입금액[\s\S]{0,10}?([\d,]{7,})/); return m ? [pn(m[1])] : []; })();
     const expLine = findLine('⑩필요경비') || findLine('필요경비');
     const expenses = expLine ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=9999999999) : [];
 
