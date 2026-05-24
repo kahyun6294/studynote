@@ -382,7 +382,7 @@
       const after = F.substring(tcIdx + 7, tcIdx + 100).replace(/[가-힣\n①-⑰+()]/g,'');
       const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=1000&&n<=99999999);
       if (v) result.세액공제합계 = v + 감면합계;
-    else if (감면합계) result.세액공제합계 = 감면합계;
+      else if (감면합계) result.세액공제합계 = 감면합계;
     }
 
     const agLine = findLine('신고기한내납부할세액');
