@@ -294,7 +294,7 @@
     const afterKw = (kw, min, max) => {
       const idx = F.indexOf(kw);
       if (idx < 0) return 0;
-      const after = F.substring(idx + kw.length, idx + kw.length + 60).replace(/[가-힣\n①-⑮]/g,'');
+      const after = F.substring(idx + kw.length, idx + kw.length + 60).replace(/[가-힣\n①-⑮]/g,' ');
       const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=(min||1000)&&n<=(max||999999999));
       return nums[0] || 0;
     };
