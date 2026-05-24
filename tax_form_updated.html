@@ -330,10 +330,17 @@
     }
 
     const incLine = findLine('⑨총수입금액') || findLine('총수입금액');
-    const incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999) :
-      (() => { const m = F.match(/⑨총수입금액[\s\S]{0,10}?([\d,]{7,})/); return m ? [pn(m[1])] : []; })();
+    let incomes = incLine ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999) : [];
+    if (incomes.length === 0) {
+      const im = F.match(/⑨총수입금액([\d,]{7,})/);
+      if (im) incomes = [pn(im[1])];
+    }
     const expLine = findLine('⑩필요경비') || findLine('필요경비');
-    const expenses = expLine ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=9999999999) : [];
+    let expenses = expLine ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=9999999999) : [];
+    if (expenses.length === 0) {
+      const em = F.match(/⑩필요경비([\d,]{7,})/);
+      if (em) expenses = [pn(em[1])];
+    }
 
     const maxBiz = Math.max(bizRegs.length, 1);
     for (let i = 0; i < maxBiz; i++) {
@@ -343,7 +350,7 @@
     if (result.bizRows.length>0 && result.bizRows[0].income===0) {
       const bline = findLine('주택외임대소득');
       if (bline) {
-        const nums = bline.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=999999999);
+        const nums = bline.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999);
         if (nums.length>=2) { result.bizRows[0].income=nums[0]; result.bizRows[0].expense=nums[1]; }
       }
     }
@@ -357,9 +364,9 @@
       const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=100000&&n<=9999999);
       if (v) result.노란우산공제 = v;
     }
-   // 타소득 파싱 (51=근로, 66=연금, 60=기타)
+
+    // 타소득 파싱 (51=근로, 66=연금, 60=기타)
     result.타소득 = [];
-    const codeMap = {'51':2,'66':3,'60':4};
     lines.forEach(line => {
       const f = fa(line);
       const m = f.match(/^(51|60|66)\d/);
@@ -408,7 +415,7 @@
     [d.인적공제,d.국민연금,d.개인연금저축,d.노란우산공제].forEach((v,i)=>{if(di[i])di[i].value=v?v.toLocaleString('ko-KR'):'';});
     if (d.세액공제합계) document.getElementById('tc_taxcredit').value = d.세액공제합계.toLocaleString('ko-KR');
     if (d.tc_agritax)  document.getElementById('tc_agritax').value   = d.tc_agritax.toLocaleString('ko-KR');
-  const revInputs = document.querySelectorAll('[data-other-revenue]');
+    const revInputs = document.querySelectorAll('[data-other-revenue]');
     const incInputs = document.querySelectorAll('[data-other-income]');
     (d.타소득||[]).forEach(item => {
       const idx = {'51':2,'66':3,'60':4}[item.code];
@@ -416,8 +423,8 @@
         if (revInputs[idx]) revInputs[idx].value = item.revenue ? item.revenue.toLocaleString('ko-KR') : '';
         if (incInputs[idx]) incInputs[idx].value = item.income ? item.income.toLocaleString('ko-KR') : '';
       }
-    });  
-   calcTotal(); syncDeduct(); calcTax();
+    });
+    calcTotal(); syncDeduct(); calcTax();
     alert('✅ 불러오기 완료!');
   }
 
@@ -531,16 +538,10 @@
     const fe=document.getElementById('tc_final');const fl=document.getElementById('finalLabel');
     if(fa2<0){fe.value=Math.abs(fa2).toLocaleString('ko-KR');fl.textContent='결정세액 (환급)';fe.style.color='#22c55e';}
     else{fe.value=fa2?fa2.toLocaleString('ko-KR'):'';fl.textContent='결정세액 (납부)';fe.style.color='var(--gold)';}
-   const fwe=document.getElementById('tc_finalWithAgri');
-const agriRow=fwe.closest('.tax-row');
-if(ag>0){
-  agriRow.style.display='';
-  fwe.value=fw?Math.abs(fw).toLocaleString('ko-KR'):'';
-  fwe.style.color=fw<0?'#22c55e':'#15803d';
-} else {
-  agriRow.style.display='none';
-  fwe.value='';
-}
+    const fwe=document.getElementById('tc_finalWithAgri');
+    const agriRow=fwe.closest('.tax-row');
+    if(ag>0){agriRow.style.display='';fwe.value=fw?Math.abs(fw).toLocaleString('ko-KR'):'';fwe.style.color=fw<0?'#22c55e':'#15803d';}
+    else{agriRow.style.display='none';fwe.value='';}
     if(!localTaxManuallyEdited){const al=fa2>0?Math.round(fa2*0.1):0;document.getElementById('tc_localtax').value=al?al.toLocaleString('ko-KR'):'';}
   }
 
