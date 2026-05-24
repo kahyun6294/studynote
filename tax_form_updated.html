@@ -267,7 +267,6 @@
         if (!cur || it.pg !== cur.pg || Math.abs(it.y - cur.y) > 4) { cur = { y: it.y, pg: it.pg, items: [it] }; rows.push(cur); }
         else cur.items.push(it);
       });
-      // 탭 분리 lines (수입/경비 추출용)
       const lines = rows.map(r => {
         r.items.sort((a, b) => a.x - b.x);
         let result = ''; let prevEndX = -9999;
@@ -289,28 +288,16 @@
 
   function parseKoreanTaxReturn(lines) {
     const pn = s => { const n = parseInt(String(s).replace(/[^\d]/g,''),10); return isNaN(n)||n<=0?0:n; };
-
-    // 전체 공백 제거 텍스트 (소득공제 등 키워드 검색용)
     const F = lines.map(l => l.replace(/[\t\s]/g,'')).join('\n');
-
-    // 탭 분리 행에서 숫자 추출 (수입/경비용)
     const fa = l => l.replace(/[\t\s]/g,'');
     const findLine = kw => lines.find(l => fa(l).includes(kw));
-
-    // F에서 키워드 바로 뒤 숫자 추출
-    const afterKw = (kw, min, max) => {
-      const idx = F.indexOf(kw);
-      if (idx < 0) return 0;
-      const after = F.substring(idx + kw.length).replace(/[가-힣\n①-⑮]/g,'');
-      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=(min||1000)&&n<=(max||999999999));
-      return nums[0] || 0;
-    };
 
     const result = {
       name:'', taxYear:'', deadline:'', bizRows:[],
       인적공제:0, 국민연금:0, 개인연금저축:0, 노란우산공제:0,
       퇴직연금세액공제:0, 연금계좌세액공제:0,
-      기타세액공제:[], tc_agritax:0, tc_prepaid:0,
+      세액공제합계:0, 기타세액공제:[],
+      tc_agritax:0, tc_prepaid:0,
     };
 
     // 귀속연도
@@ -330,34 +317,30 @@
     const agentM = F.match(/세무대리인.{0,80}사업자등록번호(\d{3}-\d{2}-\d{5})/);
     const agentReg = agentM ? agentM[1] : null;
 
-    // 사업장명: ④상호 ~ ⑤ 사이 (또는 상호 ~ 사업자등록번호 사이)
+    // 사업장명
     const hoM = F.match(/④상호([^⑤]+)⑤/) || F.match(/상호([^⑤]+)⑤사업자등록번호/);
     let bizNames = [];
     if (hoM) {
-      const txt = hoM[1];
-      // "[가-힣]+(한글괄호)?" 패턴으로 상호명 추출
-      const matches = txt.match(/[가-힣]+(?:\([가-힣]+\))?/g) || [];
+      const matches = hoM[1].match(/[가-힣]+(?:\([가-힣]+\))?/g) || [];
       bizNames = matches.filter(n => n.length >= 2 && !/(국내|국외|소재지|복식|간편|추계|외부|자기|코드|기장|신고)/.test(n));
     }
 
-    // 사업자번호: ⑤사업자등록번호 이후 ~ ⑥ 사이
+    // 사업자번호
     const regM = F.match(/⑤사업자등록번호([^⑥]+)⑥/) || F.match(/사업자등록번호([\d\-\s]+)(?:⑥|기장의무)/);
     let bizRegs = [];
     if (regM) {
       bizRegs = [...new Set((regM[1].match(/\d{3}-\d{2}-\d{5}/g)||[]).filter(r=>r!==agentReg))];
     }
     if (bizRegs.length === 0) {
-      // 전체에서 찾되 세무대리인 제외
       const allRegs = [...new Set((F.match(/\d{3}-\d{2}-\d{5}/g)||[]).filter(r=>r!==agentReg))];
       bizRegs = allRegs.slice(0, 3);
     }
 
-    // 수입금액/경비: 탭 분리 방식 (Y좌표 기반 - 이건 잘 됨)
+    // 수입금액/경비 (탭 분리)
     const incLine = findLine('⑨총수입금액') || findLine('총수입금액');
     const incomes = incLine
       ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=999999999)
       : [];
-
     const expLine = findLine('⑩필요경비') || findLine('필요경비');
     const expenses = expLine
       ? expLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑩]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=10000&&n<=999999999)
@@ -377,47 +360,84 @@
       }
     }
 
-    // ── 소득공제: F에서 키워드 바로 뒤 숫자 추출 (핵심 변경!) ──
-    result.인적공제  = afterKw('본인', 500000, 9000000);
-    result.국민연금  = afterKw('국민연금', 100000, 9999999);
-
-    // 노란우산: 사업자번호가 바로 붙을 수 있어서 별도 처리
-    const ynIdx = F.indexOf('소기업');
-    if (ynIdx >= 0) {
-      const after = F.substring(ynIdx + 3).replace(/\d{3}-\d{2}-\d{5}/g,'').replace(/[가-힣\n①-⑮·ㆍ()（）]/g,'');
-      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999);
-      if (nums[0]) result.노란우산공제 = nums[0];
+    // 인적공제
+    const pIdx = F.indexOf('①본인');
+    if (pIdx>=0) {
+      const after = F.substring(pIdx+4).replace(/[가-힣\n①-⑮]/g,'');
+      const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=500000&&n<=9000000);
+      if (v) result.인적공제 = v;
     }
 
- // 세액공제 항목 동적 추출 (세액공제명세서 구간)
-    const creditKws = [
-      { kw:'표준세액공제', label:'표준세액공제', min:10000, max:999999 },
-      { kw:'고용을증대시킨기업에대한세액공제', label:'고용증대세액공제', min:10000, max:99999999 },
-      { kw:'중소기업에대한특별세액감면', label:'중소기업특별세액감면', min:10000, max:99999999 },
-      { kw:'창업중소기업에대한세액감면', label:'창업중소기업세액감면', min:10000, max:99999999 },
-      { kw:'통합고용세액공제', label:'통합고용세액공제', min:10000, max:99999999 },
-      { kw:'연구및인력개발비에대한세액공제', label:'R&D세액공제', min:10000, max:99999999 },
-      { kw:'근로소득세액공제', label:'근로소득세액공제', min:10000, max:999999 },
-      { kw:'배당세액공제', label:'배당세액공제', min:1000, max:99999999 },
-      { kw:'기장세액공제', label:'기장세액공제', min:1000, max:99999999 },
-    ];
-    creditKws.forEach(({ kw, label, min, max }) => {
-      const idx = F.indexOf(kw);
-      if (idx < 0) return;
-      const after = F.substring(idx + kw.length)
-        .replace(/\d{3}-\d{2}-\d{5}/g,'')
-        .replace(/[가-힣\n①-⑰·ㆍ%\/]/g,'');
-      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=min&&n<=max);
-      if (nums.length > 0) result.기타세액공제.push({ label, amount: nums[nums.length-1] });
-    });
+    // 국민연금
+    const nIdx = F.indexOf('国민연금');
+    const nIdx2 = F.indexOf('국민연금');
+    const nI = nIdx>=0 ? nIdx : nIdx2;
+    if (nI>=0) {
+      const after = F.substring(nI+5).replace(/[가-힣\n①-⑮ㆍ·]/g,'');
+      const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=100000&&n<=9999999);
+      if (v) result.국민연금 = v;
+    }
 
-    // 농특세
-    const agIdx = F.indexOf('신고기한내납부할세액');
-    if (agIdx >= 0) {
-      const after = F.substring(agIdx + 11).replace(/[가-힣\n①-⑮]/g,'');
-      const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=1000&&n<=999999999);
-      if (nums.length>=2) result.tc_agritax=nums[1];
-      else if (nums.length===1) result.tc_agritax=nums[0];
+    // 노란우산공제
+    const ynIdx = F.indexOf('소기업');
+    if (ynIdx>=0) {
+      const after = F.substring(ynIdx+3).replace(/\d{3}-\d{2}-\d{5}/g,'').replace(/[가-힣\n①-⑮·ㆍ()（）소상공인공제부금]/g,'');
+      const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=100000&&n<=9999999);
+      if (v) result.노란우산공제 = v;
+    }
+
+    // ── 세액공제: 합계만 직접 추출 ──────────────────
+    // "⑥세액공제합계" 또는 "세액공제합계" 바로 뒤 숫자
+    const taxCreditIdx = F.indexOf('세액공제합계');
+    if (taxCreditIdx >= 0) {
+      const after = F.substring(taxCreditIdx + 7).replace(/[가-힣\n①-⑰+]/g,'');
+      const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=1000&&n<=99999999);
+      if (v) result.세액공제합계 = v;
+    }
+
+    // 개별 세액공제 항목: 세액공제명세서 구간에서만 추출
+    // "세액공제명세서" ~ "세액공제합계" 사이 텍스트
+    const creditSecM = F.match(/세액공제명세서([\s\S]+?)세액공제합계/);
+    if (creditSecM) {
+      const sec = creditSecM[1];
+      const creditKws = [
+        { kw:'표준세액공제', label:'표준세액공제', min:10000, max:500000 },
+        { kw:'고용을증대시킨기업에대한세액공제', label:'고용증대세액공제', min:10000, max:99999999 },
+        { kw:'중소기업에대한특별세액감면', label:'중소기업특별세액감면', min:10000, max:99999999 },
+        { kw:'창업중소기업에대한세액감면', label:'창업중소기업세액감면', min:10000, max:99999999 },
+        { kw:'통합고용세액공제', label:'통합고용세액공제', min:10000, max:99999999 },
+        { kw:'연구및인력개발비', label:'R&D세액공제', min:10000, max:99999999 },
+        { kw:'연금계좌세액공제', label:'연금계좌세액공제', min:10000, max:99999999 },
+        { kw:'퇴직연금', label:'퇴직연금세액공제', min:10000, max:99999999 },
+      ];
+      creditKws.forEach(({ kw, label, min, max }) => {
+        const idx = sec.indexOf(kw);
+        if (idx < 0) return;
+        // 키워드 뒤 100자 이내에서만 숫자 추출
+        const after = sec.substring(idx + kw.length, idx + kw.length + 100)
+          .replace(/\d{3}-\d{2}-\d{5}/g,'')
+          .replace(/[가-힣\n①-⑰·ㆍ%\/]/g,'');
+        const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=min&&n<=max);
+        if (nums.length > 0) result.기타세액공제.push({ label, amount: nums[nums.length-1] });
+      });
+    }
+
+    // ── 농특세: 탭 분리 행에서 정확히 추출 ──────────
+    // "산출세액" 행의 두 번째 숫자 (종합소득세, 농특세 두 컬럼)
+    const agLine = findLine('신고기한내납부할세액');
+    if (agLine) {
+      const segs = agLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s)));
+      const nums = segs.map(s=>pn(s)).filter(n=>n>=1000&&n<=9999999);
+      if (nums.length>=2) result.tc_agritax = nums[1];
+    }
+    // 보완: 신고서 표에서 농특세 컬럼 (산출세액 행)
+    if (!result.tc_agritax) {
+      const agLine2 = findLine('산출세액');
+      if (agLine2) {
+        const segs = agLine2.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣①-⑮=]/.test(fa(s)));
+        const nums = segs.map(s=>pn(s)).filter(n=>n>=1000&&n<=9999999);
+        if (nums.length>=2) result.tc_agritax = nums[1];
+      }
     }
 
     return result;
@@ -431,15 +451,26 @@
     if (d.bizRows&&d.bizRows.length>0) {
       d.bizRows.forEach(row=>addBizRow({name:row.name,code:row.code,income:row.income?row.income.toLocaleString('ko-KR'):'',expense:row.expense?row.expense.toLocaleString('ko-KR'):''}));
     } else { addBizRow(); addBizRow(); }
+
     const di=document.querySelectorAll('[data-deduct]');
     [d.인적공제,d.국민연금,d.개인연금저축,d.노란우산공제].forEach((v,i)=>{if(di[i])di[i].value=v?v.toLocaleString('ko-KR'):'';});
     const ti=document.querySelectorAll('[data-taxdeduct]');
     [d.퇴직연금세액공제,d.연금계좌세액공제].forEach((v,i)=>{if(ti[i])ti[i].value=v?v.toLocaleString('ko-KR'):'';});
+
+    // 세액공제 합계를 직접 설정 (syncTaxDeduct 호출 안 함)
     document.getElementById('creditDetailRows').innerHTML=''; creditSeq=0;
     (d.기타세액공제||[]).forEach(item=>{if(item.amount>0)addCreditDetailRow({label:item.label,amount:item.amount.toLocaleString('ko-KR')});});
-    if(d.tc_agritax) document.getElementById('tc_agritax').value=d.tc_agritax.toLocaleString('ko-KR');
-    if(d.tc_prepaid) document.getElementById('tc_prepaid').value=d.tc_prepaid.toLocaleString('ko-KR');
-    calcTotal(); syncDeduct(); syncTaxDeduct();
+
+    if (d.세액공제합계) {
+      document.getElementById('tc_taxcredit').value = d.세액공제합계.toLocaleString('ko-KR');
+    } else {
+      syncTaxDeduct();
+    }
+
+    if (d.tc_agritax) document.getElementById('tc_agritax').value=d.tc_agritax.toLocaleString('ko-KR');
+    if (d.tc_prepaid) document.getElementById('tc_prepaid').value=d.tc_prepaid.toLocaleString('ko-KR');
+
+    calcTotal(); syncDeduct(); calcTax();
     alert('✅ PDF 데이터를 불러왔어요!\n내용 확인 후 필요한 부분 수정해주세요.');
   }
 
@@ -580,7 +611,7 @@
     document.getElementById('specialDeductRows').querySelectorAll('div[id^="sd_r"]').forEach(d=>{const i=d.querySelectorAll('input');sd.push({label:i[0]?.value||'',amount:i[1]?.value||'',note:i[2]?.value||''});});
     const cd=[];
     document.getElementById('creditDetailRows').querySelectorAll('div[id^="credit_r"]').forEach(d=>{const i=d.querySelectorAll('input');cd.push({label:i[0]?.value||'',amount:i[1]?.value||''});});
-    return{taxYear:document.getElementById('taxYear').value,f_name:document.getElementById('f_name').value,f_deadline:document.getElementById('f_deadline').value,bizRows,otherRevenue:or,otherIncome:oi,otherNote:on,deduct:de,deductNote:dn,specialDeducts:sd,creditDetails:cd,tc_carryover:document.getElementById('tc_carryover').value,tc_penalty:document.getElementById('tc_penalty').value,tc_agritax:document.getElementById('tc_agritax').value,tc_prepaid:document.getElementById('tc_prepaid').value,tc_localtax:document.getElementById('tc_localtax').value,localTaxManuallyEdited,memo:document.getElementById('memo').value};
+    return{taxYear:document.getElementById('taxYear').value,f_name:document.getElementById('f_name').value,f_deadline:document.getElementById('f_deadline').value,bizRows,otherRevenue:or,otherIncome:oi,otherNote:on,deduct:de,deductNote:dn,specialDeducts:sd,creditDetails:cd,tc_carryover:document.getElementById('tc_carryover').value,tc_penalty:document.getElementById('tc_penalty').value,tc_agritax:document.getElementById('tc_agritax').value,tc_prepaid:document.getElementById('tc_prepaid').value,tc_taxcredit:document.getElementById('tc_taxcredit').value,tc_localtax:document.getElementById('tc_localtax').value,localTaxManuallyEdited,memo:document.getElementById('memo').value};
   }
 
   function applyData(d){
@@ -593,9 +624,15 @@
     const dni=document.querySelectorAll('.deduct-table tbody tr:not(.deduct-section-row) td:last-child input');(d.deductNote||[]).forEach((v,i)=>{if(dni[i])dni[i].value=v;});
     document.getElementById('specialDeductRows').innerHTML='';specialDeductSeq=0;(d.specialDeducts||[]).forEach(r=>addSpecialDeductRow(r));
     document.getElementById('creditDetailRows').innerHTML='';creditSeq=0;(d.creditDetails||[]).forEach(r=>addCreditDetailRow(r));
-    document.getElementById('tc_carryover').value=d.tc_carryover||'';document.getElementById('tc_penalty').value=d.tc_penalty||'';document.getElementById('tc_agritax').value=d.tc_agritax||'';document.getElementById('tc_prepaid').value=d.tc_prepaid||'';
-    localTaxManuallyEdited=d.localTaxManuallyEdited||false;document.getElementById('tc_localtax').value=d.tc_localtax||'';document.getElementById('memo').value=d.memo||'';
-    calcTotal();syncDeduct();syncTaxDeduct();
+    document.getElementById('tc_carryover').value=d.tc_carryover||'';
+    document.getElementById('tc_penalty').value=d.tc_penalty||'';
+    document.getElementById('tc_agritax').value=d.tc_agritax||'';
+    document.getElementById('tc_prepaid').value=d.tc_prepaid||'';
+    document.getElementById('tc_taxcredit').value=d.tc_taxcredit||'';
+    localTaxManuallyEdited=d.localTaxManuallyEdited||false;
+    document.getElementById('tc_localtax').value=d.tc_localtax||'';
+    document.getElementById('memo').value=d.memo||'';
+    calcTotal();syncDeduct();calcTax();
   }
 
   function resetAll(){
