@@ -500,8 +500,16 @@
     const fe=document.getElementById('tc_final');const fl=document.getElementById('finalLabel');
     if(fa2<0){fe.value=Math.abs(fa2).toLocaleString('ko-KR');fl.textContent='결정세액 (환급)';fe.style.color='#22c55e';}
     else{fe.value=fa2?fa2.toLocaleString('ko-KR'):'';fl.textContent='결정세액 (납부)';fe.style.color='var(--gold)';}
-    const fwe=document.getElementById('tc_finalWithAgri');
-    fwe.value=fw?Math.abs(fw).toLocaleString('ko-KR'):'';fwe.style.color=fw<0?'#22c55e':'#15803d';
+   const fwe=document.getElementById('tc_finalWithAgri');
+const agriRow=fwe.closest('.tax-row');
+if(ag>0){
+  agriRow.style.display='';
+  fwe.value=fw?Math.abs(fw).toLocaleString('ko-KR'):'';
+  fwe.style.color=fw<0?'#22c55e':'#15803d';
+} else {
+  agriRow.style.display='none';
+  fwe.value='';
+}
     if(!localTaxManuallyEdited){const al=fa2>0?Math.round(fa2*0.1):0;document.getElementById('tc_localtax').value=al?al.toLocaleString('ko-KR'):'';}
   }
 
