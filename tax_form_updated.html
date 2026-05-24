@@ -347,12 +347,7 @@
       }
     }
 
-    const bIdx = F.indexOf('①본인');
-if (bIdx >= 0) {
-  const bAfter = F.substring(bIdx + 3, bIdx + 15).replace(/[^\d,]/g,'');
-  const bv = pn(bAfter.split(',').join('').substring(0,7));
-  if (bv >= 500000 && bv <= 9000000) result.인적공제 = bv;
-}
+    result.인적공제 = afterKw('①본인', 500000, 9000000);
     result.국민연금  = afterKw('⑨국민연금', 100000, 9999999);
 
     const ynIdx = F.indexOf('소기업');
