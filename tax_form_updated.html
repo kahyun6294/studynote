@@ -288,15 +288,17 @@
 
   function parseKoreanTaxReturn(lines) {
     const pn = s => { const n = parseInt(String(s).replace(/[^\d]/g,''),10); return isNaN(n)||n<=0?0:n; };
+    // 공백+탭 모두 제거한 전체 텍스트
     const F = lines.map(l => l.replace(/[\t\s]/g,'')).join('\n');
     const fa = l => l.replace(/[\t\s]/g,'');
     const findLine = kw => lines.find(l => fa(l).includes(kw));
 
-    // F에서 키워드 바로 뒤 숫자 추출
+    // F에서 키워드 뒤 숫자 추출
     const afterKw = (kw, min, max) => {
       const idx = F.indexOf(kw);
       if (idx < 0) return 0;
-      const after = F.substring(idx + kw.length, idx + kw.length + 80).replace(/[가-힣\n①-⑮]/g,'');
+      const after = F.substring(idx + kw.length, idx + kw.length + 60)
+        .replace(/[가-힣\n①-⑮]/g,'');
       const nums = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=(min||1000)&&n<=(max||999999999));
       return nums[0] || 0;
     };
@@ -345,7 +347,7 @@
       bizRegs = allRegs.slice(0, 3);
     }
 
-    // 수입금액/경비
+    // 수입금액/경비 (탭 분리)
     const incLine = findLine('⑨총수입금액') || findLine('총수입금액');
     const incomes = incLine
       ? incLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑨]/.test(fa(s))).map(s=>pn(s)).filter(n=>n>=100000&&n<=999999999)
@@ -369,10 +371,8 @@
       }
     }
 
-    // 인적공제
-    result.인적공제 = afterKw('①본인', 500000, 9000000);
-
-    // 국민연금
+    // ── 소득공제 (잘 됐던 방식 그대로) ──────────────
+    result.인적공제 = afterKw('본인', 500000, 9000000);
     result.국민연금 = afterKw('국민연금', 100000, 9999999);
 
     // 노란우산공제
@@ -383,29 +383,30 @@
       if (v) result.노란우산공제 = v;
     }
 
-    // ── 세액공제합계 직접 추출 (핵심!) ──────────────
-    // 신고서 표의 "세액공제" 줄 → 종합소득세 컬럼 값
-    const taxCreditLine = findLine('세액공제');
-    if (taxCreditLine) {
-      const segs = taxCreditLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣⑳-㉟]/.test(fa(s)));
+    // ── 세액공제합계: 신고서 표 세액공제 행 첫번째 숫자 ──
+    // "세액공제" 키워드 포함 탭 분리 행에서
+    const tcLine = lines.find(l => {
+      const f = fa(l);
+      return f.includes('세액공제') && !f.includes('명세서') && !f.includes('항목') && /\d{4,}/.test(l);
+    });
+    if (tcLine) {
+      const segs = tcLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s)));
       const nums = segs.map(s=>pn(s)).filter(n=>n>=1000&&n<=99999999);
       if (nums.length>0) result.세액공제합계 = nums[0];
     }
-    // 보완: ⑥세액공제합계 키워드
-    if (!result.세액공제합계) {
-      result.세액공제합계 = afterKw('세액공제합계', 1000, 99999999);
-    }
 
-    // ── 농특세: 신고서 표 산출세액 행 두 번째 컬럼 ──
-    const agritaxLine = findLine('산출세액');
-    if (agritaxLine) {
-      const segs = agritaxLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣=]/.test(fa(s)));
+    // ── 농특세: 신고서 표에서 추출 ──────────────────
+    // "신고기한내납부할세액" 행의 두 번째 컬럼
+    const agLine = findLine('신고기한내납부할세액');
+    if (agLine) {
+      const segs = agLine.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s)));
       const nums = segs.map(s=>pn(s)).filter(n=>n>=1000&&n<=9999999);
       if (nums.length>=2) result.tc_agritax = nums[1];
+      else if (nums.length===1) result.tc_agritax = nums[0];
     }
-    // 보완: 신고기한내납부할세액 행
+    // 보완: 산출세액 행 두번째 컬럼
     if (!result.tc_agritax) {
-      const agLine2 = findLine('신고기한내납부할세액');
+      const agLine2 = lines.find(l => fa(l).includes('산출세액') && !fa(l).includes('=') && /\d{4,}/.test(l));
       if (agLine2) {
         const segs = agLine2.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s)));
         const nums = segs.map(s=>pn(s)).filter(n=>n>=1000&&n<=9999999);
