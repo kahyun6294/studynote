@@ -361,7 +361,12 @@
       }
     }
 
-    result.인적공제  = afterKw('①본인', 500000, 9000000);
+    const bIdx = F.indexOf('①본인');
+if (bIdx >= 0) {
+  const bStr = F.substring(bIdx + 3, bIdx + 20).replace(/[^\d,]/g,'');
+  const bNums = (bStr.match(/[\d,]+/g)||[]).map(s=>pn(s)).filter(n=>n>=500000&&n<=9000000);
+  if (bNums[0]) result.인적공제 = bNums[0];
+}
     result.국민연금  = afterKw('⑨국민연금', 100000, 9999999);
 
     const ynIdx = F.indexOf('소기업');
