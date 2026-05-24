@@ -276,6 +276,25 @@
           result += it.str;
           prevEndX = it.x + Math.max(it.w > 0 ? it.w : it.str.length * 5, 1);
         });
+       // 디버그 전체
+const dbg = [];
+['①본인','본인','국민연금','소기업','소상공인','세액공제합계','신고기한내납부할세액','④상호','⑤사업자등록번호','⑨총수입금액','⑩필요경비'].forEach(kw => {
+  const i = F.indexOf(kw);
+  dbg.push('=== ' + kw + ' (위치:' + i + ') ===');
+  dbg.push(i >= 0 ? F.substring(i, i+80) : '❌ 없음');
+  dbg.push('');
+});
+// 탭분리 수입/경비 행 확인
+const incL = findLine('⑨총수입금액') || findLine('총수입금액');
+dbg.push('=== 수입금액 행(탭분리) ===');
+dbg.push(incL ? incL.replace(/\t/g, ' [TAB] ') : '❌ 없음');
+const expL = findLine('⑩필요경비') || findLine('필요경비');
+dbg.push('=== 필요경비 행(탭분리) ===');
+dbg.push(expL ? expL.replace(/\t/g, ' [TAB] ') : '❌ 없음');
+const agL = findLine('신고기한내납부할세액');
+dbg.push('=== 농특세 행(탭분리) ===');
+dbg.push(agL ? agL.replace(/\t/g, ' [TAB] ') : '❌ 없음');
+alert(dbg.join('\n'));
         return result;
       });
       applyPDFData(parseKoreanTaxReturn(lines));
