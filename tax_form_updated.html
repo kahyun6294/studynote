@@ -356,12 +356,33 @@
       const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=100000&&n<=9999999);
       if (v) result.노란우산공제 = v;
     }
+   // 타소득 파싱 (51=근로, 66=연금, 60=기타)
+    result.타소득 = [];
+    const codeMap = {'51':2,'66':3,'60':4};
+    lines.forEach(line => {
+      const f = fa(line);
+      const m = f.match(/^(51|60|66)\d/);
+      if (!m) return;
+      const code = m[1];
+      const segs = line.split('\t').filter(s=>/\d/.test(s)&&!/[가-힣]/.test(fa(s))&&!/^\d{3}-\d{2}/.test(fa(s)));
+      const nums = segs.map(s=>pn(s)).filter(n=>n>=100000&&n<=9999999999);
+      if (nums.length >= 3) result.타소득.push({ code, revenue: nums[0], expense: nums[1], income: nums[2] });
+    });
 
+    // 세액감면합계 먼저 추출
+    let 감면합계 = 0;
+    const exIdx = F.indexOf('세액감면합계');
+    if (exIdx >= 0) {
+      const exAfter = F.substring(exIdx+7, exIdx+80).replace(/[가-힣\n①-⑰+()]/g,'');
+      const exv = (exAfter.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=1000&&n<=99999999);
+      if (exv) 감면합계 = exv;
+    }
     const tcIdx = F.indexOf('세액공제합계');
     if (tcIdx >= 0) {
       const after = F.substring(tcIdx + 7, tcIdx + 100).replace(/[가-힣\n①-⑰+()]/g,'');
       const v = (after.match(/[\d,]+/g)||[]).map(s=>pn(s)).find(n=>n>=1000&&n<=99999999);
-      if (v) result.세액공제합계 = v;
+      if (v) result.세액공제합계 = v + 감면합계;
+    else if (감면합계) result.세액공제합계 = 감면합계;
     }
 
     const agLine = findLine('신고기한내납부할세액');
@@ -386,7 +407,16 @@
     [d.인적공제,d.국민연금,d.개인연금저축,d.노란우산공제].forEach((v,i)=>{if(di[i])di[i].value=v?v.toLocaleString('ko-KR'):'';});
     if (d.세액공제합계) document.getElementById('tc_taxcredit').value = d.세액공제합계.toLocaleString('ko-KR');
     if (d.tc_agritax)  document.getElementById('tc_agritax').value   = d.tc_agritax.toLocaleString('ko-KR');
-    calcTotal(); syncDeduct(); calcTax();
+  const revInputs = document.querySelectorAll('[data-other-revenue]');
+    const incInputs = document.querySelectorAll('[data-other-income]');
+    (d.타소득||[]).forEach(item => {
+      const idx = {'51':2,'66':3,'60':4}[item.code];
+      if (idx !== undefined) {
+        if (revInputs[idx]) revInputs[idx].value = item.revenue ? item.revenue.toLocaleString('ko-KR') : '';
+        if (incInputs[idx]) incInputs[idx].value = item.income ? item.income.toLocaleString('ko-KR') : '';
+      }
+    });  
+   calcTotal(); syncDeduct(); calcTax();
     alert('✅ 불러오기 완료!');
   }
 
