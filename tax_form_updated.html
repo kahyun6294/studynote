@@ -119,7 +119,6 @@
     .toolbar, .add-row-wrap, .del-row-btn { display: none !important; }
     .page-wrap { margin: 0; box-shadow: none; padding: 20px 24px 28px; }
     .field-input, .amount-input, .doc-year-val, .memo-textarea, .section-header, .row-total td, .tax-row-final, .doc-tag, .deduct-section-row td, .biz-table tfoot td, .progressive-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .memo-textarea { height: auto !important; overflow: visible !important; }
     .print-hidden { display: none !important; }
     @page { size: A4; margin: 14mm 15mm 16mm; }
   }
@@ -603,7 +602,7 @@
     document.getElementById('tc_ratePct').textContent='—';document.getElementById('tc_progressiveAmt').textContent='—';document.getElementById('clientSelect').value='';
   }
 
-  window.addEventListener('beforeprint',function(){const h=Array.from(document.querySelectorAll('[data-other-income]')).some(el=>el.value&&el.value!=='0');document.getElementById('section-other-body').classList.toggle('print-hidden',!h);});
+  window.addEventListener('beforeprint',function(){const h=Array.from(document.querySelectorAll('[data-other-income]')).some(el=>el.value&&el.value!=='0');document.getElementById('section-other-body').classList.toggle('print-hidden',!h);const memo=document.getElementById('memo');if(memo){memo.style.height='auto';memo.style.height=memo.scrollHeight+'px';}});
   window.addEventListener('afterprint',function(){document.getElementById('section-other-body').classList.remove('print-hidden');});
 
   refreshSelect('');
