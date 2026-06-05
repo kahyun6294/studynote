@@ -607,7 +607,7 @@
   }
 
   window.addEventListener('beforeprint',function(){const h=Array.from(document.querySelectorAll('[data-other-income]')).some(el=>el.value&&el.value!=='0');document.getElementById('section-other-body').classList.toggle('print-hidden',!h);const memo=document.getElementById('memo');if(memo){memo.style.height='auto';memo.style.height=memo.scrollHeight+'px';}});
-  window.addEventListener('afterprint',function(){document.getElementById('section-other-body').classList.remove('print-hidden');document.querySelectorAll('#creditDetailRows .print-label').forEach(function(sp){sp.remove();});document.querySelectorAll('#creditDetailRows .hidden-for-print').forEach(function(inp){inp.classList.remove('hidden-for-print');});});
+  window.addEventListener('afterprint',function(){document.getElementById('section-other-body').classList.remove('print-hidden');document.querySelectorAll('#creditDetailRows .print-label').forEach(function(sp){sp.remove();});document.querySelectorAll('#creditDetailRows .hidden-for-print').forEach(function(inp){inp.classList.remove('hidden-for-print');});var mpd=document.getElementById('memo-print-div');if(mpd){mpd.remove();document.getElementById('memo').style.display='';}});
 
   refreshSelect('');
 </script>
