@@ -571,7 +571,7 @@
     document.getElementById('specialDeductRows').querySelectorAll('div[id^="sd_r"]').forEach(d=>{const i=d.querySelectorAll('input');sd.push({label:i[0]?.value||'',amount:i[1]?.value||'',note:i[2]?.value||''});});
     const cd=[];
     document.getElementById('creditDetailRows').querySelectorAll('div[id^="credit_r"]').forEach(d=>{const i=d.querySelectorAll('input');cd.push({label:i[0]?.value||'',amount:i[1]?.value||''});});
-    return{taxYear:document.getElementById('taxYear').value,f_name:document.getElementById('f_name').value,f_deadline:document.getElementById('f_deadline').value,bizRows,otherRevenue:or,otherIncome:oi,otherNote:on,deduct:de,deductNote:dn,specialDeducts:sd,creditDetails:cd,tc_carryover:document.getElementById('tc_carryover').value,tc_penalty:document.getElementById('tc_penalty').value,tc_agritax:document.getElementById('tc_agritax').value,tc_prepaid:document.getElementById('tc_prepaid').value,tc_taxcredit:document.getElementById('tc_taxcredit').value,tc_localtax:document.getElementById('tc_localtax').value,localTaxManuallyEdited,memo:document.getElementById('memo').value};
+    const tdi=[];document.querySelectorAll('.deduct-table [data-taxdeduct]').forEach(function(e){tdi.push(e.value);});return{taxYear:document.getElementById('taxYear').value,f_name:document.getElementById('f_name').value,f_deadline:document.getElementById('f_deadline').value,bizRows,otherRevenue:or,otherIncome:oi,otherNote:on,deduct:de,deductNote:dn,specialDeducts:sd,creditDetails:cd,tc_carryover:document.getElementById('tc_carryover').value,tc_penalty:document.getElementById('tc_penalty').value,tc_agritax:document.getElementById('tc_agritax').value,tc_prepaid:document.getElementById('tc_prepaid').value,taxdeductItems:tdi,tc_taxcredit:document.getElementById('tc_taxcredit').value,tc_localtax:document.getElementById('tc_localtax').value,localTaxManuallyEdited,memo:document.getElementById('memo').value};
   }
 
   function applyData(d){
@@ -588,7 +588,7 @@
     document.getElementById('tc_penalty').value=d.tc_penalty||'';
     document.getElementById('tc_agritax').value=d.tc_agritax||'';
     document.getElementById('tc_prepaid').value=d.tc_prepaid||'';
-    document.getElementById('tc_taxcredit').value=d.tc_taxcredit||'';
+    const tdia=document.querySelectorAll('.deduct-table [data-taxdeduct]');(d.taxdeductItems||[]).forEach(function(v,i){if(tdia[i])tdia[i].value=v;});document.getElementById('tc_taxcredit').value=d.tc_taxcredit||'';
     localTaxManuallyEdited=d.localTaxManuallyEdited||false;
     document.getElementById('tc_localtax').value=d.tc_localtax||'';
     document.getElementById('memo').value=d.memo||'';
@@ -606,8 +606,8 @@
     document.getElementById('tc_ratePct').textContent='—';document.getElementById('tc_progressiveAmt').textContent='—';document.getElementById('clientSelect').value='';
   }
 
-  window.addEventListener('beforeprint',function(){const h=Array.from(document.querySelectorAll('[data-other-income]')).some(el=>el.value&&el.value!=='0');document.getElementById('section-other-body').classList.toggle('print-hidden',!h);const memo=document.getElementById('memo');if(memo){memo.style.height='auto';memo.style.height=memo.scrollHeight+'px';}});
-  window.addEventListener('afterprint',function(){document.getElementById('section-other-body').classList.remove('print-hidden');document.querySelectorAll('#creditDetailRows .print-label').forEach(function(sp){sp.remove();});document.querySelectorAll('#creditDetailRows .hidden-for-print').forEach(function(inp){inp.classList.remove('hidden-for-print');});var mpd=document.getElementById('memo-print-div');if(mpd){mpd.remove();document.getElementById('memo').style.display='';}});
+  window.addEventListener('beforeprint',function(){var h=Array.from(document.querySelectorAll('[data-other-income]')).some(function(el){return el.value&&el.value!=='0';});document.getElementById('section-other-body').classList.toggle('print-hidden',!h);var memo=document.getElementById('memo');if(memo){var mp=document.createElement('div');mp.id='memo-print-div';mp.textContent=memo.value;memo.parentNode.insertBefore(mp,memo.nextSibling);memo.style.display='none';}document.querySelectorAll('#creditDetailRows > div').forEach(function(row){var inputs=row.querySelectorAll('input');for(var i=0;i<inputs.length;i++){if(inputs[i].placeholder&&inputs[i].placeholder.indexOf('감면')>-1){var sp=document.createElement('span');sp.className='print-label';sp.textContent=inputs[i].value||'';inputs[i].style.display='none';inputs[i].parentNode.insertBefore(sp,inputs[i]);break;}}});});
+  window.addEventListener('afterprint',function(){document.getElementById('section-other-body').classList.remove('print-hidden');document.querySelectorAll('#creditDetailRows .print-label').forEach(function(sp){sp.remove();});document.querySelectorAll('#creditDetailRows input').forEach(function(inp){inp.style.display='';});var mpd=document.getElementById('memo-print-div');if(mpd){mpd.remove();}var memo=document.getElementById('memo');if(memo){memo.style.display='';}});document.querySelectorAll('#creditDetailRows .hidden-for-print').forEach(function(inp){inp.classList.remove('hidden-for-print');});var mpd=document.getElementById('memo-print-div');if(mpd){mpd.remove();document.getElementById('memo').style.display='';}});
 
   refreshSelect('');
 </script>
