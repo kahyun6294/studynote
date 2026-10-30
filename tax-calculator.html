@@ -200,7 +200,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   </div>
   <div class="card">
     <div class="card-title">&#128203; 법인세율표</div>
-    <div class="year-selector"><button class="year-btn active" id="btn-2025" onclick="setYear(2025)">2025년</button><button class="year-btn" id="btn-2026" onclick="setYear(2026)">2026년~</button></div>
+    <div class="year-selector"><button class="year-btn" id="btn-2025" onclick="setYear(2025)">2025년</button><button class="year-btn active" id="btn-2026" onclick="setYear(2026)">2026년~</button></div>
     <table class="rate-table"><thead><tr><th>과세표준</th><th>세율</th></tr></thead><tbody id="rate-tbody"></tbody></table>
     <div class="rate-note" id="rate-note"></div>
     <div class="rate-change-note" id="rate-change-note"></div>
@@ -230,7 +230,7 @@ body { font-family:'Noto Sans KR',sans-serif; background:#f0f2f5; min-height:100
   </div>
 </div>
 <script>
-var currentYear=2025;
+var currentYear=2026;
 var RATES={2025:[{limit:200000000,rate:0.09,label:'2억 이하',rateLabel:'9%'},{limit:20000000000,rate:0.19,label:'2억~200억',rateLabel:'19%'},{limit:300000000000,rate:0.21,label:'200억~3,000억',rateLabel:'21%'},{limit:Infinity,rate:0.24,label:'3,000억 초과',rateLabel:'24%'}],2026:[{limit:200000000,rate:0.10,label:'2억 이하',rateLabel:'10%'},{limit:20000000000,rate:0.20,label:'2억~200억',rateLabel:'20%'},{limit:300000000000,rate:0.22,label:'200억~3,000억',rateLabel:'22%'},{limit:Infinity,rate:0.25,label:'3,000억 초과',rateLabel:'25%'}]};
 var currentModalType=null;
 function setYear(y){currentYear=y;document.getElementById('btn-2025').classList.toggle('active',y===2025);document.getElementById('btn-2026').classList.toggle('active',y===2026);renderRateTable(-1);calc();}
